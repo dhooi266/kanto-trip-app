@@ -287,6 +287,36 @@ a{color:inherit}
 .split span{font-size:12px;opacity:.75}
 
 /* TAB BAR */
+/* Voice translator */
+.voice{background:linear-gradient(160deg,var(--night),var(--night-2));color:var(--snow);border-radius:22px;box-shadow:var(--shadow);padding:14px}
+.vlog{max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:2px}
+.vhint{margin:0;font-size:13px;line-height:1.55;opacity:.75}
+.vb{position:relative;max-width:86%;border-radius:16px;padding:9px 40px 9px 12px;animation:rise .3s ease-out both}
+.vb.me{align-self:flex-end;background:var(--dc);border-bottom-right-radius:4px}
+.vb.them{align-self:flex-start;background:rgba(255,255,255,.12);border-bottom-left-radius:4px}
+.vb small{display:block;font-size:12px;opacity:.75;line-height:1.4}
+.vb b{display:block;font-size:18px;line-height:1.45;margin-top:2px}
+.vb button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:rgba(255,255,255,.16);color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.vmsg{margin:10px 0 0;font-size:13px;color:#FFB4A2}
+.vmsg.busy{color:var(--snow);opacity:.85}
+.vbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.vbtn{border:0;border-radius:18px;padding:14px 10px;color:#fff;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;font:inherit;position:relative}
+.vbtn.me{background:var(--dc)}
+.vbtn.them{background:#FF8A6B;color:var(--night)}
+.vbtn span{font-size:28px;line-height:1.1}
+.vbtn b{font-size:15px}
+.vbtn small{font-size:11px;opacity:.85}
+.vbtn:disabled{opacity:.4}
+.vbtn.rec{background:#E5484D;color:#fff;animation:vpulse 1.2s ease-in-out infinite}
+@keyframes vpulse{0%,100%{box-shadow:0 0 0 0 rgba(229,72,77,.6)}50%{box-shadow:0 0 0 10px rgba(229,72,77,0)}}
+.vset{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:12px}
+.vset span{flex:1;opacity:.85}
+.vset button,.vrow button{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:var(--snow);border-radius:999px;padding:5px 11px;font:inherit;font-size:12px;cursor:pointer}
+.vform{margin-top:10px;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.06);border-radius:14px;padding:12px}
+.vform label{display:flex;flex-direction:column;gap:5px;font-size:12px;opacity:.9}
+.vform input,.vform select{font:inherit;font-size:15px;border:1px solid rgba(255,255,255,.25);background:rgba(13,20,38,.6);color:var(--snow);border-radius:10px;padding:9px 10px;width:100%}
+.vrow{display:flex;gap:8px}
+@media (prefers-reduced-motion:reduce){.vbtn.rec,.vb{animation:none}}
 /* Translator tab */
 .tr{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:14px}
 .trdir{display:flex;gap:6px;flex-wrap:wrap}
@@ -1050,11 +1080,129 @@ async function translate(){
   } catch(e) { trOut = {src:q, err:1, dir}; }
   renderTalk();
 }
+/* ---- Voice translator: ElevenLabs Scribe (speech-to-text) → MyMemory → ElevenLabs TTS.
+   The ElevenLabs key is typed in by the user and kept only in this browser (kanto27:elkey), never in the page source.
+   Without a key it falls back to the browser's own speech recognition and voices. ---- */
+const EL = "https://api.elevenlabs.io/v1", EL_STT = "scribe_v2", EL_TTS = ["eleven_v4_turbo","eleven_flash_v2_5"], EL_DEFAULT_VOICE = "21m00Tcm4TlvDq8ikWAM";
+let elKey = store.get("elkey") || "", elVoices = null, elPref = store.get("elv") || {}, vlog = [], vrec = null, vBusy = false, vMsg = "", vShowSet = false, actx = null;
+const myL = () => lang==="en" ? "en" : "zh";
+const mmL = l => l==="zh" ? "zh-CN" : l;
+async function mt(q, pair){
+  const r = await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(q)+"&langpair="+encodeURIComponent(pair));
+  const j = await r.json(), raw = j && j.responseData && j.responseData.translatedText;
+  if (!raw || +j.responseStatus !== 200 || /MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(raw)) throw new Error("mt");
+  const d = document.createElement("textarea"); d.innerHTML = raw; return d.value;
+}
+function unlockAudio(){ try { actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch(e) {} }
+async function playBuf(ab){ unlockAudio(); const buf = await actx.decodeAudioData(ab); const s = actx.createBufferSource(); s.buffer = buf; s.connect(actx.destination); s.start(); }
+const elVoiceFor = l => elPref[l] || (elVoices && elVoices[0] && elVoices[0].voice_id) || EL_DEFAULT_VOICE;
+async function elSpeak(text, l){
+  if (!elKey) { say(text, l==="ja" ? "ja-JP" : l==="zh" ? "zh-CN" : "en-US"); return; }
+  for (const m of EL_TTS) {
+    const r = await fetch(EL+"/text-to-speech/"+elVoiceFor(l)+"?output_format=mp3_44100_128", {method:"POST", headers:{"xi-api-key":elKey,"Content-Type":"application/json"}, body:JSON.stringify({text, model_id:m, language_code:l})});
+    if (r.ok) { await playBuf(await r.arrayBuffer()); return; }
+    if (r.status === 401) throw new Error("key");
+  }
+  throw new Error("tts");
+}
+async function elHear(blob, l){
+  const fd = new FormData(); fd.append("model_id", EL_STT); fd.append("language_code", l);
+  fd.append("file", blob, "speech."+(/mp4|m4a|aac/.test(blob.type) ? "m4a" : "webm"));
+  const r = await fetch(EL+"/speech-to-text", {method:"POST", headers:{"xi-api-key":elKey}, body:fd});
+  if (r.status === 401) throw new Error("key");
+  if (!r.ok) throw new Error("stt");
+  return ((await r.json()).text || "").trim();
+}
+async function elLoadVoices(){
+  if (!elKey) return;
+  try { const r = await fetch(EL+"/voices", {headers:{"xi-api-key":elKey}}); if (!r.ok) throw 0; elVoices = ((await r.json()).voices || []).map(v => ({voice_id:v.voice_id, name:v.name})); }
+  catch(e) { elVoices = []; }
+  paintVoice();
+}
+function vErr(e){
+  const m = e && e.message;
+  vMsg = m==="key" ? t(_("ElevenLabs key无效或额度不足，请在设置里检查。","ElevenLabs key rejected or out of credits; check settings.")) :
+         m==="empty" ? t(_("没听清楚，请再说一次。","Didn't catch that, please try again.")) :
+         m==="mic" ? t(_("无法使用麦克风，请在浏览器允许麦克风权限。","Microphone blocked; allow mic access in your browser.")) :
+         m==="mt" ? t(_("翻译服务暂时不可用（没网络或今天额度用完）。","Translation service unavailable (offline or daily quota used).")) :
+         t(_("出错了，请再试一次。","Something went wrong, please try again."));
+}
+async function finishTurn(who, heard){
+  const from = who==="me" ? myL() : "ja", to = who==="me" ? "ja" : myL();
+  const out = await mt(heard, mmL(from)+"|"+mmL(to));
+  vlog.push({who, heard, out, to}); vMsg = ""; paintVoice();
+  await elSpeak(out, to);
+}
+async function startRec(who){
+  unlockAudio(); vMsg = "";
+  const from = who==="me" ? myL() : "ja";
+  if (!elKey) { /* browser speech recognition fallback */
+    if (!SR) { vMsg = t(_("这个浏览器不支持语音输入；设置ElevenLabs key后就可以用。","This browser has no voice input; add an ElevenLabs key to enable it.")); paintVoice(); return; }
+    const r = new SR(); r.lang = from==="ja" ? "ja-JP" : from==="zh" ? "zh-CN" : "en-US"; r.interimResults = false;
+    vrec = {who, stop:() => r.stop()}; paintVoice();
+    r.onresult = async e => { const heard = e.results[0][0].transcript; vrec = null; vBusy = true; paintVoice(); try { await finishTurn(who, heard); } catch(err) { vErr(err); } vBusy = false; paintVoice(); };
+    r.onerror = () => { vrec = null; vErr({message:"empty"}); paintVoice(); };
+    r.onend = () => { if (vrec && vrec.who === who) { vrec = null; paintVoice(); } };
+    r.start(); return;
+  }
+  let stream;
+  try { stream = await navigator.mediaDevices.getUserMedia({audio:true}); } catch(e) { vErr({message:"mic"}); paintVoice(); return; }
+  const mime = ["audio/webm;codecs=opus","audio/webm","audio/mp4"].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || "";
+  const mr = new MediaRecorder(stream, mime ? {mimeType:mime} : undefined), chunks = [];
+  mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+  mr.onstop = async () => {
+    stream.getTracks().forEach(tr => tr.stop());
+    vBusy = true; paintVoice();
+    try { const heard = await elHear(new Blob(chunks, {type:mr.mimeType || mime || "audio/webm"}), from); if (!heard) throw new Error("empty"); await finishTurn(who, heard); }
+    catch(e) { vErr(e); }
+    vBusy = false; paintVoice();
+  };
+  mr.start();
+  vrec = {who, stop:() => { if (mr.state !== "inactive") mr.stop(); }, timer:setTimeout(stopRec, 30000)};
+  paintVoice();
+}
+function stopRec(){ if (!vrec) return; const r = vrec; vrec = null; clearTimeout(r.timer); r.stop(); paintVoice(); }
+function voiceInner(){
+  const me = lang==="en" ? "English" : "中文";
+  let h = '<div class="vlog" id="vlog">';
+  if (!vlog.length) h += '<p class="vhint">'+t(_("轮流按下面的按钮说话：你说中文会翻成日语读出来；对方说日语会翻成中文读给你听。","Take turns: tap your button and speak, it is read out in Japanese. Staff tap theirs and speak Japanese, you hear it in English."))+'</p>';
+  vlog.forEach((x,i) => h += '<div class="vb '+(x.who==="me"?"me":"them")+'"><small>'+esc(x.heard)+'</small><b lang="'+(x.to==="ja"?"ja":x.to)+'">'+esc(x.out)+'</b><button data-vr="'+i+'" aria-label="Replay">🔊</button></div>');
+  h += '</div>';
+  if (vMsg) h += '<p class="vmsg">'+esc(vMsg)+'</p>';
+  const btn = (who, label, sub) => { const rec = vrec && vrec.who===who;
+    return '<button class="vbtn '+who+(rec?" rec":"")+'" data-who="'+who+'"'+(vBusy||(vrec&&!rec)?" disabled":"")+'><span>'+(rec?"⏹":"🎙")+'</span><b>'+(rec?t(_("说完点这里","Tap when done")):label)+'</b><small>'+(rec?t(_("正在听…","Listening…")):sub)+'</small></button>'; };
+  h += '<div class="vbtns">'+btn("me", t(_("我说","I speak")), me+" → 日本語")+btn("them", "相手が話す", "日本語 → "+me)+'</div>';
+  if (vBusy) h += '<p class="vmsg busy">⏳ '+t(_("识别、翻译中…","Listening back and translating…"))+'</p>';
+  h += '<div class="vset"><span>'+(elKey?"🟢 ElevenLabs":"⚪ "+t(_("手机自带语音","Built-in phone voice")))+'</span>'+(vlog.length?'<button id="vClear">'+t(_("清空","Clear"))+'</button>':'')+'<button id="vSetBtn">⚙ '+t(_("设置","Settings"))+'</button></div>';
+  if (vShowSet) {
+    h += '<div class="vform"><label>ElevenLabs API key<input id="elKeyIn" type="password" autocomplete="off" spellcheck="false" placeholder="'+(elKey?"••••••••"+esc(elKey.slice(-4)):"sk_…")+'"></label><div class="vrow"><button id="elSave">'+t(_("保存","Save"))+'</button>'+(elKey?'<button id="elDel">'+t(_("删除key","Remove key"))+'</button>':'')+'</div>';
+    if (elKey) {
+      if (!elVoices) h += '<p class="vhint">'+t(_("正在读取你的声音列表…","Loading your voices…"))+'</p>';
+      else if (!elVoices.length) h += '<p class="vhint">'+t(_("读取不到声音列表（key可能没有voices权限），会用默认声音。","Couldn't load your voice list (the key may lack voice access); the default voice is used."))+'</p>';
+      else [["ja",t(_("日语声音","Japanese voice"))],[myL(),t(_("中文声音","English voice"))]].forEach(([l,lab]) => h += '<label>'+lab+'<select data-vl="'+l+'">'+elVoices.map(v => '<option value="'+v.voice_id+'"'+(elVoiceFor(l)===v.voice_id?" selected":"")+'>'+esc(v.name)+'</option>').join("")+'</select></label>');
+    }
+    h += '<p class="vhint">🔒 '+t(_("Key只保存在这部手机的浏览器里，不会上传到网页代码。每部手机设置一次。","The key stays in this phone's browser only, never in the page code. Set it once per phone."))+'</p></div>';
+  }
+  return h;
+}
+function paintVoice(){
+  const box = $("#voice"); if (!box) return;
+  box.innerHTML = voiceInner();
+  const lg = $("#vlog"); if (lg) lg.scrollTop = lg.scrollHeight;
+  box.querySelectorAll(".vbtn").forEach(b => b.onclick = () => { if (vrec && vrec.who === b.dataset.who) stopRec(); else if (!vrec && !vBusy) startRec(b.dataset.who); });
+  box.querySelectorAll("button[data-vr]").forEach(b => b.onclick = () => { unlockAudio(); const x = vlog[+b.dataset.vr]; elSpeak(x.out, x.to).catch(e => { vErr(e); paintVoice(); }); });
+  const c = $("#vClear"); if (c) c.onclick = () => { vlog = []; vMsg = ""; paintVoice(); };
+  $("#vSetBtn").onclick = () => { vShowSet = !vShowSet; if (vShowSet && elKey && !elVoices) elLoadVoices(); paintVoice(); };
+  const sv = $("#elSave"); if (sv) sv.onclick = () => { const k = ($("#elKeyIn").value || "").trim(); if (!k) return; elKey = k; store.set("elkey", k); elVoices = null; vMsg = ""; elLoadVoices(); paintVoice(); };
+  const dl = $("#elDel"); if (dl) dl.onclick = () => { elKey = ""; elVoices = null; try { localStorage.removeItem("kanto27:elkey"); } catch(e) {} paintVoice(); };
+  box.querySelectorAll("select[data-vl]").forEach(s => s.onchange = () => { elPref[s.dataset.vl] = s.value; store.set("elv", elPref); });
+}
 function renderTalk(){
   const el = $("#view-talk"); if (!el) return;
   const keep = $("#trIn") ? $("#trIn").value : (trOut ? trOut.src : "");
   const ph = { zh:_("输入中文，例如：附近有便利店吗？","Type Chinese…"), en:_("Type English…","Type English, e.g. Is there a convenience store nearby?"), ja:_("输入或粘贴日语（例如店员写的字）","Type or paste Japanese (e.g. what staff wrote)") }[trDir];
-  let h = '<div class="sec"><h3>🗣 '+t(_("日语翻译","Japanese translator"))+'</h3></div><div class="tr"><div class="trdir" role="group">';
+  let h = '<div class="sec"><h3>🎙 '+t(_("语音对话翻译","Voice translator"))+'</h3><span>ElevenLabs</span></div><div class="voice" id="voice"></div>';
+  h += '<div class="sec"><h3>🗣 '+t(_("打字翻译","Type to translate"))+'</h3></div><div class="tr"><div class="trdir" role="group">';
   [["zh","中文 → 日本語"],["en","English → 日本語"],["ja",lang==="en"?"日本語 → English":"日本語 → 中文"]].forEach(([k,l]) => h += '<button data-dir="'+k+'" aria-pressed="'+(trDir===k)+'">'+l+'</button>');
   h += '</div><textarea id="trIn" maxlength="300" placeholder="'+esc(t(ph))+'">'+esc(keep)+'</textarea><div class="tracts">';
   if (SR) h += '<button id="trMic" class="ghost">🎤 '+t(_("说话","Speak"))+'</button>';
@@ -1084,6 +1232,7 @@ function renderTalk(){
     } catch(e) {}
   };
   wireTrOut();
+  paintVoice();
 }
 function renderAll(){ renderHero(); renderStrip(); renderDay(); renderPrep(); renderInfo(); renderTalk(); }
 $("#showja").onclick = () => { $("#showja").hidden = true; };
