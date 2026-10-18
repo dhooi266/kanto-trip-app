@@ -1124,6 +1124,11 @@ function vErr(e){
   vMsg = m==="key" ? t(_("ElevenLabs key无效或额度不足，请在设置里检查。","ElevenLabs key rejected or out of credits; check settings.")) :
          m==="empty" ? t(_("没听清楚，请再说一次。","Didn't catch that, please try again.")) :
          m==="mic" ? t(_("无法使用麦克风，请在浏览器允许麦克风权限。","Microphone blocked; allow mic access in your browser.")) :
+         m==="denied" ? t(_("麦克风权限被拒绝：请到手机 设置 → Safari（或你用的浏览器）→ 麦克风，允许本网站，然后刷新页面。","Microphone permission denied: allow the mic for this site in your phone's browser settings, then reload.")) :
+         m==="nosvc" ? t(_("手机自带的语音识别用不了（iPhone请开启 设置 → 通用 → 键盘 → 启用听写）。更稳定的做法：在下面⚙设置里加上ElevenLabs key。","The phone's built-in speech recognition isn't available (iPhone: Settings → General → Keyboard → Enable Dictation). More reliable: add your ElevenLabs key in ⚙ Settings below.")) :
+         m==="nosound" ? t(_("没有听到声音。按下按钮后再开口说，说完再按一次。","No speech heard. Tap the button, then speak, then tap again when done.")) :
+         m==="norec" ? t(_("这个浏览器不能录音，请用Safari或Chrome打开本网页。","This browser can't record audio; open the page in Safari or Chrome.")) :
+         m==="net" ? t(_("语音识别需要网络连接。","Speech recognition needs an internet connection.")) :
          m==="mt" ? t(_("翻译服务暂时不可用（没网络或今天额度用完）。","Translation service unavailable (offline or daily quota used).")) :
          t(_("出错了，请再试一次。","Something went wrong, please try again."));
 }
@@ -1133,20 +1138,30 @@ async function finishTurn(who, heard){
   vlog.push({who, heard, out, to}); vMsg = ""; paintVoice();
   await elSpeak(out, to);
 }
+/* iPhone Safari only lets speechSynthesis talk after it has spoken once inside a tap, so prime it silently on every tap */
+function primeSpeech(){ try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } } catch(e) {} }
 async function startRec(who){
-  unlockAudio(); vMsg = "";
+  unlockAudio(); primeSpeech(); vMsg = "";
   const from = who==="me" ? myL() : "ja";
-  if (!elKey) { /* browser speech recognition fallback */
-    if (!SR) { vMsg = t(_("这个浏览器不支持语音输入；设置ElevenLabs key后就可以用。","This browser has no voice input; add an ElevenLabs key to enable it.")); paintVoice(); return; }
-    const r = new SR(); r.lang = from==="ja" ? "ja-JP" : from==="zh" ? "zh-CN" : "en-US"; r.interimResults = false;
-    vrec = {who, stop:() => r.stop()}; paintVoice();
-    r.onresult = async e => { const heard = e.results[0][0].transcript; vrec = null; vBusy = true; paintVoice(); try { await finishTurn(who, heard); } catch(err) { vErr(err); } vBusy = false; paintVoice(); };
-    r.onerror = () => { vrec = null; vErr({message:"empty"}); paintVoice(); };
-    r.onend = () => { if (vrec && vrec.who === who) { vrec = null; paintVoice(); } };
-    r.start(); return;
+  if (!elKey) { /* browser speech recognition fallback; every way it can end now says why */
+    if (!SR) { vErr({message:"nosvc"}); paintVoice(); return; }
+    const r = new SR(); r.lang = from==="ja" ? "ja-JP" : from==="zh" ? "zh-CN" : "en-US"; r.interimResults = false; r.continuous = false;
+    let settled = false;
+    vrec = {who, stop:() => { try { r.stop(); } catch(e) {} }}; paintVoice();
+    r.onresult = async e => { settled = true; const heard = ((e.results[0] && e.results[0][0] && e.results[0][0].transcript) || "").trim(); vrec = null;
+      if (!heard) { vErr({message:"nosound"}); paintVoice(); return; }
+      vBusy = true; paintVoice(); try { await finishTurn(who, heard); } catch(err) { vErr(err); } vBusy = false; paintVoice(); };
+    r.onerror = ev => { settled = true; vrec = null; const c = ev && ev.error;
+      vErr({message: c==="not-allowed" ? "denied" : c==="service-not-allowed" ? "nosvc" : c==="no-speech" || c==="aborted" ? "nosound" : c==="audio-capture" ? "mic" : c==="network" ? "net" : "empty"}); paintVoice(); };
+    r.onend = () => { if (vrec && vrec.who === who) vrec = null; if (!settled) vErr({message:"nosound"}); paintVoice(); };
+    try { r.start(); } catch(e) { vrec = null; vErr({message:"nosvc"}); paintVoice(); }
+    return;
   }
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { vErr({message:"norec"}); paintVoice(); return; }
+  vMsg = t(_("正在打开麦克风…","Opening the microphone…")); paintVoice();
   let stream;
-  try { stream = await navigator.mediaDevices.getUserMedia({audio:true}); } catch(e) { vErr({message:"mic"}); paintVoice(); return; }
+  try { stream = await navigator.mediaDevices.getUserMedia({audio:true}); vMsg = ""; }
+  catch(e) { vErr({message: e && e.name==="NotAllowedError" ? "denied" : "mic"}); paintVoice(); return; }
   const mime = ["audio/webm;codecs=opus","audio/webm","audio/mp4"].find(m => window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(m)) || "";
   const mr = new MediaRecorder(stream, mime ? {mimeType:mime} : undefined), chunks = [];
   mr.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
