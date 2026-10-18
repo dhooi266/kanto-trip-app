@@ -297,6 +297,7 @@ a{color:inherit}
 .vb small{display:block;font-size:12px;opacity:.75;line-height:1.4}
 .vb b{display:block;font-size:18px;line-height:1.45;margin-top:2px}
 .vb button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:rgba(255,255,255,.16);color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer}
+.vlive{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:rgba(255,255,255,.08);border:1px dashed rgba(255,255,255,.3);font-size:16px;line-height:1.5;min-height:22px}
 .vmsg{margin:10px 0 0;font-size:13px;color:#FFB4A2}
 .vmsg.busy{color:var(--snow);opacity:.85}
 .vbtns{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
@@ -1071,11 +1072,7 @@ async function translate(){
   btn.disabled = true; btn.textContent = t(_("翻译中…","Translating…"));
   const dir = trDir;
   try {
-    const r = await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(q)+"&langpair="+encodeURIComponent(trPair()));
-    const j = await r.json(), raw = j && j.responseData && j.responseData.translatedText;
-    if (!raw || +j.responseStatus !== 200 || /MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(raw)) throw 0;
-    const d = document.createElement("textarea"); d.innerHTML = raw;
-    trOut = {src:q, res:d.value, dir};
+    trOut = {src:q, res:await mt(q, trPair()), dir};
     const hist = (store.get("trhist") || []).filter(x => x.src !== q); hist.unshift(trOut); store.set("trhist", hist.slice(0,8));
   } catch(e) { trOut = {src:q, err:1, dir}; }
   renderTalk();
@@ -1084,10 +1081,19 @@ async function translate(){
    The ElevenLabs key is typed in by the user and kept only in this browser (kanto27:elkey), never in the page source.
    Without a key it falls back to the browser's own speech recognition and voices. ---- */
 const EL = "https://api.elevenlabs.io/v1", EL_STT = "scribe_v2", EL_TTS = ["eleven_v4_turbo","eleven_flash_v2_5"], EL_DEFAULT_VOICE = "21m00Tcm4TlvDq8ikWAM";
-let elKey = store.get("elkey") || "", elVoices = null, elPref = store.get("elv") || {}, vlog = [], vrec = null, vBusy = false, vMsg = "", vShowSet = false, actx = null;
+let vLive = "", elKey = store.get("elkey") || "", elVoices = null, elPref = store.get("elv") || {}, vlog = [], vrec = null, vBusy = false, vMsg = "", vShowSet = false, actx = null;
 const myL = () => lang==="en" ? "en" : "zh";
 const mmL = l => l==="zh" ? "zh-CN" : l;
+/* translate: Google free endpoint first (better Japanese, CORS ok, no key), MyMemory as fallback */
 async function mt(q, pair){
+  try {
+    const [sl, tl] = pair.split("|");
+    const g = await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl="+sl+"&tl="+tl+"&q="+encodeURIComponent(q));
+    if (g.ok) { const j = await g.json(); const out = (j[0]||[]).map(x => x && x[0] || "").join("").trim(); if (out) return out; }
+  } catch(e) {}
+  return mtMemory(q, pair);
+}
+async function mtMemory(q, pair){
   const r = await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(q)+"&langpair="+encodeURIComponent(pair));
   const j = await r.json(), raw = j && j.responseData && j.responseData.translatedText;
   if (!raw || +j.responseStatus !== 200 || /MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(raw)) throw new Error("mt");
@@ -1145,16 +1151,31 @@ async function startRec(who){
   const from = who==="me" ? myL() : "ja";
   if (!elKey) { /* browser speech recognition fallback; every way it can end now says why */
     if (!SR) { vErr({message:"nosvc"}); paintVoice(); return; }
-    const r = new SR(); r.lang = from==="ja" ? "ja-JP" : from==="zh" ? "zh-CN" : "en-US"; r.interimResults = false; r.continuous = false;
-    let settled = false;
-    vrec = {who, stop:() => { try { r.stop(); } catch(e) {} }}; paintVoice();
-    r.onresult = async e => { settled = true; const heard = ((e.results[0] && e.results[0][0] && e.results[0][0].transcript) || "").trim(); vrec = null;
-      if (!heard) { vErr({message:"nosound"}); paintVoice(); return; }
-      vBusy = true; paintVoice(); try { await finishTurn(who, heard); } catch(err) { vErr(err); } vBusy = false; paintVoice(); };
-    r.onerror = ev => { settled = true; vrec = null; const c = ev && ev.error;
-      vErr({message: c==="not-allowed" ? "denied" : c==="service-not-allowed" ? "nosvc" : c==="no-speech" || c==="aborted" ? "nosound" : c==="audio-capture" ? "mic" : c==="network" ? "net" : "empty"}); paintVoice(); };
-    r.onend = () => { if (vrec && vrec.who === who) vrec = null; if (!settled) vErr({message:"nosound"}); paintVoice(); };
-    try { r.start(); } catch(e) { vrec = null; vErr({message:"nosvc"}); paintVoice(); }
+    /* keep listening (continuous + interim results) and use whatever was heard when it ends: iPhone often never sends a
+       "final" result, and stops at the first pause in single-shot mode. Ends by itself after ~1.8s of silence. */
+    const r = new SR(); r.lang = from==="ja" ? "ja-JP" : from==="zh" ? "zh-CN" : "en-US"; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
+    let heard = "", fatal = null, done = false, quiet = null, cap = null;
+    const finish = async () => {
+      if (done) return; done = true; clearTimeout(quiet); clearTimeout(cap);
+      if (vrec && vrec.who === who) vrec = null; vLive = "";
+      const text = heard.trim();
+      if (!text) { vErr({message: fatal || "nosound"}); paintVoice(); return; }
+      vBusy = true; paintVoice(); try { await finishTurn(who, text); } catch(err) { vErr(err); } vBusy = false; paintVoice();
+    };
+    const halt = () => { try { r.stop(); } catch(e) {} setTimeout(finish, 1500); };
+    vrec = {who, stop:halt}; vLive = "";
+    r.onresult = e => {
+      const all = Array.from(e.results).map(x => x[0].transcript).join(""), last = e.results[e.results.length-1][0].transcript, first = e.results[0][0].transcript;
+      /* iPhone sometimes repeats the whole sentence in each result; then the last one alone is the full text */
+      heard = e.results.length > 1 && last.replace(/\s/g,"").startsWith(first.replace(/\s/g,"")) ? last : all;
+      vLive = heard; const lv = $("#vlive"); if (lv) lv.textContent = heard;
+      clearTimeout(quiet); quiet = setTimeout(halt, 1800);
+    };
+    r.onerror = ev => { const c = ev && ev.error; fatal = c==="not-allowed" ? "denied" : c==="service-not-allowed" ? "nosvc" : c==="audio-capture" ? "mic" : c==="network" ? "net" : fatal; };
+    r.onend = finish;
+    try { r.start(); } catch(e) { vrec = null; vErr({message:"nosvc"}); paintVoice(); return; }
+    cap = setTimeout(halt, 20000);
+    paintVoice();
     return;
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { vErr({message:"norec"}); paintVoice(); return; }
@@ -1185,7 +1206,9 @@ function voiceInner(){
   h += '</div>';
   if (vMsg) h += '<p class="vmsg">'+esc(vMsg)+'</p>';
   const btn = (who, label, sub) => { const rec = vrec && vrec.who===who;
-    return '<button class="vbtn '+who+(rec?" rec":"")+'" data-who="'+who+'"'+(vBusy||(vrec&&!rec)?" disabled":"")+'><span>'+(rec?"⏹":"🎙")+'</span><b>'+(rec?t(_("说完点这里","Tap when done")):label)+'</b><small>'+(rec?t(_("正在听…","Listening…")):sub)+'</small></button>'; };
+    return '<button class="vbtn '+who+(rec?" rec":"")+'" data-who="'+who+'"'+(vBusy||(vrec&&!rec)?" disabled":"")+'><span>'+(rec?"⏹":"🎙")+'</span><b>'+(rec?t(_("说完点这里","Tap when done")):label)+'</b><small>'+(rec?(elKey?t(_("正在录音…","Recording…")):t(_("停顿2秒自动结束","Stops after a 2-second pause"))):sub)+'</small></button>'; };
+  if (vrec && !elKey) h += '<p class="vlive" id="vlive">'+esc(vLive || t(_("正在听，请说话…","Listening, go ahead…")))+'</p>';
+  else if (vrec) h += '<p class="vlive">'+t(_("正在录音，说完点按钮…","Recording, tap the button when done…"))+'</p>';
   h += '<div class="vbtns">'+btn("me", t(_("我说","I speak")), me+" → 日本語")+btn("them", "相手が話す", "日本語 → "+me)+'</div>';
   if (vBusy) h += '<p class="vmsg busy">⏳ '+t(_("识别、翻译中…","Listening back and translating…"))+'</p>';
   h += '<div class="vset"><span>'+(elKey?"🟢 ElevenLabs":"⚪ "+t(_("手机自带语音","Built-in phone voice")))+'</span>'+(vlog.length?'<button id="vClear">'+t(_("清空","Clear"))+'</button>':'')+'<button id="vSetBtn">⚙ '+t(_("设置","Settings"))+'</button></div>';
@@ -1225,7 +1248,7 @@ function renderTalk(){
   const hist = store.get("trhist") || [];
   if (hist.length) h += '<div class="trhist">'+hist.map((x,i) => '<button data-h="'+i+'">'+esc(x.src)+'</button>').join("")+'</div>';
   h += '</div><a class="trcam" href="https://translate.google.com/?sl=ja&tl='+(lang==="en"?"en":"zh-CN")+'&op=images" target="_blank" rel="noopener">📷 '+t(_("拍照翻译菜单、招牌（Google翻译）","Translate a menu or sign from a photo (Google Translate)"))+' ↗</a>';
-  h += '<p class="note">'+t(_("自由翻译需要网络（免费服务MyMemory，每天有额度）；下面的常用句离线也能用。发音用手机自带的日语语音。","Free-text translation needs a connection (free MyMemory service, daily limit). The phrasebook below works offline. Pronunciation uses your phone's built-in Japanese voice."))+'</p>';
+  h += '<p class="note">'+t(_("自由翻译需要网络（用Google翻译，备用MyMemory）；下面的常用句离线也能用。发音用手机自带的日语语音。","Free-text translation needs a connection (Google Translate, with MyMemory as backup). The phrasebook below works offline. Pronunciation uses your phone's built-in Japanese voice."))+'</p>';
   h += '<div class="sec"><h3>📖 '+t(_("常用句","Phrasebook"))+'</h3><span>'+t(_("点一下听发音","tap to hear it"))+'</span></div><div class="phcats">';
   PHR.forEach((g,i) => h += '<button data-cat="'+i+'" aria-pressed="'+(i===phCat)+'">'+g.e+' '+t(g.c)+'</button>');
   h += '</div><div class="phl">';
