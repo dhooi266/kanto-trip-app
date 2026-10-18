@@ -97,15 +97,35 @@ a{color:inherit}
 .chip[aria-selected="true"] .n{color:rgba(255,255,255,.8)}
 
 /* DAY HERO */
-.dayhero{margin-top:12px;border-radius:24px;padding:22px 20px 18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--dc) 0%,var(--dc2) 100%);box-shadow:var(--shadow)}
-.dayhero .big{position:absolute;right:-6px;top:-18px;font-family:var(--mono);font-weight:700;font-size:120px;line-height:1;opacity:.14;letter-spacing:-.04em}
-.dayhero .emoji{font-size:40px;line-height:1}
-.dayhero .date{font-family:var(--mono);font-size:12px;letter-spacing:.1em;opacity:.85;margin-top:12px}
-.dayhero h2{font-family:var(--serif);font-weight:900;font-size:28px;line-height:1.2;margin:4px 0 8px;position:relative}
-.dayhero p{margin:0;opacity:.92;font-size:15px;position:relative}
-.pills{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;position:relative}
-.pill{background:rgba(255,255,255,.18);border-radius:999px;padding:4px 12px;font-size:13px;backdrop-filter:blur(4px)}
+/* Day card: full-bleed AI photo per day (img/dayN.webp), story-style progress, swipe to change day */
+.dayhero{margin-top:12px;border-radius:24px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--dc) 0%,var(--dc2) 100%);box-shadow:var(--shadow);min-height:470px;display:flex;flex-direction:column;touch-action:pan-y}
+.dh-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.dh-bg i{position:absolute;inset:-5%;background:var(--img) 60% 35%/cover no-repeat;animation:dhIn 1.1s ease-out both,kb 28s ease-in-out 1.1s infinite alternate}
+.dh-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,14,26,.55) 0%,rgba(10,14,26,0) 24%,rgba(10,14,26,0) 38%,rgba(10,14,26,.55) 62%,rgba(10,14,26,.9) 100%),linear-gradient(0deg,color-mix(in srgb,var(--dc) 45%,transparent) 0%,transparent 45%)}
+@keyframes dhIn{from{opacity:0;transform:scale(1.12)}to{opacity:1;transform:scale(1)}}
+.dh-prog{position:relative;display:flex;gap:4px;padding:12px 14px 0}
+.dh-prog button{flex:1;height:14px;border:0;padding:5px 0;background:none;cursor:pointer}
+.dh-prog button i{display:block;height:3px;border-radius:2px;background:rgba(255,255,255,.35)}
+.dh-prog button.past i{background:rgba(255,255,255,.85)}
+.dh-prog button.now i{background:linear-gradient(90deg,#fff 50%,rgba(255,255,255,.35) 50%);background-size:200% 100%;animation:fillbar 1.2s ease-out .2s both}
+@keyframes fillbar{from{background-position:100% 0}to{background-position:0 0}}
+.dh-top{position:relative;display:flex;align-items:center;gap:10px;padding:8px 16px 0}
+.dh-badge{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:22px;background:rgba(255,255,255,.18);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3)}
+.dh-top .date{font-family:var(--mono);font-size:12px;letter-spacing:.1em;line-height:1.35;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.dh-top .date b{display:block;font-size:11px;opacity:.8;font-weight:500}
+.dayhero .big{margin-left:auto;font-family:var(--mono);font-weight:700;font-size:44px;line-height:1;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.75)}
+.dh-body{position:relative;margin-top:auto;padding:0 18px 18px}
+.dh-body>*{animation:rise .7s ease-out both}
+.dh-body>:nth-child(2){animation-delay:.08s}.dh-body>:nth-child(3){animation-delay:.16s}.dh-body>:nth-child(4){animation-delay:.24s}
+.dayhero h2{font-family:var(--serif);font-weight:900;font-size:30px;line-height:1.2;margin:0 0 8px;text-shadow:0 2px 16px rgba(0,0,0,.55)}
+.dayhero p{margin:0;font-size:15px;line-height:1.55;opacity:.95;text-shadow:0 1px 10px rgba(0,0,0,.6)}
+.pills{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.pill{background:rgba(10,14,26,.42);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:5px 12px;font-size:13px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .pill b{font-weight:700}
+.dh-foot{display:flex;align-items:center;gap:10px;margin-top:14px}
+.dh-foot .go{margin-top:0}
+.dh-swipe{font-size:12px;opacity:.7;margin-left:auto}
+@media (prefers-reduced-motion:reduce){.dh-bg i,.dh-body>*,.dh-prog button.now i{animation:none}}
 .routes{display:flex;flex-direction:column;gap:8px}
 .rleg,.rfull{display:grid;grid-template-columns:26px auto 1fr auto;gap:10px;align-items:center;background:var(--surface);border-radius:16px;padding:12px 14px;text-decoration:none;box-shadow:var(--shadow)}
 .rleg i{font-style:normal;font-family:var(--mono);font-size:12px;font-weight:700;width:26px;height:26px;border-radius:50%;background:var(--dc);color:#fff;display:grid;place-items:center}
@@ -750,11 +770,13 @@ function renderDay(){
   const dateStr = lang==="en" ? (t(d.w)+" · JAN "+da).toUpperCase() : mo+"月"+da+"日 · "+t(d.w);
   const isTrain = d.train.length > 0;
   let h = '<div class="fade">';
-  h += '<div class="dayhero"><div class="big">D'+(cur+1)+'</div><div class="emoji">'+th.e+'</div><div class="date">'+dateStr+'</div><h2>'+esc(t(d.title))+'</h2><p>'+esc(t(d.intro))+'</p><div class="pills">';
-  if (t(d.km) !== "—") h += '<span class="pill">🛣 <b>'+esc(t(d.km))+'</b></span>';
+  h += '<div class="dayhero" id="dayhero" style="--img:url(img/day'+(cur+1)+'.webp)"><div class="dh-bg" aria-hidden="true"><i></i></div><div class="dh-prog">'+DAYS.map((x2,n)=>'<button data-go="'+n+'" class="'+(n<cur?"past":n===cur?"now":"")+'" aria-label="'+t(_("第","Day "))+(n+1)+t(_("天",""))+'"><i></i></button>').join("")+'</div>';
+  h += '<div class="dh-top"><span class="dh-badge">'+th.e+'</span><div class="date">'+dateStr+'<b>'+t(_("第","DAY "))+(cur+1)+t(_("天 / 共8天"," OF 8"))+'</b></div><div class="big">D'+(cur+1)+'</div></div>';
+  h += '<div class="dh-body"><h2>'+esc(t(d.title))+'</h2><p>'+esc(t(d.intro))+'</p><div class="pills">';
+  if (t(d.km) !== "—") h += '<span class="pill">'+(/d/.test(t(d.km))?"🛣 ":"🧭 ")+'<b>'+esc(t(d.km))+'</b></span>';
   if (t(d.drive) !== "—") h += '<span class="pill">'+(isTrain?"🚃 ":"🚗 ")+'<b>'+fx(esc(t(d.drive)))+'</b></span>';
   if (t(d.stay) !== "—") h += '<span class="pill">🛏 <b>'+esc(t(d.stay))+'</b></span>';
-  h += '</div>' + (LEGS[cur] ? '<a class="go" href="#routes">'+t(_("🧭 分段路线 ↓","🧭 Route legs ↓"))+'</a>' : '') + '</div>';
+  h += '</div><div class="dh-foot">' + (LEGS[cur] ? '<a class="go" href="#routes">'+t(_("🧭 分段路线 ↓","🧭 Route legs ↓"))+'</a>' : '') + '<span class="dh-swipe">'+t(_("← 滑动切换日期 →","← swipe for other days →"))+'</span></div></div></div>';
   h += dayMapHTML();
   h += '<div id="routes">'+routesHTML(cur)+'</div>';
 
@@ -799,6 +821,7 @@ function renderDay(){
   h += '</div>';
   $("#dayview").innerHTML = h;
   wireMap();
+  wireDayHero();
   $("#dayview").querySelectorAll(".rleg").forEach(b => { const pick = e => { if (e.target.closest("a")) return; const n=+b.dataset.leg; selLeg = selLeg===n ? -1 : n; redrawMap(); markLegs(); $("#dmap").scrollIntoView && $("#dmap").scrollIntoView({behavior:"smooth",block:"center"}); };
     b.onclick = pick; b.onkeydown = e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(e); } }; });
   $("#dayview").querySelectorAll("button[data-stop]").forEach(b => b.onclick = () => {
@@ -809,6 +832,17 @@ function renderDay(){
   const pvb = $("#pv"), nxb = $("#nx");
   if (pvb) pvb.onclick = () => go(cur-1, true);
   if (nxb) nxb.onclick = () => go(cur+1, true);
+}
+/* day card: tap a progress bar to jump, swipe sideways to change day, preload neighbours */
+function wireDayHero(){
+  const el = $("#dayhero"); if (!el) return;
+  el.querySelectorAll("button[data-go]").forEach(b => b.onclick = () => go(+b.dataset.go, false));
+  let x0 = null, y0 = 0;
+  el.addEventListener("pointerdown", e => { if (e.target.closest("a,button")) return; x0 = e.clientX; y0 = e.clientY; });
+  el.addEventListener("pointerup", e => { if (x0 === null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
+    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)*1.5) go(cur + (dx < 0 ? 1 : -1), false); });
+  el.addEventListener("pointercancel", () => { x0 = null; });
+  [cur-1, cur+1].forEach(n => { if (n >= 0 && n <= 7) new Image().src = "img/day"+(n+1)+".webp"; });
 }
 function firstOpen(d){ return d.stops.findIndex(s => s.k === "spot"); }
 
