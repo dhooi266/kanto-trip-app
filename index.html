@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>慢游旧时光 东京・伊豆</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sea:#CFE0EE; --land:#F3F1EA; --land-edge:#B9C6D3; --sea-halo:#F3F1EA;
+  --bg:#EEF2F7; --surface:#FFFFFF; --surface-2:#F6F8FB; --ink:#141B2D; --ink-2:#47526B; --ink-3:#7C869C;
+  --line:#DEE4EE; --night:#0D1426; --night-2:#18223D; --snow:#F4F7FF;
+  --accent:#E2452B; --accent-ink:#FFFFFF; --good:#1E9E78;
+  --shadow:0 10px 30px -12px rgba(20,27,45,.25);
+  --serif:"Noto Serif SC","Songti SC",serif;
+  --sans:"Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light; box-sizing:border-box;
+  padding-top:0; padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --sea:#0F1B2E; --land:#1C2740; --land-edge:#33415F; --sea-halo:#1C2740;
+    --bg:#0A0F1C; --surface:#151D31; --surface-2:#1B2540; --ink:#EEF2FA; --ink-2:#B3BDD2; --ink-3:#7F8AA3;
+    --line:#26314D; --shadow:0 10px 30px -12px rgba(0,0,0,.6); color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --sea:#0F1B2E; --land:#1C2740; --land-edge:#33415F; --sea-halo:#1C2740;
+  --bg:#0A0F1C; --surface:#151D31; --surface-2:#1B2540; --ink:#EEF2FA; --ink-2:#B3BDD2; --ink-3:#7F8AA3;
+  --line:#26314D; --shadow:0 10px 30px -12px rgba(0,0,0,.6); color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;padding-bottom:84px}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;background:radial-gradient(120% 80% at 80% 0%,#2A3A6E 0%,var(--night) 60%);color:var(--snow);padding:calc(env(safe-area-inset-top,0px) + 18px) 20px 26px}
+.hero canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.hero-in{position:relative;max-width:720px;margin:0 auto}
+.topbar{display:flex;justify-content:space-between;align-items:center}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;opacity:.75}
+.lang{display:flex;background:rgba(255,255,255,.1);border-radius:999px;padding:3px}
+.lang button{border:0;background:transparent;color:var(--snow);font-size:13px;padding:4px 12px;border-radius:999px}
+.lang button[aria-pressed="true"]{background:var(--snow);color:var(--night)}
+.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(40px,11vw,64px);line-height:1.02;margin:22px 0 8px;letter-spacing:.01em}
+.hero h1 em{font-style:normal;color:#FF8A6B}
+.hero .sub{opacity:.8;font-size:15px;margin:0;max-width:34em}
+.hero-stats{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+.hs{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:14px;padding:8px 12px;min-width:84px}
+.hs b{display:block;font-family:var(--mono);font-size:22px;line-height:1.1}
+.hs span{font-size:12px;opacity:.75}
+.hs.cd{background:#FF8A6B;border-color:#FF8A6B;color:var(--night)}
+.hs.cd span{opacity:.85}
+.topbar{flex-wrap:wrap;gap:8px}
+.toggles{display:flex;gap:6px}
+.rm{display:block;font-size:.7em;opacity:.7;font-weight:500;line-height:1.3}
+.fxcard{background:var(--surface);border-radius:20px;padding:16px;box-shadow:var(--shadow);margin-bottom:12px}
+.fxrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-family:var(--mono);font-size:15px}
+.fxrow input{width:90px;font:inherit;font-weight:700;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink)}
+.seg3{display:flex;background:var(--surface-2);border-radius:999px;padding:3px;margin-top:12px;width:max-content}
+.seg3 button{border:0;background:transparent;padding:6px 14px;border-radius:999px;font-size:13px}
+.seg3 button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.fxnote{font-size:12px;color:var(--ink-3);margin:10px 0 0}
+
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+
+/* DAY STRIP */
+.strip{display:flex;gap:10px;overflow-x:auto;padding:18px 16px 8px;margin:0 -16px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.strip::-webkit-scrollbar{display:none}
+.chip{scroll-snap-align:center;flex:0 0 auto;width:96px;border:0;border-radius:18px;padding:10px 10px 12px;text-align:left;background:var(--surface);box-shadow:var(--shadow);position:relative;transition:transform .2s}
+.chip .em{font-size:22px;line-height:1}
+.chip .n{font-family:var(--mono);font-weight:700;font-size:12px;color:var(--ink-3);display:block;margin-top:8px}
+.chip .s{display:block;font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip[aria-selected="true"]{background:var(--dc);color:#fff;transform:translateY(-3px)}
+.chip[aria-selected="true"] .n{color:rgba(255,255,255,.8)}
+
+/* DAY HERO */
+.dayhero{margin-top:12px;border-radius:24px;padding:22px 20px 18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--dc) 0%,var(--dc2) 100%);box-shadow:var(--shadow)}
+.dayhero .big{position:absolute;right:-6px;top:-18px;font-family:var(--mono);font-weight:700;font-size:120px;line-height:1;opacity:.14;letter-spacing:-.04em}
+.dayhero .emoji{font-size:40px;line-height:1}
+.dayhero .date{font-family:var(--mono);font-size:12px;letter-spacing:.1em;opacity:.85;margin-top:12px}
+.dayhero h2{font-family:var(--serif);font-weight:900;font-size:28px;line-height:1.2;margin:4px 0 8px;position:relative}
+.dayhero p{margin:0;opacity:.92;font-size:15px;position:relative}
+.pills{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;position:relative}
+.pill{background:rgba(255,255,255,.18);border-radius:999px;padding:4px 12px;font-size:13px;backdrop-filter:blur(4px)}
+.pill b{font-weight:700}
+.routes{display:flex;flex-direction:column;gap:8px}
+.rleg,.rfull{display:grid;grid-template-columns:26px auto 1fr auto;gap:10px;align-items:center;background:var(--surface);border-radius:16px;padding:12px 14px;text-decoration:none;box-shadow:var(--shadow)}
+.rleg i{font-style:normal;font-family:var(--mono);font-size:12px;font-weight:700;width:26px;height:26px;border-radius:50%;background:var(--dc);color:#fff;display:grid;place-items:center}
+.rleg .rm2{font-size:12px;color:var(--ink-3);white-space:nowrap}
+.rleg b{font-size:14px;font-weight:600;line-height:1.35}
+.rleg em{font-style:normal;color:var(--ink-3)}
+.rfull{grid-template-columns:1fr;gap:4px;background:linear-gradient(135deg,var(--dc),var(--dc2));color:#fff}
+.rfull span{font-size:12px;opacity:.85;font-weight:700}
+.rfull b{font-size:15px;line-height:1.4}
+.go{display:inline-flex;align-items:center;gap:8px;margin-top:14px;background:#fff;color:var(--ink);text-decoration:none;font-weight:700;font-size:14px;padding:9px 16px;border-radius:999px;position:relative}
+:root[data-theme="dark"] .go{color:#141B2D}
+
+/* MAP */
+
+.dmap{margin-top:14px;border-radius:24px;overflow:hidden;background:var(--sea);box-shadow:var(--shadow);position:relative;touch-action:none;user-select:none;-webkit-user-select:none}
+.dmap svg{display:block;width:100%;height:auto;cursor:grab}
+.dmap svg:active{cursor:grabbing}
+.dmap .lbl{font-family:var(--sans);font-size:12px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--sea-halo);stroke-width:3.5px;stroke-linejoin:round}
+.dmap .num{font-family:var(--mono);font-size:11px;font-weight:700;fill:#fff}
+.zoom{position:absolute;right:max(10px,env(safe-area-inset-right,0px));top:10px;display:flex;flex-direction:column;gap:6px}
+.zoom button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:18px;font-weight:700;line-height:1;box-shadow:var(--shadow)}
+.dlegend{position:absolute;left:10px;bottom:10px;display:flex;gap:10px;flex-wrap:wrap;background:color-mix(in srgb,var(--surface) 85%,transparent);border-radius:10px;padding:5px 9px;font-size:11px;color:var(--ink-2);max-width:calc(100% - 20px)}
+.dlegend i{display:inline-block;width:18px;height:0;border-top:3px solid var(--dc);vertical-align:middle;margin-right:4px}
+.dlegend i.t{border-top-style:dashed}.dlegend i.w{border-top-style:dotted}
+.dhint{position:absolute;left:10px;top:10px;font-size:11px;color:var(--ink-3);background:color-mix(in srgb,var(--surface) 85%,transparent);border-radius:8px;padding:3px 8px}
+.rleg{cursor:pointer;border:0;width:100%;text-align:left;font:inherit;color:inherit}
+.rleg[aria-pressed="true"]{outline:2px solid var(--dc);outline-offset:-2px}
+.rleg a{font-style:normal;color:var(--ink-3);text-decoration:none;font-size:13px;padding:4px 6px;border-radius:8px;background:var(--surface-2)}
+.mapcard{margin-top:14px;border-radius:24px;overflow:hidden;background:var(--night);box-shadow:var(--shadow);position:relative}
+.mapcard svg{display:block;width:100%;height:auto}
+.maplabel{position:absolute;left:14px;top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:rgba(244,247,255,.6)}
+@keyframes draw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+@keyframes pulse{0%{r:6;opacity:.7}100%{r:16;opacity:0}}
+.seg{stroke-dasharray:var(--len);animation:draw 1.4s ease-out forwards}
+.pulse{animation:pulse 1.8s ease-out infinite}
+
+/* SECTION TITLES */
+.sec{display:flex;align-items:baseline;justify-content:space-between;margin:28px 2px 10px}
+.sec h3{margin:0;font-family:var(--serif);font-weight:900;font-size:22px}
+.sec span{font-family:var(--mono);font-size:12px;color:var(--ink-3)}
+
+/* TIMELINE */
+.tl{list-style:none;margin:0;padding:0}
+.st{position:relative;padding-left:62px;margin-bottom:10px}
+.st::before{content:"";position:absolute;left:47px;top:0;bottom:-10px;width:2px;background:var(--line)}
+.st:last-child::before{display:none}
+.st .tm{position:absolute;left:0;top:14px;width:40px;text-align:right;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink-2)}
+.st .nd{position:absolute;left:40px;top:14px;width:16px;height:16px;border-radius:50%;background:var(--surface);border:3px solid var(--dc)}
+.st.done .nd{background:var(--dc)}
+.st.stay .nd{background:var(--ink);border-color:var(--ink)}
+.card{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.card summary{list-style:none;padding:12px 14px;display:flex;gap:10px;align-items:center;cursor:pointer}
+.card summary::-webkit-details-marker{display:none}
+.card .ttl{flex:1;min-width:0}
+.card h4{margin:0;font-size:16px;font-weight:700;line-height:1.35}
+.card .jp{font-size:12px;color:var(--ink-3)}
+.card .chev{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;transition:transform .2s;font-size:12px;color:var(--ink-2)}
+.card details[open] .chev{transform:rotate(180deg)}
+.card .more{padding:0 14px 14px}
+.card .more p{margin:0;color:var(--ink-2);font-size:15px}
+.card .more ul{margin:8px 0 0;padding-left:18px;color:var(--ink-2);font-size:14px}
+.st.done h4{text-decoration:line-through;text-decoration-color:var(--ink-3);color:var(--ink-3)}
+.tag{display:inline-block;font-size:12px;font-weight:700;border-radius:8px;padding:2px 8px;margin:10px 6px 0 0}
+.tag.warn{background:#FFE7E1;color:#B8321A}
+.tag.nav{background:var(--surface-2);color:var(--ink-2);font-family:var(--mono);font-weight:500}
+:root[data-theme="dark"] .tag.warn{background:#3B1D1A;color:#FF9C85}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tag.warn{background:#3B1D1A;color:#FF9C85}}
+.badge{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:#FF6B4A}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.acts a,.acts button{border:1px solid var(--line);background:var(--surface-2);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:500;text-decoration:none}
+.acts button[aria-pressed="true"]{background:var(--good);border-color:var(--good);color:#fff}
+.leg{position:relative;padding:4px 0 4px 62px;margin-bottom:10px;font-size:13px;color:var(--ink-3)}
+.leg::before{content:"";position:absolute;left:47px;top:-10px;bottom:-10px;width:2px;background:repeating-linear-gradient(var(--line) 0 4px,transparent 4px 8px)}
+.leg span{display:inline-block;background:var(--surface-2);border-radius:12px;padding:6px 10px}
+
+/* EAT */
+.eats{display:flex;gap:12px;overflow-x:auto;padding:4px 16px 12px;margin:0 -16px;scroll-snap-type:x mandatory;scrollbar-width:none}
+.eats::-webkit-scrollbar{display:none}
+.eat{scroll-snap-align:start;flex:0 0 78%;max-width:300px;background:var(--surface);border-radius:20px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+.eat .ml{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--dc);font-weight:700;text-transform:uppercase}
+.eat h4{margin:6px 0 6px;font-size:17px;line-height:1.3}
+.eat p{margin:0;font-size:14px;color:var(--ink-2);flex:1}
+.eat .pr{margin-top:12px;font-family:var(--mono);font-size:13px;font-weight:700}
+
+/* STAY */
+.staycard{background:var(--night);color:var(--snow);border-radius:24px;padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.staycard .moon{position:absolute;right:18px;top:16px;font-size:34px}
+.staycard h4{font-family:var(--serif);font-size:22px;margin:0 50px 4px 0;line-height:1.25}
+.staycard .ty{opacity:.75;font-size:14px}
+.staycard .price{display:inline-block;margin-top:12px;background:rgba(255,255,255,.12);border-radius:10px;padding:6px 12px;font-family:var(--mono);font-size:13px}
+.staycard p{margin:12px 0 0;font-size:14px;opacity:.85}
+
+/* COST */
+.cost{background:var(--surface);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
+.cost .tot{display:flex;align-items:baseline;justify-content:space-between}
+.cost .tot b{font-family:var(--mono);font-size:30px;line-height:1}
+.cost .tot span{color:var(--ink-3);font-size:13px}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;margin:14px 0 12px;background:var(--surface-2)}
+.bar i{display:block;height:100%}
+.crow{display:flex;justify-content:space-between;gap:10px;font-size:14px;padding:4px 0;color:var(--ink-2)}
+.crow .dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px;vertical-align:middle}
+.crow b{font-family:var(--mono);font-weight:500;color:var(--ink);white-space:nowrap}
+.note{font-size:13px;color:var(--ink-3);margin:10px 2px 0}
+
+.pager{display:flex;gap:10px;margin:26px 0 8px}
+.pager button{flex:1;border:0;border-radius:16px;padding:14px;background:var(--surface);box-shadow:var(--shadow);text-align:left;font-size:13px;color:var(--ink-3)}
+.pager button b{display:block;color:var(--ink);font-size:15px}
+.pager button:last-child{text-align:right}
+.pager button:disabled{opacity:.35}
+
+/* PREP & INFO */
+.ring{display:flex;align-items:center;gap:18px;background:var(--night);color:var(--snow);border-radius:24px;padding:20px;margin-top:18px}
+.ring svg{flex:0 0 auto}
+.ring h3{font-family:var(--serif);font-size:22px;margin:0}
+.ring p{margin:4px 0 0;font-size:14px;opacity:.8}
+.grp{background:var(--surface);border-radius:20px;padding:6px 16px;margin-top:14px;box-shadow:var(--shadow)}
+.grp h4{margin:12px 0 4px;font-size:13px;font-family:var(--mono);letter-spacing:.08em;color:var(--ink-3);text-transform:uppercase}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);cursor:pointer}
+.chk:first-of-type{border-top:0}
+.chk input{appearance:none;-webkit-appearance:none;flex:0 0 auto;width:24px;height:24px;border-radius:8px;border:2px solid var(--line);margin:0;display:grid;place-items:center;transition:all .15s}
+.chk input:checked{background:var(--good);border-color:var(--good)}
+.chk input:checked::after{content:"✓";color:#fff;font-weight:900;font-size:14px}
+.chk span{font-size:15px;font-weight:500}
+.chk small{display:block;font-weight:400;color:var(--ink-3);font-size:13px}
+.chk input:checked + span{color:var(--ink-3);text-decoration:line-through}
+.sos{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.sos a{background:var(--surface);border-radius:18px;padding:14px;text-decoration:none;box-shadow:var(--shadow)}
+.sos a b{display:block;font-family:var(--mono);font-size:22px;color:#E2452B}
+.sos a span{font-size:13px;color:var(--ink-2)}
+.list{background:var(--surface);border-radius:20px;padding:6px 16px;box-shadow:var(--shadow)}
+.list div{padding:11px 0;border-top:1px solid var(--line);font-size:15px;color:var(--ink-2);display:flex;gap:12px}
+.list div:first-child{border-top:0}
+.list div i{font-style:normal;font-family:var(--mono);font-size:12px;color:var(--ink-3);padding-top:3px;flex:0 0 18px}
+.bud{background:var(--surface);border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.brow{display:grid;grid-template-columns:76px 1fr auto;gap:10px;align-items:center;padding:6px 0;font-size:13px}
+.brow .bt{height:10px;border-radius:5px;background:var(--surface-2);overflow:hidden}
+.brow .bt i{display:block;height:100%;border-radius:5px}
+.brow b{font-family:var(--mono);font-weight:500;font-size:13px}
+.split{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.split div{background:var(--night);color:var(--snow);border-radius:16px;padding:12px;text-align:center}
+.split b{display:block;font-family:var(--mono);font-size:17px}
+.split span{font-size:12px;opacity:.75}
+
+/* TAB BAR */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 10px calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;justify-content:center}
+.tabbar .in{display:flex;gap:6px;max-width:480px;width:100%}
+.tabbar button{flex:1;border:0;background:transparent;border-radius:14px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--ink-3)}
+.tabbar button svg{width:22px;height:22px}
+.tabbar button[aria-selected="true"]{color:var(--ink);background:var(--surface-2)}
+.foot{font-size:12px;color:var(--ink-3);margin:30px 2px 10px}
+.fade{animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.seg{stroke-dasharray:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <canvas id="snow" aria-hidden="true"></canvas>
+  <div class="hero-in">
+    <div class="topbar"><span class="eyebrow">JAN 23–30 · 2027 · TOKYO · KAMAKURA · IZU</span>
+      <div class="toggles"><div class="lang" role="group" aria-label="Currency" id="curT"><button data-cur="jpy">¥</button><button data-cur="myr">RM</button><button data-cur="both">¥+RM</button></div><div class="lang" role="group" aria-label="Language"><button data-lang="zh">中文</button><button data-lang="en">EN</button></div></div></div>
+    <h1 id="hTitle"></h1>
+    <p class="sub" id="hSub"></p>
+    <div class="hero-stats" id="hStats"></div>
+  </div>
+</header>
+
+<div class="wrap">
+  <main>
+    <section id="view-plan">
+      <div class="strip" id="strip" role="tablist"></div>
+      <div id="dayview"></div>
+    </section>
+    <section id="view-prep" hidden></section>
+    <section id="view-info" hidden></section>
+  </main>
+  <p class="foot" id="foot"></p>
+</div>
+
+<nav class="tabbar" role="tablist"><div class="in">
+  <button role="tab" data-view="plan" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg><span></span></button>
+  <button role="tab" data-view="prep" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span></span></button>
+  <button role="tab" data-view="info" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg><span></span></button>
+</div></nav>
+
+<script>
+const _ = (z,e) => ({z,e});
+let lang = "zh";
+try { const s = localStorage.getItem("kanto27:lang"); if (s) lang = JSON.parse(s); } catch(e) {}
+if (lang !== "zh" && lang !== "en") lang = "zh";
+const t = v => (v && typeof v === "object" && "z" in v) ? (lang === "en" ? v.e : v.z) : v;
+
+const UI = {
+  title:_("慢游<em>旧时光</em><br>东京・伊豆","Old Japan,<br><em>Slowly</em>"),
+  sub:_("老东京的下町、海边古都镰仓、伊豆的木造温泉旅馆、昭和温泉乡热海。不赶路，最后一天留给东京购物。","Old Tokyo lanes, seaside Kamakura, a wooden ryokan in Izu and Showa-era Atami. No rushing, and a final day for Tokyo shopping."),
+  stats:_(["天","公里自驾","晚温泉","天出发"],["days","km driven","onsen nights","days to go"]),
+  live:_("旅行第","Day"), over:_("完成","done"),
+  tabs:[_("行程","Plan"),_("清单","Checklist"),_("信息","Info")],
+  drive:_("车程","Drive"), fare:_("车费","Fares"), stay:_("住","Stay"),
+  openRoute:_("导航当天路线 →","Navigate today's route →"),
+  map:_("ROUTE · 当天路段","ROUTE · TODAY"),
+  plan:_("行程","Schedule"), stops:_(n=>n+" 个景点", n=>n+" stops"),
+  photos:_("📷 实拍照片","📷 Photos"), mapB:_("📍 地图","📍 Map"), call:_("📞 致电","📞 Call"),
+  mark:_("标记去过","Mark visited"), done:_("✓ 已去过","✓ Visited"),
+  navTel:_("导航 ","NAV "),
+  eat:_("吃什么","Eat"), swipe:_("左右滑动 →","swipe →"),
+  sleep:_("今晚住","Tonight"), costT:_("今天花费","Today's spend"), pp:_("每人估算","per person, est."),
+  carNote:_("租车、高速、油费按整车计算，见“信息”页。","Car, tolls and fuel are per car; see Info."),
+  prev:_("前一天","Previous"), next:_("后一天","Next"),
+  yen:_(n=>"¥"+n.toLocaleString("en-US"), n=>"¥"+n.toLocaleString("en-US")),
+  foot:_("车程按不塞车估算，雪天多预留30%以上的时间。营业时间、表演场次和点灯以官网为准。勾选进度只保存在本机浏览器。","Drive times assume no traffic; add 30%+ in snow. Check official sites for hours and show times. Ticks are saved only in this browser."),
+  prepT:_("出发准备","Get ready"), prepTip:_("温泉旅馆和涩谷SKY日落票最难订，先搞定。","Ryokan and Shibuya Sky sunset tickets go first. Book them now."),
+  sos:_("紧急电话","Emergency"), driveT:_("冬季驾驶","Winter driving"), tipsT:_("小贴士","Good to know"),
+  fxNote:_("参考汇率：2026年10月16日中间价。出发前可以改成最新汇率，所有金额会自动更新。","Reference mid-rate from 16 Oct 2026. Update it before you go and every amount recalculates."),
+  budT:_("整趟预算","Trip budget"), budSub:_("含机票 · 不含购物","incl. flights · excl. shopping"),
+  flight:_("✈️ 机票：越南航空商务舱（2人共RM10,000，每人）","✈️ Flights: Vietnam Airlines Business (RM10,000 for 2; per person)"), pp2:_("每人总计","Per person"), tot2:_("2人总计","Total for 2"), flightSub:_("每人小计（含机票）","Per person incl. flights"),
+  perP:_("每人吃住门票","Per person (food, stays, entry)"), car:_("整车费用","Per car"),
+  nPpl:_(n=>n+"人同行",n=>n+" people"), each:_("每人总计","each, total"),
+  budNote:_("住宿按中等价位、两人一间估算，温泉旅馆价差很大，以订房网站为准。","Lodging assumes mid-range, two per room. Ryokan prices vary widely."),
+  cats:_(["吃","住","玩","行"],["Food","Stay","Fun","Transit"])
+};
+const THEME = [
+  {c:"#4F5DDB",c2:"#2A2F7A",e:"✈️"},
+  {c:"#D8432A",c2:"#7A1F14",e:"🏮"},
+  {c:"#1592C9",c2:"#0D4E7A",e:"🚃"},
+  {c:"#3E8E5A",c2:"#1C4A2E",e:"🎋"},
+  {c:"#13A08F",c2:"#0B4F52",e:"♨️"},
+  {c:"#D2668E",c2:"#6E2445",e:"🌸"},
+  {c:"#D9862A",c2:"#7A3E12",e:"🛍️"},
+  {c:"#5C6C8C",c2:"#2B3550",e:"🛫"}
+];
+const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+const gdir = pts => "https://www.google.com/maps/dir/" + pts.map(p => encodeURIComponent(p).replace(/%20/g,"+")).join("/");
+
+const P = {
+  asakusa:{x:309,y:45,n:_("浅草・谷中","Asakusa·Yanaka"),a:"end",o:[-12,4]},
+  ginza:{x:299,y:66,n:_("银座","Ginza"),a:"end",o:[-12,8]},
+  haneda:{x:299,y:114,n:_("羽田机场","Haneda"),a:"end",o:[-12,5]},
+  kamakura:{x:230,y:211,n:_("镰仓","Kamakura"),a:"start",o:[12,6]},
+  atami:{x:86,y:303,n:_("热海","Atami"),a:"end",o:[-10,18]},
+  shuzenji:{x:44,y:358,n:_("修善寺","Shuzenji"),a:"start",o:[12,16]},
+  joren:{x:47,y:404,n:_("净莲瀑布・天城","Joren Falls·Amagi"),a:"start",o:[12,6]}
+};
+
+const DAYS = [
+ {d:"1/23",w:_("周六","Sat"),short:_("抵达浅草","Arrive"),title:_("落地，住进老东京","Land and settle into old Tokyo"),
+  intro:_("下午到达，不赶行程。坐京急直达浅草，入住传统旅馆，晚上在附近散步吃饭就好。","An easy afternoon. Ride the Keikyu Line straight to Asakusa, check in to a traditional inn, and just stroll out for dinner."),
+  seg:[],train:["haneda","asakusa"],km:_("电车","Train"),drive:_("约40分钟","~40 min"),stay:_("浅草／谷中（2晚）","Asakusa / Yanaka (2 nights)"),route:null,
+  stops:[
+   {t:"15:30",k:"spot",n:_("羽田机场 第3航站楼","Haneda Airport Terminal 3"),jp:"羽田空港 第3ターミナル",p:_("入境加取行李约1小时。在手机钱包里添加Suica，接下来几天坐电车都用它。","Allow an hour for immigration and bags. Add Suica to your phone wallet for the train days."),q:"Haneda Airport Terminal 3"},
+   {t:"16:45",k:"drive",n:_("京急线直通浅草线，羽田到浅草约40分钟，不用换车。","Keikyu Line runs straight through to Asakusa in about 40 minutes, no transfer.")},
+   {t:"17:30",k:"stay",n:_("入住：浅草或谷中的传统旅馆","Check in: traditional inn in Asakusa or Yanaka"),p:_("榻榻米房间、家庭经营的小旅馆最有老东京味道。放下行李后休息一下。","A tatami room in a family-run inn sets the mood. Drop your bags and rest.")},
+   {t:"19:00",k:"spot",n:_("浅草 Hoppy通り 晚餐","Dinner on Hoppy Street, Asakusa"),jp:"ホッピー通り",p:_("一整排昭和风格的居酒屋，坐在街边吃炖牛筋、烤串，配一杯Hoppy。冬天有塑料帘子挡风，不会太冷。","A row of Showa-style izakaya with street seating. Try beef-tendon stew and skewers with a Hoppy. Plastic curtains keep the wind out in winter."),q:"Hoppy Street Asakusa"}
+  ]},
+ {d:"1/24",w:_("周日","Sun"),short:_("老东京","Old Tokyo"),title:_("浅草清晨，谷中午后","Asakusa morning, Yanaka afternoon"),
+  intro:_("全天步行加电车，只排两个区域，节奏放慢。晚上自由。","A walking day with only two neighbourhoods. The evening is yours."),
+  seg:[],train:["asakusa"],km:_("步行","On foot"),drive:_("电车约600日元","~¥600 trains"),stay:_("浅草／谷中（续住）","Asakusa / Yanaka (2nd night)"),
+  route:gdir(["Senso-ji","Yanaka Ginza","Nezu Shrine"]),
+  stops:[
+   {t:"08:30",k:"spot",n:_("浅草寺・雷门","Senso-ji & Kaminarimon"),jp:"浅草寺",p:_("早上人少，可以慢慢看雷门、宝藏门和五重塔。仲见世商店街9点后陆续开门，买人形烧当早点。","Few crowds early, so take your time at the gates and pagoda. Nakamise shops open from about 9:00; ningyo-yaki makes a fine breakfast."),q:"Senso-ji",tel:"03-3842-0181",tips:[_("寺院背后的传法院通一带保留着老店铺","Denboin-dori behind the temple keeps its old shopfronts")]},
+   {t:"10:30",k:"spot",n:_("浅草 老咖啡馆","Old kissaten in Asakusa"),jp:"純喫茶",p:_("浅草有很多昭和年代开业的“纯喫茶”，点一杯手冲咖啡和厚切吐司，坐一会儿。","Asakusa has many Showa-era kissaten. Order pour-over coffee and thick toast and linger."),q:"純喫茶 浅草"},
+   {t:"12:00",k:"spot",n:_("午餐：浅草 天妇罗或荞麦面","Lunch: tempura or soba in Asakusa"),p:_("浅草有不少百年老店，天妇罗盖饭和荞麦面都是经典选择。","Century-old tempura and soba shops are an Asakusa classic."),q:"Asakusa tempura"},
+   {t:"13:30",k:"drive",n:_("银座线到上野，换山手线到日暮里，约20分钟。","Ginza Line to Ueno, then Yamanote Line to Nippori, about 20 minutes.")},
+   {t:"14:00",k:"spot",n:_("谷中灵园・谷中银座","Yanaka Cemetery & Yanaka Ginza"),jp:"谷中銀座商店街",p:_("走过安静的谷中灵园，再从“夕阳阶梯”走进谷中银座。老肉铺的炸肉饼、手工糖果和猫咪杂货都很有昭和味道。","Walk through quiet Yanaka Cemetery, then down the Yuyake Dandan steps into Yanaka Ginza for menchi katsu, handmade sweets and cat-themed shops."),q:"Yanaka Ginza"},
+   {t:"15:30",k:"spot",n:_("根津神社","Nezu Shrine"),jp:"根津神社",p:_("东京最古老的神社之一，朱红色鸟居走廊很好看。从谷中步行约15分钟，沿途是老木屋和小寺院。","One of Tokyo's oldest shrines, with a tunnel of red torii. A 15-minute walk past wooden houses and small temples."),q:"Nezu Shrine"},
+   {t:"17:00",k:"stay",n:_("回旅馆休息，晚上自由","Back to rest; free evening"),p:_("想出门的话，可以去上野的阿美横丁，或者在旅馆附近找一家小居酒屋。","If you feel like going out, try Ameyoko in Ueno or a small izakaya near your inn.")}
+  ]},
+ {d:"1/25",w:_("周一","Mon"),short:_("镰仓","Kamakura"),title:_("海边的古都镰仓","Kamakura, the old capital by the sea"),
+  intro:_("10点左右取车，开1小时到镰仓。车停酒店，下午坐复古的江之电游览。","Pick up the car around 10:00 and drive an hour to Kamakura. Park at the hotel and ride the retro Enoden train in the afternoon."),
+  seg:["haneda","kamakura"],train:["asakusa","haneda"],km:_("约50 km","~50 km"),drive:_("约1小时","~1 h"),stay:_("镰仓","Kamakura"),
+  route:gdir(["Haneda Airport","Kamakura Station","Kotoku-in","Hase-dera"]),
+  stops:[
+   {t:"09:00",k:"drive",n:_("京急线浅草到羽田，约40分钟，不用换车。","Keikyu Line from Asakusa to Haneda, about 40 minutes, no transfer.")},
+   {t:"10:00",k:"spot",n:_("羽田 取车","Pick up car at Haneda"),p:_("坐租车公司接驳车到营业所。确认ETC卡，拍照记录车身划痕。这条路线基本不会下雪，防滑胎可选。","Take the shuttle to the rental office. Confirm the ETC card and photograph any scratches. Snow is unlikely on this route, so winter tyres are optional."),book:_("租车需预约","Reserve in advance")},
+   {t:"10:30",k:"drive",n:_("首都高速转横滨横须贺道路，朝比奈IC下，约1小时。","Shuto Expressway to the Yokohama-Yokosuka Road, exit Asahina IC, about an hour.")},
+   {t:"11:45",k:"spot",n:_("小町通 午餐","Lunch on Komachi-dori"),jp:"小町通り",p:_("镰仓站前的老商店街。推荐吃镰仓名物吻仔鱼盖饭(しらす丼)。","The old shopping street by Kamakura Station. Try shirasu-don, Kamakura's whitebait rice bowl."),q:"Komachi-dori Kamakura"},
+   {t:"13:15",k:"drive",n:_("江之电镰仓站到长谷站，约5分钟。买一日券(のりおりくん)可以随上随下。","Enoden from Kamakura to Hase, about 5 minutes. A Noriorikun day pass lets you hop on and off.")},
+   {t:"13:30",k:"spot",n:_("镰仓大佛（高德院）","Great Buddha (Kotoku-in)"),jp:"鎌倉大仏 高徳院",p:_("高约11米的露天青铜大佛，已经在这里坐了近800年。可以付少量费用进入佛像内部。","An 11-metre bronze Buddha that has sat in the open for nearly 800 years. You can step inside for a small fee."),q:"Kotoku-in",tel:"0467-22-0703"},
+   {t:"14:45",k:"spot",n:_("长谷寺","Hase-dera"),jp:"長谷寺",p:_("建在山坡上的古寺，观景台可以俯瞰镰仓的海。寺内的地藏小石像很可爱。","A hillside temple with a terrace overlooking the sea and rows of small jizo statues."),q:"Hase-dera Kamakura",tel:"0467-22-6300",tips:[_("冬季16:30左右关门","Closes around 16:30 in winter")]},
+   {t:"16:15",k:"spot",n:_("七里滨 看日落（可选）","Sunset at Shichirigahama (optional)"),jp:"七里ヶ浜",p:_("坐江之电沿海几站，日落约16:55。天气好时能看到海对面的富士山剪影。","A few stops along the coast on the Enoden. Sunset is around 16:55, often with Mt Fuji in silhouette across the bay."),q:"Shichirigahama"},
+   {t:"18:00",k:"stay",n:_("入住：镰仓","Check in: Kamakura"),p:_("住镰仓站附近，晚上可以走到小町通一带吃饭。","Stay near Kamakura Station so dinner is a short walk.")}
+  ]},
+ {d:"1/26",w:_("周二","Tue"),short:_("去修善寺","To Shuzenji"),title:_("竹林抹茶，然后去伊豆","Bamboo and matcha, then to Izu"),
+  intro:_("早上不赶，喝完抹茶再出发。下午3点前到修善寺，接下来连住两晚。","A gentle start with matcha in a bamboo grove. Reach Shuzenji by 15:00 and stay two nights."),
+  seg:["kamakura","shuzenji"],train:[],km:_("约90 km","~90 km"),drive:_("约1小时50分","~1 h 50 min"),stay:_("修善寺温泉（2晚）","Shuzenji Onsen (2 nights)"),
+  route:gdir(["Hokokuji Kamakura","Tsurugaoka Hachimangu","Shuzenji Onsen"]),
+  stops:[
+   {t:"09:00",k:"spot",n:_("报国寺 竹林","Hokokuji bamboo grove"),jp:"報国寺",p:_("寺后有一片安静的孟宗竹林，在竹林里的茶席坐下来喝一碗抹茶，是镰仓最放松的时刻。","A quiet grove of tall bamboo behind the temple. Sit at the tea pavilion inside it with a bowl of matcha."),q:"Hokokuji Kamakura",tel:"0467-22-0762",tips:[_("早上9点开门，越早越安静","Opens at 9:00; earlier is quieter")]},
+   {t:"10:30",k:"spot",n:_("鹤冈八幡宫","Tsurugaoka Hachimangu"),jp:"鶴岡八幡宮",p:_("镰仓的中心神社，沿着长长的参道走到本殿，可以俯瞰整条若宫大路。","Kamakura's central shrine. Climb to the main hall for a view straight down Wakamiya-oji."),q:"Tsurugaoka Hachimangu"},
+   {t:"11:30",k:"spot",n:_("午餐：镰仓 荞麦面","Lunch: soba in Kamakura"),p:_("吃完再上路，伊豆这一段没有太多休息站。","Eat before setting off; there are few stops on the way to Izu."),q:"Kamakura soba"},
+   {t:"12:45",k:"drive",n:_("沿海走国道134号，经西湘支线、伊豆中央道到修善寺，约1小时50分钟。","Coastal Route 134, then the Seisho Bypass and Izu-Chuo Road to Shuzenji, about 1 h 50 min.")},
+   {t:"15:00",k:"stay",n:_("入住：修善寺温泉旅馆","Check in: Shuzenji ryokan"),p:_("先泡汤休息。修善寺有不少百年木造旅馆，房间面向桂川。","Soak first. Shuzenji has several century-old wooden inns facing the Katsura River.")},
+   {t:"16:00",k:"spot",n:_("竹林小径・桂川","Bamboo path & Katsura River"),jp:"竹林の小径",p:_("傍晚沿桂川散步，竹林小径和几座朱红小桥，天快黑时亮灯，很有气氛。","Stroll the river at dusk: the bamboo path and little red bridges light up as it gets dark."),q:"Chikurin no Komichi Shuzenji"},
+   {t:"18:00",k:"spot",n:_("旅馆晚餐","Ryokan dinner"),p:_("怀石料理，伊豆的海鲜和山菜。","Kaiseki with Izu seafood and mountain vegetables.")}
+  ]},
+ {d:"1/27",w:_("周三","Wed"),short:_("温泉休息日","Onsen day"),title:_("修善寺慢慢过一天","A slow day in Shuzenji"),
+  intro:_("不换酒店、不赶路。上午逛古寺，想出门就去天城走走，下午回来泡汤。","No packing, no rushing. A temple in the morning, an optional drive to Amagi, and an afternoon in the bath."),
+  seg:["shuzenji","joren","shuzenji"],train:[],km:_("约50 km（可选）","~50 km (optional)"),drive:_("约1小时（可选）","~1 h (optional)"),stay:_("修善寺温泉（续住）","Shuzenji (2nd night)"),
+  route:gdir(["Shuzenji Temple","Joren Falls","Kyu-Amagi Tunnel","Shuzenji Onsen"]),
+  stops:[
+   {t:"09:30",k:"spot",n:_("修禅寺・独钴之汤","Shuzenji Temple & Tokko-no-yu"),jp:"修禅寺・独鈷の湯",p:_("温泉街名字由来的古寺，据说由空海开创。河边的独钴之汤是修善寺最早的温泉，现在可以看不能泡。","The temple that gave the town its name, said to be founded by Kukai. Tokko-no-yu by the river is the town's first spring."),q:"Shuzenji Temple"},
+   {t:"10:30",k:"spot",n:_("温泉街散步・足汤","Town stroll & foot bath"),p:_("街上有免费足汤，还有卖温泉馒头和黑芝麻冰淇淋的小店。","Free foot baths, onsen manju and black-sesame ice cream along the way."),q:"Shuzenji Onsen"},
+   {t:"11:30",k:"drive",n:_("可选：国道414号往南到净莲瀑布，约35分钟。","Optional: Route 414 south to Joren Falls, about 35 minutes.")},
+   {t:"12:15",k:"spot",n:_("净莲瀑布・山葵田","Joren Falls & wasabi fields"),jp:"浄蓮の滝",p:_("瀑布旁有阶梯状的山葵田，可以试山葵冰淇淋。附近的餐厅有现磨山葵盖饭。","Terraced wasabi fields sit beside the falls. Try wasabi ice cream, and fresh-grated wasabi rice nearby."),q:"Joren Falls"},
+   {t:"13:30",k:"spot",n:_("旧天城隧道","Old Amagi Tunnel"),jp:"旧天城トンネル",p:_("1905年建成的石造隧道，是川端康成《伊豆的舞女》的舞台。","A 1905 stone tunnel, the setting of Kawabata's The Izu Dancer."),q:"Kyu-Amagi Tunnel",tips:[_("通往隧道的旧路是碎石路，冬季可能封闭，出发前在现场确认","The old access road is gravel and may close in winter; check on the day")]},
+   {t:"14:30",k:"drive",n:_("回修善寺，约40分钟。","Back to Shuzenji, about 40 minutes.")},
+   {t:"15:30",k:"stay",n:_("泡汤、休息、晚餐","Bath, rest, dinner"),p:_("下午留给温泉。可以预约旅馆的包场风吕。","Save the afternoon for the bath. Book the ryokan's private bath if available.")}
+  ]},
+ {d:"1/28",w:_("周四","Thu"),short:_("热海・回东京","Atami · Tokyo"),title:_("昭和温泉乡热海，回东京","Showa-era Atami, back to Tokyo"),
+  intro:_("10点退房，在热海过半天，下午还车，晚上住银座。","Check out at 10:00, spend half a day in Atami, return the car and sleep in Ginza."),
+  seg:["shuzenji","atami","haneda"],train:["haneda","ginza"],km:_("约130 km","~130 km"),drive:_("约2.5小时","~2.5 h"),stay:_("银座","Ginza"),
+  route:gdir(["Shuzenji Onsen","Kiunkaku Atami","Atami Baien","Haneda Airport"]),
+  stops:[
+   {t:"10:00",k:"drive",n:_("修善寺到热海，约1小时。","Shuzenji to Atami, about an hour.")},
+   {t:"11:00",k:"spot",n:_("起云阁","Kiunkaku"),jp:"起雲閣",p:_("大正年间建造的富豪别墅，日式和西式建筑混搭，彩色玻璃和庭园都很美。不少文豪曾在这里住过。","A Taisho-era villa mixing Japanese and Western rooms, stained glass and a garden. Several famous writers stayed here."),q:"Kiunkaku Atami",tel:"0557-86-3101",tips:[_("周三休馆，今天周四没问题","Closed Wednesdays; Thursday is fine")]},
+   {t:"12:30",k:"spot",n:_("热海站前 老商店街午餐","Lunch in Atami's retro arcades"),jp:"平和通り・仲見世",p:_("站前两条有顶棚的老商店街，海鲜盖饭、干货和温泉布丁都有。","Two covered arcades by the station with seafood bowls, dried fish and onsen pudding."),q:"Atami Heiwa-dori"},
+   {t:"13:45",k:"spot",n:_("热海梅园","Atami Baien plum garden"),jp:"熱海梅園",p:_("号称日本最早开花的梅园，1月下旬通常已经有早梅。","Known as Japan's earliest-blooming plum garden; early blossoms are usually out by late January."),q:"Atami Baien",tips:[_("梅花节期间收少量入园费","A small entry fee applies during the plum festival")]},
+   {t:"14:30",k:"drive",n:_("小田原厚木道路转东名、首都高速到羽田，约1.5小时。还车前在附近加满油。","Odawara-Atsugi Road, Tomei and Shuto Expressways to Haneda, about 1.5 hours. Refuel nearby before returning.")},
+   {t:"16:15",k:"spot",n:_("羽田 还车","Return car at Haneda"),p:_("ETC费用在还车时结算，检查车内有没有遗留物品。","ETC tolls are settled at return. Check for belongings.")},
+   {t:"17:00",k:"drive",n:_("京急线直通浅草线到东银座，约30分钟。","Keikyu through-service to Higashi-Ginza, about 30 minutes.")},
+   {t:"18:00",k:"stay",n:_("入住：银座","Check in: Ginza"),p:_("晚餐推荐有乐町高架桥下的老居酒屋，烤串配啤酒，很有昭和气氛。","For dinner, try the old izakaya under the Yurakucho railway arches for yakitori and beer.")}
+  ]},
+ {d:"1/29",w:_("周五","Fri"),short:_("东京购物","Shopping"),title:_("一整天的东京购物","A full day of Tokyo shopping"),
+  intro:_("住在银座不用退房，整天轻装逛街。买的东西可以随时放回酒店。晚上吃一顿告别晚餐。","No check-out today. Shop light all day and drop bags back at the hotel any time. Finish with a farewell dinner."),
+  seg:[],train:["ginza"],km:_("步行+电车","Walk + train"),drive:_("约600日元","~¥600"),stay:_("银座（续住）","Ginza (2nd night)"),
+  route:gdir(["Tsukiji Outer Market","Nihonbashi Mitsukoshi","Ginza Itoya","Kappabashi Dougu Street"]),
+  stops:[
+   {t:"08:30",k:"spot",n:_("筑地场外市场 早餐","Breakfast at Tsukiji Outer Market"),jp:"築地場外市場",p:_("从银座步行约15分钟。平日早上最热闹，玉子烧、海鲜盖饭和烤扇贝都可以边走边吃。也能买到刀具、干货和茶叶。","A 15-minute walk from Ginza and liveliest on weekday mornings. Graze on tamagoyaki, seafood bowls and grilled scallops, and browse knives, dried goods and tea."),q:"Tsukiji Outer Market",tips:[_("很多店中午左右就收摊，早点去","Many stalls close around midday; go early")]},
+   {t:"10:30",k:"spot",n:_("日本桥 老铺","Nihonbashi heritage shops"),jp:"日本橋",p:_("江户时代就开业的老店集中在这里：和纸、鲣鱼干、刀具、漆器，都适合当伴手礼。日本桥三越本店的建筑本身也值得看。","Shops dating back to the Edo era: washi paper, katsuobushi, knives and lacquerware. The Mitsukoshi flagship building is worth a look too."),q:"Nihonbashi Mitsukoshi"},
+   {t:"12:30",k:"spot",n:_("午餐：日本桥老字号","Lunch at an old Nihonbashi restaurant"),p:_("天妇罗、鳗鱼或荞麦面，午市套餐比晚上便宜很多。","Tempura, eel or soba; lunch sets are far cheaper than dinner."),q:"Nihonbashi lunch"},
+   {t:"14:00",k:"spot",n:_("银座 伊东屋・百货地下美食","Ginza Itoya & department-store food halls"),jp:"銀座 伊東屋・デパ地下",p:_("伊东屋是百年文具店，整栋楼都是文具。百货公司地下一层的点心和茶叶适合买伴手礼，可以要求包装好方便带上飞机。","Itoya is a century-old stationery store filling a whole building. Basement food halls are perfect for sweets and tea, gift-wrapped for the flight."),q:"Ginza Itoya",tips:[_("先把东西放回酒店，再去下一站","Drop your bags at the hotel before the next stop")]},
+   {t:"16:00",k:"spot",n:_("合羽桥 道具街","Kappabashi kitchen street"),jp:"かっぱ橋道具街",p:_("坐银座线到田原町约20分钟。整条街卖厨具、餐具和食物模型，喜欢日式餐具的话很值得逛。","About 20 minutes on the Ginza Line to Tawaramachi. A whole street of knives, tableware and plastic food models."),q:"Kappabashi Dougu Street",tips:[_("多数店17:00–17:30关门","Most shops close 17:00–17:30")]},
+   {t:"19:00",k:"spot",n:_("告别晚餐：银座","Farewell dinner in Ginza"),p:_("银座有不少百年老店，可以吃一顿寿喜烧或寿司，为旅程画上句号。","Ginza has century-old restaurants; end the trip with sukiyaki or sushi."),q:"Ginza sukiyaki"},
+   {t:"21:00",k:"stay",n:_("回酒店收拾行李","Back to the hotel to pack"),p:_("确认明天的航班时间，提前把行李整理好。","Check tomorrow's flight time and pack tonight.")}
+  ]},
+ {d:"1/30",w:_("周六","Sat"),short:_("返程","Depart"),title:_("早上从羽田回家","Morning flight home from Haneda"),
+  intro:_("东银座坐京急直通羽田约30分钟。国际线建议起飞前2.5–3小时到柜台。","Keikyu runs straight from Higashi-Ginza to Haneda in about 30 minutes. Arrive 2.5–3 hours before an international flight."),
+  seg:[],train:["ginza","haneda"],km:_("电车","Train"),drive:_("约30分钟","~30 min"),stay:"—",route:null,
+  stops:[
+   {t:_("起飞前3.5小时","Flight −3.5h"),k:"stay",n:_("退房，坐京急去羽田","Check out and ride Keikyu to Haneda"),p:_("早班电车很准时，但带大件行李最好避开7:30–9:00的通勤高峰。","Early trains are reliable, but avoid the 7:30–9:00 rush with big bags.")},
+   {t:_("机场","Airport"),k:"spot",n:_("羽田机场第3航站楼 江户小路","Edo Koji, Haneda T3"),jp:"江戸小路",p:_("办完登机后，可以在江户风格的街道吃早餐、补买最后的伴手礼。","After check-in, have breakfast and pick up last souvenirs on this Edo-style street."),q:"Haneda Airport Edo Koji"}
+  ]}
+];
+
+const EXTRA = [
+ {eat:[
+   [_("晚餐","Dinner"),_("浅草 Hoppy通り","Hoppy Street, Asakusa"),_("炖牛筋(煮込み)和烤串是招牌，适合第一晚轻松吃一顿。","Beef-tendon stew and skewers: an easy first-night dinner."),_("约2,000–3,000日元","~¥2,000–3,000")],
+   [_("备选","Alt."),_("浅草 文字烧／大阪烧","Monjayaki or okonomiyaki"),_("自己在铁板上做，很适合两三个人慢慢吃。","Cook it yourself on the griddle; good for a slow meal."),_("约1,500–2,500日元","~¥1,500–2,500")]],
+  stay:{area:_("浅草或谷中","Asakusa or Yanaka"),type:_("传统日式旅馆或小型和风旅店（连住2晚）","Traditional inn or small Japanese-style guesthouse (2 nights)"),ex:_("谷中有一些家庭经营的老旅馆，例如泽之屋；浅草则有很多新开的和风小旅店，离京急站近。","Yanaka has family-run inns such as Sawanoya; Asakusa has many newer Japanese-style guesthouses near the Keikyu station."),price:_("双人房约2–3万日元／晚","Double ~¥20,000–30,000/night"),why:_("住在老街区，早晚出门散步就是旅行的一部分。京急直达羽田，第三天取车也方便。","Staying in old Tokyo makes every walk part of the trip, and Keikyu runs straight to Haneda for car pickup.")},
+  cost:[[_("晚餐","Dinner"),2500],[_("京急电车","Keikyu train"),600],[_("住宿（双人房平摊）","Inn (shared double)"),12000]]},
+ {eat:[
+   [_("早餐","Breakfast"),_("仲见世 人形烧","Ningyo-yaki, Nakamise"),_("小小的鸡蛋糕里包红豆馅，现烤的最好吃。","Little sponge cakes filled with red bean, best warm."),_("约500日元","~¥500")],
+   [_("咖啡","Coffee"),_("浅草 纯喫茶","Kissaten in Asakusa"),_("昭和风格的老咖啡馆，手冲咖啡加厚切吐司。","Showa-era coffee house: pour-over and thick toast."),_("约1,000日元","~¥1,000")],
+   [_("午餐","Lunch"),_("浅草 天妇罗盖饭","Tempura rice bowl, Asakusa"),_("浅草老店的招牌，酱汁偏甜偏浓，是江户风味。","An Asakusa classic with a rich, sweet Edo-style sauce."),_("约1,500–2,500日元","~¥1,500–2,500")],
+   [_("下午","Snack"),_("谷中银座 炸肉饼","Menchi katsu, Yanaka Ginza"),_("老肉铺现炸，边走边吃。","Fresh-fried at old butchers; eat as you walk."),_("约300日元","~¥300")]],
+  stay:{area:_("浅草或谷中（续住）","Asakusa or Yanaka (2nd night)"),type:_("同前一晚","Same as last night"),ex:_("明早带着行李坐京急去羽田，取车后直接放进后车厢。","Tomorrow you ride Keikyu to Haneda with your bags and load them straight into the car."),price:_("双人房约2–3万日元／晚","Double ~¥20,000–30,000/night"),why:_("不用换酒店。","No hotel change today.")},
+  cost:[[_("三餐和咖啡","Meals & coffee"),5500],[_("电车","Trains"),600],[_("住宿（双人房平摊）","Inn (shared double)"),12000]]},
+ {eat:[
+   [_("午餐","Lunch"),_("小町通 吻仔鱼盖饭","Shirasu-don, Komachi-dori"),_("镰仓近海捕的小鱼，生的或煮熟的铺在饭上，清淡鲜甜。","Tiny local whitebait, raw or boiled, over rice. Light and sweet."),_("约1,500–2,500日元","~¥1,500–2,500")],
+   [_("下午","Snack"),_("长谷 豆子点心或抹茶冰淇淋","Bean snacks or matcha ice cream, Hase"),_("从长谷站到大佛的路上有很多小吃店。","Plenty of snack shops between Hase Station and the Buddha."),_("约500日元","~¥500")],
+   [_("晚餐","Dinner"),_("镰仓站附近 和食或意大利菜","Japanese or Italian near Kamakura Station"),_("镰仓有很多藏在小巷里的小餐馆，海鲜都很新鲜。","Small restaurants tucked into side streets, all with fresh seafood."),_("约3,000–5,000日元","~¥3,000–5,000")]],
+  stay:{area:_("镰仓站周边","Around Kamakura Station"),type:_("小型酒店或和风旅店（要有停车位）","Small hotel or Japanese-style inn with parking"),ex:_("镰仓停车位少，订房时一定确认有停车场，或者附近有合作的投币停车场。","Parking is scarce in Kamakura; confirm the hotel has parking or a partner lot nearby."),price:_("双人房约2.5–3.5万日元／晚","Double ~¥25,000–35,000/night"),why:_("晚上镰仓游客散去后很安静，第二天一早就能去报国寺。","Kamakura is calm once day-trippers leave, and you're close to Hokokuji for an early start.")},
+  cost:[[_("电车（京急、江之电一日券）","Trains (Keikyu, Enoden day pass)"),1400],[_("大佛、长谷寺门票","Great Buddha & Hase-dera"),700],[_("三餐和小吃","Meals & snacks"),6500],[_("住宿（双人房平摊）","Hotel (shared double)"),14000]]},
+ {eat:[
+   [_("早上","Morning"),_("报国寺 竹林抹茶","Matcha in Hokokuji's bamboo grove"),_("一碗抹茶配和果子，坐在竹林里慢慢喝。","A bowl of matcha and a sweet, sipped among the bamboo."),_("约600日元","~¥600")],
+   [_("午餐","Lunch"),_("镰仓 荞麦面","Soba in Kamakura"),_("吃完再上路。","Eat before the drive."),_("约1,500日元","~¥1,500")],
+   [_("晚餐","Dinner"),_("修善寺旅馆 怀石料理","Ryokan kaiseki, Shuzenji"),_("包含在房费里，伊豆的金目鲷、山葵和山菜是特色。","Included. Look for Izu's kinmedai fish, wasabi and mountain greens."),_("含在房费","Included")]],
+  stay:{area:_("修善寺温泉（桂川沿岸）","Shuzenji Onsen, along the Katsura River"),type:_("木造温泉旅馆（含早晚餐，连住2晚）","Wooden ryokan with dinner and breakfast (2 nights)"),ex:_("修善寺有几家百年以上的老旅馆，例如被列为登录有形文化财的新井旅馆。房间面向河或庭园的最舒服。","Shuzenji has several century-old inns, such as Arai Ryokan, a registered cultural property. Rooms facing the river or garden are best."),price:_("每人约2.5–4.5万日元／晚（含两餐）","~¥25,000–45,000 pp/night with meals"),why:_("连住两晚，不用每天收拾行李，可以真正放松。","Two nights means no packing and a real rest.")},
+  cost:[[_("报国寺门票和抹茶","Hokokuji & matcha"),1000],[_("午餐","Lunch"),1500],[_("温泉旅馆（含两餐，每人）","Ryokan with meals (pp)"),30000]]},
+ {eat:[
+   [_("午餐","Lunch"),_("净莲瀑布 山葵盖饭","Fresh wasabi rice, Joren Falls"),_("自己磨新鲜山葵，铺在热饭和鲣鱼干上，简单但难忘。","Grate fresh wasabi yourself over rice and bonito flakes. Simple and memorable."),_("约1,000–1,500日元","~¥1,000–1,500")],
+   [_("小吃","Snack"),_("修善寺 黑芝麻冰淇淋・温泉馒头","Black-sesame ice cream & onsen manju"),_("温泉街上散步时的小点心。","Treats for the town stroll."),_("约300–500日元","~¥300–500")],
+   [_("晚餐","Dinner"),_("修善寺旅馆 怀石料理","Ryokan kaiseki, Shuzenji"),_("第二晚的菜单通常会换。","The menu usually changes on the second night."),_("含在房费","Included")]],
+  stay:{area:_("修善寺温泉（续住）","Shuzenji Onsen (2nd night)"),type:_("同前一晚","Same as last night"),ex:_("今天下午尽量留给温泉和休息。","Keep the afternoon for the bath and a nap."),price:_("每人约2.5–4.5万日元／晚（含两餐）","~¥25,000–45,000 pp/night with meals"),why:_("全程最悠闲的一天。","The slowest day of the trip.")},
+  cost:[[_("午餐和小吃","Lunch & snacks"),2000],[_("温泉旅馆（含两餐，每人）","Ryokan with meals (pp)"),30000]]},
+ {eat:[
+   [_("午餐","Lunch"),_("热海 海鲜盖饭","Seafood bowl, Atami"),_("站前商店街里有很多海鲜店，金目鲷和竹荚鱼是相模湾的特产。","Seafood shops line the station arcades. Kinmedai and horse mackerel are local to Sagami Bay."),_("约2,000–3,500日元","~¥2,000–3,500")],
+   [_("小吃","Snack"),_("热海 温泉布丁","Atami onsen pudding"),_("复古瓶装的布丁，热海很有名的伴手礼。","Retro bottled pudding, a famous Atami treat."),_("约400日元","~¥400")],
+   [_("晚餐","Dinner"),_("有乐町 高架桥下居酒屋","Izakaya under the Yurakucho tracks"),_("电车从头顶开过，烤串配啤酒，是东京最有昭和味道的地方之一。","Trains rumble overhead as you eat yakitori with beer. Pure Showa Tokyo."),_("约3,000–4,000日元","~¥3,000–4,000")]],
+  stay:{area:_("银座或东京站周边","Ginza or Tokyo Station area"),type:_("城市酒店（能寄存行李）","City hotel with luggage storage"),ex:_("选东银座站附近的酒店最方便：京急直达羽田，步行就能逛银座和日本桥。","Near Higashi-Ginza Station is ideal: direct trains to Haneda and walking distance to Ginza and Nihonbashi."),price:_("双人房约2.5–3.5万日元／晚","Double ~¥25,000–35,000/night"),why:_("连住两晚，周五整天购物不用退房，买的东西随时放回房间。","Two nights here, so Friday is a full shopping day with no check-out.")},
+  cost:[[_("起云阁、梅园门票","Kiunkaku & plum garden"),900],[_("三餐和小吃","Meals & snacks"),7000],[_("京急电车","Keikyu train"),600],[_("住宿（双人房平摊）","Hotel (shared double)"),15000]]},
+ {eat:[
+   [_("早餐","Breakfast"),_("筑地场外市场","Tsukiji Outer Market"),_("玉子烧、海鲜盖饭、烤扇贝，边走边吃。","Tamagoyaki, seafood bowls and grilled scallops on the go."),_("约2,000–3,000日元","~¥2,000–3,000")],
+   [_("午餐","Lunch"),_("日本桥 老字号午市套餐","Old-shop lunch set, Nihonbashi"),_("天妇罗、鳗鱼或荞麦面，午市比晚上便宜很多。","Tempura, eel or soba, much cheaper at lunch."),_("约2,000–4,000日元","~¥2,000–4,000")],
+   [_("下午","Snack"),_("银座 百货地下美食","Ginza depachika"),_("试吃点心，顺便买伴手礼。","Taste sweets and buy gifts."),_("约1,000日元","~¥1,000")],
+   [_("晚餐","Dinner"),_("银座 寿喜烧或寿司","Sukiyaki or sushi, Ginza"),_("最后一晚吃好一点，很多老店需要提前预约。","Treat yourself on the last night; many old restaurants need a reservation."),_("约6,000–12,000日元","~¥6,000–12,000")]],
+  stay:{area:_("银座或东京站周边（续住）","Ginza or Tokyo Station (2nd night)"),type:_("同前一晚","Same as last night"),ex:_("明早坐京急直达羽田，不用换车。","Tomorrow Keikyu takes you straight to Haneda, no transfer."),price:_("双人房约2.5–3.5万日元／晚","Double ~¥25,000–35,000/night"),why:_("今晚好好收拾行李，明早轻松出发。","Pack tonight for an easy morning.")},
+  cost:[[_("三餐和小吃","Meals & snacks"),13000],[_("电车","Trains"),600],[_("住宿（双人房平摊）","Hotel (shared double)"),15000]]},
+ {eat:[
+   [_("早餐","Breakfast"),_("羽田机场第3航站楼","Haneda Terminal 3"),_("办完登机后在江户小路吃早餐，有寿司、乌冬和咖啡。","Breakfast on Edo Koji after check-in: sushi, udon or coffee."),_("约1,000–2,000日元","~¥1,000–2,000")]],
+  stay:null,
+  cost:[[_("早餐","Breakfast"),1500],[_("京急电车","Keikyu train"),600]]}
+];
+const CAR = [[_("租车（紧凑车，4天）","Rental (compact, 4 days)"),35000],[_("高速费（ETC）","Tolls (ETC)"),8000],[_("油费","Fuel"),5000],[_("停车费（镰仓较贵）","Parking (Kamakura is pricey)"),5000]];
+
+const PREP = [
+ {g:_("证件与驾驶","Documents & driving"),items:[
+  ["prep-idp",_("国际驾照或驾照日文译本","International Driving Permit or official Japanese translation"),_("中国大陆驾照不能直接在日本开车，要提前确认自己的情况","Mainland China licences are not valid alone in Japan; check what applies to you")],
+  ["prep-passport",_("护照、驾照原件、信用卡","Passport, original licence, credit card"),_("租车时都要出示","All required at pickup")],
+  ["prep-car",_("预约租车：1/25 羽田取，1/28 羽田还","Book car: Haneda pickup 1/25, return 1/28"),_("加ETC卡和全额免责险；防滑胎可选","Add ETC card and full insurance; winter tyres optional")]]},
+ {g:_("需要预约的","Bookings"),items:[
+  ["prep-h1",_("住宿 1/23–1/24：浅草或谷中旅馆（2晚）","Inn 1/23–1/24: Asakusa or Yanaka (2 nights)"),""],
+  ["prep-h2",_("住宿 1/25：镰仓（确认有停车位）","Hotel 1/25: Kamakura (confirm parking)"),""],
+  ["prep-h3",_("住宿 1/26–1/27：修善寺温泉旅馆（2晚，含早晚餐）","Ryokan 1/26–1/27: Shuzenji (2 nights, with meals)"),_("最先订，好房间很快订满","Book first; the best rooms go quickly")],
+  ["prep-h4",_("住宿 1/28–1/29：银座或东京站（2晚）","Hotel 1/28–1/29: Ginza or Tokyo Station (2 nights)"),_("选东银座站附近，京急直达羽田","Near Higashi-Ginza for direct trains to Haneda")],
+  ["prep-bath",_("修善寺旅馆的包场风吕（如有）","Private bath at the Shuzenji ryokan (if offered)"),_("入住时或提前预约","Reserve at check-in or ahead")]]},
+ {g:_("出发前一周","The week before"),items:[
+  ["prep-sim",_("手机eSIM或随身Wi-Fi","eSIM or pocket Wi-Fi"),_("导航必需","Essential for navigation")],
+  ["prep-suica",_("手机钱包添加Suica","Add Suica to your phone wallet"),_("东京和镰仓坐电车用","For trains in Tokyo and Kamakura")],
+  ["prep-cash",_("准备一些日元现金","Carry some yen in cash"),_("寺院门票、小店和老居酒屋常常只收现金","Temples, small shops and old izakaya are often cash-only")],
+  ["prep-cloth",_("保暖外套、好走的鞋","Warm coat and comfortable walking shoes"),_("白天约8–13度，早晚接近0度","Days ~8–13°C, mornings near 0°C")],
+  ["prep-bag",_("留一个空行李箱或折叠包","Pack an empty bag or foldable duffel"),_("周五购物用","For Friday's shopping")],
+  ["prep-dinner",_("预约 1/29 银座告别晚餐","Book farewell dinner in Ginza, 1/29"),_("老字号寿喜烧或寿司店常需预约","Old sukiyaki and sushi places often need a booking")]]}
+];
+
+const SOS = [[_("报警","Police"),"110"],[_("火警、救护车","Fire / ambulance"),"119"],[_("JAF道路救援（手机拨打）","JAF roadside assistance (mobile)"),"#8139"],[_("日本观光厅游客热线（24小时，可用中文）","Japan Visitor Hotline (24h, multilingual)"),"050-3816-2787"]];
+const DRIVE_TIPS = [
+ _("日本靠左行驶，右转时要让对向直行车先走。","Drive on the left. Yield to oncoming traffic when turning right."),
+ _("镰仓市区路窄、周末很堵，车停在酒店，用江之电和步行游览。","Kamakura's streets are narrow and busy. Park at the hotel and use the Enoden and your feet."),
+ _("天城山路早上可能有薄冰，太阳出来后再开最安全。","The Amagi pass can have thin ice early; drive it after the sun is up."),
+ _("看到红色倒三角“止まれ”标志必须完全停车。","Red inverted triangle “止まれ” means a full stop."),
+ _("高速走紫色ETC车道时，车速要降到20公里以下。","Slow to under 20 km/h through purple ETC lanes."),
+ _("伊豆山区加油站少，出发前加满更安心。","Few fuel stations in inland Izu; top up before heading out."),
+ _("还车前要加满油，保留加油收据。","Return the car full and keep the fuel receipt.")
+];
+const TIPS = [
+ _("旅馆的晚餐一般在18:00–19:00开始，迟到要提前打电话通知。","Ryokan dinners start 18:00–19:00. Call ahead if you'll be late."),
+ _("寺院和庭园冬天下午4点到4点半左右就关门，参观尽量安排在中午前后。","Temples and gardens close around 16:00–16:30 in winter; visit around midday."),
+ _("有纹身的话，部分公共浴场不能进，可以选旅馆的包场风吕(貸切風呂)。","Tattoos may be refused at public baths; book a private bath (kashikiri) instead."),
+ _("百货公司购物满5,000日元（未税）可以凭护照办理免税，以店内规定为准。","Department stores offer tax-free shopping on purchases over ¥5,000 with your passport; check each store's rules."),
+ _("便利店(7-11、全家、罗森)可以取钱，24小时营业。","Convenience-store ATMs (7-Eleven, FamilyMart, Lawson) work 24/7.")
+];
+
+
+/* ---- Google Maps routes, leg by leg ---- */
+const PL = {
+  hnd:{n:_("羽田机场第3航站楼","Haneda T3"),q:"Haneda Airport Terminal 3"},
+  hndCar:{n:_("羽田（租车营业所）","Haneda (car rental)"),q:"Haneda Airport"},
+  asa:{n:_("浅草站","Asakusa Sta."),q:"Asakusa Station"},
+  hoppy:{n:_("Hoppy通り","Hoppy Street"),q:"Hoppy Street Asakusa"},
+  senso:{n:_("浅草寺","Senso-ji"),q:"Senso-ji Temple"},
+  yanaka:{n:_("谷中银座","Yanaka Ginza"),q:"Yanaka Ginza Shopping Street"},
+  nezu:{n:_("根津神社","Nezu Shrine"),q:"Nezu Shrine Tokyo"},
+  komachi:{n:_("小町通","Komachi-dori"),q:"Komachi-dori Kamakura"},
+  kmkSta:{n:_("镰仓站","Kamakura Sta."),q:"Kamakura Station"},
+  hase:{n:_("长谷站","Hase Sta."),q:"Hase Station Kanagawa"},
+  daibutsu:{n:_("镰仓大佛","Great Buddha"),q:"Kotoku-in Kamakura"},
+  hasedera:{n:_("长谷寺","Hase-dera"),q:"Hase-dera Kamakura"},
+  shichiri:{n:_("七里滨站","Shichirigahama Sta."),q:"Shichirigahama Station"},
+  hokoku:{n:_("报国寺","Hokokuji"),q:"Hokokuji Temple Kamakura"},
+  hachiman:{n:_("鹤冈八幡宫","Tsurugaoka Hachimangu"),q:"Tsurugaoka Hachimangu"},
+  shuzen:{n:_("修善寺温泉","Shuzenji Onsen"),q:"Shuzenji Onsen"},
+  chikurin:{n:_("竹林小径","Bamboo path"),q:"Chikurin no Komichi Shuzenji"},
+  shuzenT:{n:_("修禅寺","Shuzenji Temple"),q:"Shuzenji Temple Izu"},
+  joren:{n:_("净莲瀑布","Joren Falls"),q:"Joren Falls Izu"},
+  amagi:{n:_("旧天城隧道","Old Amagi Tunnel"),q:"Kyu-Amagi Tunnel"},
+  kiun:{n:_("起云阁","Kiunkaku"),q:"Kiunkaku Atami"},
+  baien:{n:_("热海梅园","Atami Baien"),q:"Atami Baien"},
+  hgz:{n:_("东银座站","Higashi-ginza Sta."),q:"Higashi-ginza Station"},
+  yura:{n:_("有乐町高架桥下","Yurakucho arches"),q:"Yurakucho Gado-shita"},
+  tsukiji:{n:_("筑地场外市场","Tsukiji Outer Market"),q:"Tsukiji Outer Market"},
+  nihon:{n:_("日本桥三越","Nihonbashi Mitsukoshi"),q:"Nihonbashi Mitsukoshi Main Store"},
+  itoya:{n:_("银座伊东屋","Ginza Itoya"),q:"Ginza Itoya"},
+  kappa:{n:_("合羽桥道具街","Kappabashi"),q:"Kappabashi Dougu Street"}
+};
+const MODE = {d:{g:"driving",e:"🚗",l:_("开车","Drive")},t:{g:"transit",e:"🚃",l:_("电车","Train")},w:{g:"walking",e:"🚶",l:_("步行","Walk")}};
+/* each leg: [mode, from, to, via?] ; full: whole-day driving chain */
+const LEGS = [
+ {legs:[["t","hnd","asa"],["w","asa","hoppy"]]},
+ {legs:[["w","asa","senso"],["t","senso","yanaka"],["w","yanaka","nezu"],["t","nezu","asa"]]},
+ {legs:[["t","asa","hnd"],["d","hndCar","komachi"],["t","kmkSta","hase"],["w","hase","daibutsu"],["w","daibutsu","hasedera"],["t","hase","shichiri"],["t","shichiri","kmkSta"]]},
+ {full:["kmkSta","hokoku","hachiman","shuzen"],legs:[["d","kmkSta","hokoku"],["d","hokoku","hachiman"],["d","hachiman","shuzen"],["w","shuzen","chikurin"]]},
+ {full:["shuzen","joren","amagi","shuzen"],legs:[["w","shuzen","shuzenT"],["d","shuzen","joren"],["d","joren","amagi"],["d","amagi","shuzen"]]},
+ {full:["shuzen","kiun","baien","hndCar"],legs:[["d","shuzen","kiun"],["d","kiun","baien"],["d","baien","hndCar"],["t","hnd","hgz"],["w","hgz","yura"]]},
+ {legs:[["w","hgz","tsukiji"],["t","tsukiji","nihon"],["t","nihon","itoya"],["t","itoya","kappa"],["t","kappa","hgz"]]},
+ {legs:[["t","hgz","hnd"]]}
+];
+const gUrl = (m,o,d,via) => "https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(PL[o].q)+"&destination="+encodeURIComponent(PL[d].q)+(via&&via.length?"&waypoints="+encodeURIComponent(via.map(k=>PL[k].q).join("|")):"")+"&travelmode="+MODE[m].g;
+function routesHTML(i){
+  const L = LEGS[i]; if (!L) return "";
+  let h = '<div class="sec"><h3>🧭 '+t(_("分段路线","Route legs"))+'</h3><span>'+t(_("点一段，地图放大显示","tap a leg to zoom the map"))+'</span></div><div class="routes">';
+  if (L.full){ const a=L.full; h += '<a class="rfull" href="'+gUrl("d",a[0],a[a.length-1],a.slice(1,-1))+'" target="_blank" rel="noopener"><span>🚗 '+t(_("全天开车路线","Whole-day drive"))+'</span><b>'+a.map(k=>esc(t(PL[k].n))).join(" → ")+'</b></a>'; }
+  L.legs.forEach((g,n) => { const M = MODE[g[0]];
+    h += '<div class="rleg" role="button" tabindex="0" data-leg="'+n+'" aria-pressed="'+(selLeg===n)+'"><i>'+(n+1)+'</i><span class="rm2">'+M.e+' '+t(M.l)+'</span><b>'+esc(t(PL[g[1]].n))+' → '+esc(t(PL[g[2]].n))+'</b><a href="'+gUrl(g[0],g[1],g[2])+'" target="_blank" rel="noopener" aria-label="Google Maps">G ↗</a></div>'; });
+  return h + '</div><p class="note">'+t(_("地图上的路线按真实地理位置绘制，走向为近似；要实际导航时，点每段右边的“G ↗”打开Google地图。","Routes are drawn on real geography and follow the approximate road and rail corridors. For live navigation, tap “G ↗” on any leg to open Google Maps."))+'</p>';
+}
+
+
+/* ---- In-app route map (real coordinates) ---- */
+const LAND = [[[140.6372,36.5397],[140.6228,36.5059],[140.6084,36.4333],[140.612,36.4181],[140.6228,36.3793],[140.6264,36.3641],[140.6156,36.3371],[140.5796,36.305],[140.5652,36.283],[140.5652,36.2459],[140.5796,36.1614],[140.6084,36.0956],[140.6444,36.0128],[140.7884,35.8085],[140.7704,35.6971],[140.72,35.6819],[140.7164,35.6988],[140.6624,35.6886],[140.5976,35.6515],[140.4824,35.5654],[140.4248,35.4911],[140.3852,35.3813],[140.4068,35.329],[140.414,35.302],[140.4032,35.2597],[140.3996,35.2226],[140.3924,35.1973],[140.378,35.177],[140.3492,35.1804],[140.3312,35.1584],[140.3348,35.1415],[140.3204,35.1297],[140.3024,35.1331],[140.2952,35.1466],[140.2772,35.1314],[140.252,35.1348],[140.2376,35.1128],[140.2016,35.1145],[140.1548,35.1179],[140.1332,35.123],[140.1044,35.0976],[140.1008,35.0757],[140.0756,35.0588],[140.054,35.0588],[140.0216,35.0385],[139.9892,35.02],[139.982,35.0081],[139.9748,34.9896],[139.964,34.9761],[139.964,34.9592],[139.9604,34.9406],[139.9532,34.9288],[139.9424,34.9186],[139.928,34.9068],[139.8992,34.9034],[139.8812,34.9018],[139.8704,34.9051],[139.856,34.9018],[139.8416,34.9001],[139.838,34.9051],[139.8236,34.9119],[139.8236,34.922],[139.8236,34.9355],[139.8092,34.944],[139.7804,34.9541],[139.7552,34.9558],[139.7516,34.9642],[139.7516,34.9761],[139.766,34.9761],[139.784,34.9744],[139.7948,34.9727],[139.8092,34.9761],[139.82,34.9811],[139.8272,34.9896],[139.8416,34.9913],[139.8596,34.9862],[139.8668,34.9913],[139.8704,34.9997],[139.8668,35.0132],[139.856,35.0216],[139.8344,35.0267],[139.8344,35.0368],[139.8452,35.047],[139.8488,35.0588],[139.8488,35.0689],[139.838,35.0875],[139.8344,35.0993],[139.838,35.1348],[139.82,35.1584],[139.8236,35.1702],[139.82,35.1854],[139.8236,35.199],[139.8524,35.2141],[139.8668,35.2243],[139.8668,35.2462],[139.8488,35.2716],[139.8488,35.2935],[139.8092,35.3053],[139.7804,35.3138],[139.7804,35.3188],[139.802,35.3172],[139.8236,35.329],[139.8236,35.3475],[139.838,35.3594],[139.8452,35.3763],[139.892,35.3644],[139.9064,35.3779],[139.9064,35.3931],[139.8992,35.4235],[139.9136,35.4337],[139.9424,35.4421],[139.9604,35.4556],[139.982,35.459],[140.0072,35.4742],[140.0216,35.4911],[140.0432,35.513],[140.072,35.5434],[140.09,35.54],[140.0972,35.5552],[140.1008,35.5671],[140.0864,35.5671],[140.0828,35.5856],[140.0792,35.6042],[140.0648,35.616],[140.0468,35.6312],[140.0324,35.6414],[140.0072,35.6599],[139.9964,35.6566],[139.982,35.6684],[139.9496,35.6718],[139.9208,35.6616],[139.9388,35.6363],[139.9136,35.6245],[139.8956,35.6143],[139.892,35.6228],[139.8812,35.6245],[139.8704,35.6312],[139.8632,35.6312],[139.8488,35.638],[139.8416,35.6295],[139.838,35.6143],[139.8236,35.6228],[139.82,35.638],[139.8056,35.638],[139.802,35.6194],[139.7876,35.6025],[139.7732,35.6177],[139.7768,35.6414],[139.766,35.6532],[139.7588,35.6312],[139.7696,35.6008],[139.784,35.5806],[139.784,35.5687],[139.7984,35.54],[139.7876,35.5265],[139.7876,35.513],[139.7876,35.5113],[139.7768,35.5012],[139.7444,35.4843],[139.7156,35.4641],[139.6868,35.4607],[139.6652,35.4674],[139.6508,35.4641],[139.6436,35.4539],[139.6616,35.4472],[139.6796,35.4387],[139.6868,35.432],[139.6832,35.4185],[139.6868,35.3999],[139.676,35.4016],[139.6508,35.41],[139.6364,35.4016],[139.6436,35.3881],[139.658,35.3763],[139.6544,35.3391],[139.6508,35.3273],[139.6508,35.3104],[139.6472,35.2986],[139.658,35.2868],[139.6652,35.2986],[139.676,35.2918],[139.694,35.2682],[139.7336,35.2648],[139.7444,35.2496],[139.7264,35.2327],[139.73,35.2293],[139.73,35.226],[139.7336,35.2226],[139.7264,35.2074],[139.6904,35.2091],[139.6652,35.1939],[139.6616,35.1787],[139.6688,35.1601],[139.6796,35.15],[139.6868,35.1399],[139.676,35.1365],[139.6652,35.1348],[139.64,35.1399],[139.6256,35.1314],[139.6148,35.1348],[139.6112,35.1415],[139.6148,35.1534],[139.6148,35.1736],[139.6004,35.2023],[139.6256,35.2125],[139.6184,35.2192],[139.604,35.2243],[139.5968,35.2395],[139.568,35.2682],[139.568,35.2766],[139.5608,35.2868],[139.55,35.2884],[139.5428,35.3087],[139.5284,35.302],[139.5068,35.3036],[139.4852,35.3003],[139.4672,35.3138],[139.4132,35.3188],[139.3304,35.3036],[139.2836,35.2969],[139.2332,35.2851],[139.1828,35.2631],[139.1468,35.2344],[139.1432,35.1838],[139.1576,35.1365],[139.1216,35.15],[139.0892,35.1095],[139.0784,35.0757],[139.0748,35.0537],[139.1072,35.0487],[139.1,35.0301],[139.0964,35.0115],[139.0856,34.998],[139.1,34.9744],[139.1324,34.9659],[139.1432,34.9423],[139.1468,34.9051],[139.1396,34.8714],[139.118,34.868],[139.1,34.8562],[139.0892,34.8427],[139.0856,34.8292],[139.0748,34.8089],[139.0604,34.792],[139.0532,34.7785],[139.0424,34.7684],[139.028,34.765],[139.0172,34.7549],[139.01,34.7464],[138.9992,34.7329],[139.0028,34.7211],[138.9956,34.7143],[138.9884,34.7008],[138.9848,34.6839],[138.9884,34.6654],[138.992,34.6502],[138.9812,34.6451],[138.974,34.6451],[138.9632,34.6519],[138.9416,34.6603],[138.8948,34.6282],[138.8624,34.613],[138.8336,34.5961],[138.8192,34.6029],[138.8048,34.613],[138.794,34.6265],[138.7724,34.6468],[138.7796,34.6637],[138.7724,34.6704],[138.7652,34.6755],[138.758,34.6789],[138.7508,34.6822],[138.7472,34.6907],[138.7472,34.7093],[138.7436,34.7295],[138.758,34.738],[138.7616,34.7481],[138.776,34.7515],[138.758,34.7819],[138.7472,34.814],[138.758,34.8292],[138.7616,34.846],[138.7616,34.8494],[138.7616,34.8697],[138.7544,34.8798],[138.7616,34.8933],[138.776,34.9051],[138.7904,34.9068],[138.7796,34.922],[138.7724,34.9322],[138.7652,34.9558],[138.7616,34.9794],[138.776,35.0031],[138.7868,35.0267],[138.8264,35.0233],[138.8552,35.0183],[138.8768,35.02],[138.8948,35.02],[138.9092,35.0301],[138.8552,35.0791],[138.8372,35.0993],[138.8048,35.1213],[138.7436,35.1348],[138.6968,35.1382],[138.6644,35.1263],[138.6356,35.1162],[138.5852,35.1145],[138.5528,35.0959],[138.5276,35.0504],[138.4988,35.0318],[138.4952,35.0014],[138.506,34.9913],[138.506,35.0115],[138.5204,35.02],[138.5312,35.0166],[138.5132,34.9794],[138.47,34.9592],[138.4304,34.944],[138.4016,34.9322],[138.3656,34.917],[138.3548,34.9034],[138.3476,34.8883],[138.3368,34.8747],[138.3296,34.8545],[138.3296,34.846],[138.3404,34.8258],[138.326,34.8072],[138.3152,34.7988],[138.2936,34.765],[138.2504,34.7397],[138.2144,34.7126],[138.2,34.6603],[138.1928,34.6417],[138.2,34.6215],[138.2252,34.6164],[138.2396,34.6029],[138.2324,34.5944],[138.1892,34.6012],[138.0488,34.6552],[137.5,34.66],[137.5,37.2],[140.64,37.2]],[[139.4168,34.7802],[139.4384,34.7717],[139.4492,34.7565],[139.4564,34.738],[139.46,34.7143],[139.4564,34.6907],[139.4528,34.6789],[139.442,34.6772],[139.4204,34.6772],[139.3592,34.7025],[139.352,34.7194],[139.352,34.7667],[139.3556,34.7971],[139.4024,34.7886],[139.4168,34.7802]]];
+const GEO = {hnd:[35.5494,139.7798],hndCar:[35.5494,139.7798],asa:[35.7110,139.7967],hoppy:[35.7140,139.7926],senso:[35.7148,139.7967],
+ yanaka:[35.7276,139.7657],nezu:[35.7203,139.7607],komachi:[35.3205,139.5527],kmkSta:[35.3190,139.5505],hase:[35.3125,139.5355],
+ daibutsu:[35.3167,139.5357],hasedera:[35.3123,139.5332],shichiri:[35.3065,139.5107],hokoku:[35.3197,139.5617],hachiman:[35.3259,139.5564],
+ shuzen:[34.9700,138.9300],chikurin:[34.9708,138.9286],shuzenT:[34.9707,138.9306],joren:[34.8633,138.9310],amagi:[34.8170,138.9460],
+ kiun:[35.0977,139.0700],baien:[35.0910,139.0560],hgz:[35.6694,139.7671],yura:[35.6747,139.7628],tsukiji:[35.6654,139.7707],
+ nihon:[35.6856,139.7735],itoya:[35.6720,139.7672],kappa:[35.7128,139.7880]};
+/* intermediate points so lines follow the real road/rail corridor (approximate) */
+const VIA = {
+ "hnd>asa":[[35.628,139.739],[35.646,139.747],[35.669,139.767],[35.700,139.787]],
+ "asa>hnd":[[35.700,139.787],[35.669,139.767],[35.646,139.747],[35.628,139.739]],
+ "hgz>hnd":[[35.646,139.747],[35.628,139.739]],"hnd>hgz":[[35.628,139.739],[35.646,139.747]],
+ "senso>yanaka":[[35.712,139.777],[35.728,139.771]],"nezu>asa":[[35.712,139.777]],
+ "hndCar>komachi":[[35.500,139.680],[35.444,139.620],[35.380,139.600],[35.335,139.585]],
+ "hase>shichiri":[[35.307,139.523]],"shichiri>kmkSta":[[35.307,139.523],[35.3125,139.5355]],
+ "hachiman>shuzen":[[35.307,139.500],[35.300,139.420],[35.270,139.250],[35.256,139.160],[35.190,139.040],[35.125,138.925],[35.030,138.935]],
+ "shuzen>joren":[[34.935,138.940],[34.895,138.935]],"joren>amagi":[[34.840,138.942]],"amagi>shuzen":[[34.840,138.942],[34.895,138.935],[34.935,138.940]],
+ "shuzen>kiun":[[35.030,138.935],[35.080,138.960],[35.100,139.030]],
+ "baien>hndCar":[[35.150,139.100],[35.256,139.160],[35.430,139.360],[35.530,139.550],[35.560,139.700]],
+ "itoya>kappa":[[35.712,139.777],[35.7115,139.7845]],"kappa>hgz":[[35.7115,139.7845],[35.700,139.787]],
+ "tsukiji>nihon":[[35.6745,139.7700]]
+};
+let mapView = null, selLeg = -1;
+function legPts(g){ const via = VIA[g[1]+">"+g[2]] || []; return [GEO[g[1]], ...via, GEO[g[2]]]; }
+function fitView(pts){
+  let a=90,b=-90,c=180,d=-180; pts.forEach(([la,lo])=>{a=Math.min(a,la);b=Math.max(b,la);c=Math.min(c,lo);d=Math.max(d,lo);});
+  const cl=(a+b)/2, k=Math.cos(cl*Math.PI/180);
+  let spanLo=Math.max((d-c)*1.3,(b-a)*1.3/k*1.2,0.012);
+  return {la:cl, lo:(c+d)/2, span:spanLo};
+}
+function dayMapSVG(){
+  const L = LEGS[cur]; const W=360,H=300;
+  if (!mapView) {
+    const pts = selLeg>=0 ? legPts(L.legs[selLeg]) : L.legs.flatMap(legPts);
+    mapView = fitView(pts);
+  }
+  const v = mapView, k = Math.cos(v.la*Math.PI/180), s = W/v.span;
+  const X = lo => (lo - v.lo)*s + W/2, Y = la => (v.la - la)*s/k + H/2;
+  /* note: 1 deg lat = 1/cos(lat) deg lon in distance */
+  const P = ([la,lo]) => X(lo).toFixed(1)+","+Y(la).toFixed(1);
+  let o = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t(DAYS[cur].title))+'"><rect width="'+W+'" height="'+H+'" fill="var(--sea)"/>';
+  o += LAND.map(r=>'<path d="M'+r.map(([lo,la])=>X(lo).toFixed(1)+","+Y(la).toFixed(1)).join("L")+'Z" fill="var(--land)" stroke="var(--land-edge)" stroke-width="1"/>').join("");
+  /* scale bar */
+  const kmPerPx = v.span*111.32*k/W, steps=[0.1,0.2,0.5,1,2,5,10,20,50]; let km=steps[0]; for(const st of steps){ if(st/kmPerPx < 110) km=st; }
+  const bw = km/kmPerPx;
+  o += '<g transform="translate('+(W-bw-12)+','+(H-14)+')"><rect x="-4" y="-14" width="'+(bw+8)+'" height="20" rx="5" fill="var(--surface)" opacity=".85"/><line x1="0" y1="0" x2="'+bw.toFixed(1)+'" y2="0" stroke="var(--ink)" stroke-width="2"/><text x="'+(bw/2).toFixed(1)+'" y="-4" text-anchor="middle" font-size="10" font-family="var(--mono)" fill="var(--ink)">'+(km<1?(km*1000)+" m":km+" km")+'</text></g>';
+  /* legs */
+  L.legs.forEach((g,i) => {
+    const on = selLeg<0 || selLeg===i, dash = g[0]==="t" ? '8 6' : g[0]==="w" ? '2 5' : '';
+    o += '<polyline points="'+legPts(g).map(P).join(" ")+'" fill="none" stroke="var(--dc)" stroke-width="'+(on?(g[0]==="w"?3.5:4.5):2.5)+'" stroke-linecap="round" stroke-linejoin="round" opacity="'+(on?1:.3)+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>';
+  });
+  /* stops, numbered in order of first appearance */
+  const order = []; L.legs.forEach(g => { [g[1],g[2]].forEach(kk => { const key = kk==="hndCar"?"hnd":kk; if (!order.includes(key)) order.push(key); }); });
+  const placed = [];
+  order.forEach((kk,n) => {
+    const [la,lo] = GEO[kk], x = X(lo), y = Y(la);
+    if (x<-20||x>W+20||y<-20||y>H+20) return;
+    const near = placed.some(([px,py]) => Math.hypot(px-x,py-y) < 16);
+    placed.push([x,y]);
+    o += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="10" fill="var(--dc)" stroke="#fff" stroke-width="2"/><text class="num" x="'+x.toFixed(1)+'" y="'+(y+4).toFixed(1)+'" text-anchor="middle">'+(n+1)+'</text>';
+    if (!near) { const right = x < W-90; o += '<text class="lbl" x="'+(right?x+14:x-14).toFixed(1)+'" y="'+(y+4).toFixed(1)+'" text-anchor="'+(right?"start":"end")+'">'+esc(t(PL[kk].n))+'</text>'; }
+  });
+  return o + '</svg>';
+}
+function dayMapHTML(){
+  return '<div class="dmap" id="dmap"><div id="dmapSvg">'+dayMapSVG()+'</div><span class="dhint">'+t(_("拖动・双指缩放","Drag · pinch to zoom"))+'</span><div class="zoom"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zFit" aria-label="Fit route">⤢</button></div><div class="dlegend"><span><i></i>'+t(MODE.d.l)+'</span><span><i class="t"></i>'+t(MODE.t.l)+'</span><span><i class="w"></i>'+t(MODE.w.l)+'</span></div></div>';
+}
+function redrawMap(){ const el = $("#dmapSvg"); if (el) el.innerHTML = dayMapSVG(); }
+function wireMap(){
+  const box = $("#dmap"); if (!box) return;
+  const zoom = f => { mapView.span = Math.min(Math.max(mapView.span*f, 0.004), 3); redrawMap(); };
+  $("#zIn").onclick = () => zoom(0.6); $("#zOut").onclick = () => zoom(1.6);
+  $("#zFit").onclick = () => { selLeg=-1; mapView=null; redrawMap(); markLegs(); };
+  const ptrs = new Map(); let startDist = 0, startSpan = 0;
+  const svgEl = () => box.querySelector("svg");
+  box.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; box.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if (ptrs.size===2){ const [a,b]=[...ptrs.values()]; startDist=Math.hypot(a.x-b.x,a.y-b.y); startSpan=mapView.span; } });
+  box.addEventListener("pointermove", e => { if (!ptrs.has(e.pointerId)) return; const prev = ptrs.get(e.pointerId); const cur2 = {x:e.clientX,y:e.clientY}; ptrs.set(e.pointerId,cur2);
+    const r = svgEl().getBoundingClientRect(), scale = 360/r.width;
+    if (ptrs.size===1){ const k=Math.cos(mapView.la*Math.PI/180), s=360/mapView.span;
+      mapView.lo -= (cur2.x-prev.x)*scale/s; mapView.la += (cur2.y-prev.y)*scale/s*k; redrawMap(); }
+    else if (ptrs.size===2 && startDist){ const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y);
+      mapView.span = Math.min(Math.max(startSpan*startDist/d,0.004),3); redrawMap(); } });
+  const end = e => { ptrs.delete(e.pointerId); if (ptrs.size<2) startDist=0; };
+  box.addEventListener("pointerup", end); box.addEventListener("pointercancel", end);
+  box.addEventListener("wheel", e => { e.preventDefault(); zoom(e.deltaY>0?1.25:0.8); }, {passive:false});
+}
+function markLegs(){ document.querySelectorAll(".rleg").forEach(b => b.setAttribute("aria-pressed", +b.dataset.leg===selLeg)); }
+
+const $ = s => document.querySelector(s);
+const store = {
+  get(k){try{return JSON.parse(localStorage.getItem("kanto27:"+k))}catch(e){return null}},
+  set(k,v){try{localStorage.setItem("kanto27:"+k,JSON.stringify(v))}catch(e){}}
+};
+const esc = s => { const d=document.createElement("div"); d.textContent = s; return d.innerHTML; };
+let money = "jpy", rate = 0.0259;
+const FLIGHT_RM = 5000; /* RM10,000 for 2 people */
+try { const m = JSON.parse(localStorage.getItem("kanto27:money")); if (["jpy","myr","both"].includes(m)) money = m; } catch(e) {}
+try { const r = JSON.parse(localStorage.getItem("kanto27:rate")); if (typeof r === "number" && r > 0) rate = r; } catch(e) {}
+const rmNum = n => { const v = n*rate; return v < 10 ? v.toFixed(1) : Math.round(v).toLocaleString("en-US"); };
+const jp = n => "¥"+n.toLocaleString("en-US");
+const yen = n => money==="myr" ? "RM"+rmNum(n) : money==="both" ? jp(n)+'<span class="rm">≈ RM'+rmNum(n)+'</span>' : jp(n);
+function fx(s){
+  if (money === "jpy" || !s) return s;
+  const conv = (a,b,man) => { const k = man ? 10000 : 1; const A = parseFloat(a.replace(/,/g,""))*k, B = b ? parseFloat(b.replace(/,/g,""))*k : null; return "RM"+rmNum(A)+(B?"–"+rmNum(B):""); };
+  const rep = (m,a,b,man) => money==="myr" ? conv(a,b,man) : m+" (≈"+conv(a,b,man)+")";
+  return s.replace(/(\d[\d,.]*)(?:–(\d[\d,.]*))?(万)?日元/g, (m,a,b,man)=>rep(m,a,b,man))
+          .replace(/¥(\d[\d,]*)(?:–(\d[\d,]*))?/g, (m,a,b)=>rep(m,a,b,false));
+}
+let cur = store.get("day");
+if (typeof cur !== "number" || cur < 0 || cur > 7) {
+  const diff = Math.floor((new Date() - new Date(2027,0,23))/86400000);
+  cur = diff >= 0 && diff <= 7 ? diff : 0;
+}
+let view = "plan";
+
+/* cost category for bar colours */
+function cat(label){
+  const z = label.z;
+  if (/住宿|旅馆/.test(z)) return 1;
+  if (/门票|抹茶|大佛|起云阁/.test(z)) return 2;
+  if (/电车|京急/.test(z)) return 3;
+  return 0;
+}
+const CATC = ["#F2A33A","#5B6CFF","#13A08F","#E8336F"];
+
+function renderHero(){
+  document.documentElement.lang = lang === "en" ? "en" : "zh-CN";
+  document.title = lang === "en" ? "Old Japan, Slowly · Jan 23–30" : "慢游旧时光 东京・伊豆 1/23–1/30";
+  $("#hTitle").innerHTML = t(UI.title);
+  $("#hSub").textContent = t(UI.sub);
+  const L = t(UI.stats), now = new Date(), s = new Date(2027,0,23), e = new Date(2027,0,31);
+  let cd;
+  if (now < s) cd = '<div class="hs cd"><b>'+Math.ceil((s-now)/86400000)+'</b><span>'+L[3]+'</span></div>';
+  else if (now < e) cd = '<div class="hs cd"><b>'+(Math.floor((now-s)/86400000)+1)+'/8</b><span>'+t(UI.live)+'</span></div>';
+  else cd = '<div class="hs cd"><b>✓</b><span>'+t(UI.over)+'</span></div>';
+  $("#hStats").innerHTML = cd + '<div class="hs"><b>8</b><span>'+L[0]+'</span></div><div class="hs"><b>~300</b><span>'+L[1]+'</span></div><div class="hs"><b>2</b><span>'+L[2]+'</span></div>';
+  document.querySelectorAll(".lang button[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  document.querySelectorAll("#curT button").forEach(b => b.setAttribute("aria-pressed", b.dataset.cur === money));
+  document.querySelectorAll(".tabbar button").forEach((b,i) => b.querySelector("span").textContent = t(UI.tabs[i]));
+  $("#foot").textContent = t(UI.foot);
+}
+
+function setDayColors(){
+  const th = THEME[cur];
+  document.documentElement.style.setProperty("--dc", th.c);
+  document.documentElement.style.setProperty("--dc2", th.c2);
+}
+
+function renderStrip(){
+  $("#strip").innerHTML = DAYS.map((d,i) =>
+    '<button class="chip" role="tab" aria-selected="'+(i===cur)+'" data-i="'+i+'" style="--dc:'+THEME[i].c+'"><span class="em">'+THEME[i].e+'</span><span class="n">D'+(i+1)+' · '+d.d+'</span><span class="s">'+esc(t(d.short))+'</span></button>').join("");
+  $("#strip").querySelectorAll(".chip").forEach(b => b.onclick = () => go(+b.dataset.i));
+  const sel = $("#strip").querySelector('[aria-selected="true"]');
+  if (sel && sel.scrollIntoView) sel.scrollIntoView({block:"nearest",inline:"center",behavior:"smooth"});
+}
+
+const ALL = ["asakusa","haneda","kamakura","shuzenji","joren","shuzenji","atami","haneda","ginza"];
+function mapSVG(){
+  const d = DAYS[cur], pts = a => a.map(k => P[k].x+","+P[k].y).join(" ");
+  const len = a => { let L=0; for(let i=1;i<a.length;i++){const p=P[a[i-1]],q=P[a[i]];L+=Math.hypot(q.x-p.x,q.y-p.y);} return Math.ceil(L)+2; };
+  const on = new Set([...d.seg,...d.train]); if (cur===0||cur===7) on.add("haneda");
+  let s = '<svg viewBox="0 0 380 460" role="img"><title>'+esc(t(d.title))+'</title>';
+  s += '<defs><pattern id="g" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M20 0H0V20" fill="none" stroke="rgba(244,247,255,.05)"/></pattern></defs>';
+  s += '<rect width="380" height="460" fill="url(#g)"/>';
+  s += '<path d="M300 130 C270 180 240 230 200 250 C160 270 110 290 95 330 C85 360 80 420 90 460 L380 460 L380 130 Z" fill="rgba(70,130,200,.12)"/><text x="190" y="330" fill="rgba(244,247,255,.35)" font-size="12" font-family="var(--sans)">'+t(_("相模湾","Sagami Bay"))+'</text><text x="320" y="200" fill="rgba(244,247,255,.35)" font-size="12" font-family="var(--sans)">'+t(_("东京湾","Tokyo Bay"))+'</text>';
+  s += '<polyline points="'+pts(ALL)+'" fill="none" stroke="rgba(244,247,255,.18)" stroke-width="2" stroke-dasharray="3 5" stroke-linejoin="round"/>';
+  if (d.seg.length) s += '<polyline class="seg" style="--len:'+len(d.seg)+'" points="'+pts(d.seg)+'" fill="none" stroke="'+THEME[cur].c+'" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>';
+  if (d.train.length) s += '<polyline class="seg" style="--len:'+len(d.train)+'" points="'+pts(d.train)+'" fill="none" stroke="'+THEME[cur].c+'" stroke-width="5" stroke-linecap="round"/>';
+  for (const k in P){
+    const p = P[k], hot = on.has(k);
+    if (hot) s += '<circle class="pulse" cx="'+p.x+'" cy="'+p.y+'" r="6" fill="'+THEME[cur].c+'"/>';
+    s += '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(hot?6:3.5)+'" fill="'+(hot?"#fff":"rgba(244,247,255,.45)")+'" stroke="'+(hot?THEME[cur].c:"none")+'" stroke-width="3"/>';
+    s += '<text x="'+(p.x+p.o[0])+'" y="'+(p.y+p.o[1])+'" text-anchor="'+p.a+'" fill="'+(hot?"#fff":"rgba(244,247,255,.5)")+'" font-size="'+(hot?14:12)+'" font-weight="'+(hot?700:400)+'" font-family="var(--sans)">'+esc(t(p.n))+'</text>';
+  }
+  return s + '</svg>';
+}
+
+function renderDay(){
+  setDayColors();
+  const d = DAYS[cur], x = EXTRA[cur], th = THEME[cur], done = store.get("done-"+cur) || {};
+  const [mo,da] = d.d.split("/");
+  const dateStr = lang==="en" ? (t(d.w)+" · JAN "+da).toUpperCase() : mo+"月"+da+"日 · "+t(d.w);
+  const isTrain = d.train.length > 0;
+  let h = '<div class="fade">';
+  h += '<div class="dayhero"><div class="big">D'+(cur+1)+'</div><div class="emoji">'+th.e+'</div><div class="date">'+dateStr+'</div><h2>'+esc(t(d.title))+'</h2><p>'+esc(t(d.intro))+'</p><div class="pills">';
+  if (t(d.km) !== "—") h += '<span class="pill">🛣 <b>'+esc(t(d.km))+'</b></span>';
+  if (t(d.drive) !== "—") h += '<span class="pill">'+(isTrain?"🚃 ":"🚗 ")+'<b>'+fx(esc(t(d.drive)))+'</b></span>';
+  if (t(d.stay) !== "—") h += '<span class="pill">🛏 <b>'+esc(t(d.stay))+'</b></span>';
+  h += '</div>' + (LEGS[cur] ? '<a class="go" href="#routes">'+t(_("🧭 分段路线 ↓","🧭 Route legs ↓"))+'</a>' : '') + '</div>';
+  h += dayMapHTML();
+  h += '<div id="routes">'+routesHTML(cur)+'</div>';
+
+  const nSpots = d.stops.filter(s=>s.k!=="drive").length;
+  h += '<div class="sec"><h3>'+t(UI.plan)+'</h3><span>'+t(UI.stops)(nSpots)+'</span></div><ol class="tl">';
+  d.stops.forEach((s,i) => {
+    if (s.k === "drive"){ h += '<li class="leg"><span>'+(isTrain?"🚃 ":"🚗 ")+esc(t(s.n))+'</span></li>'; return; }
+    const isDone = !!done[i];
+    h += '<li class="st '+s.k+(isDone?" done":"")+'"><span class="tm">'+esc(t(s.t))+'</span><span class="nd"></span><div class="card"><details'+(i===firstOpen(d)?" open":"")+'><summary><div class="ttl"><h4>'+esc(t(s.n))+'</h4>'+(s.jp?'<div class="jp">'+esc(s.jp)+'</div>':'')+'</div>'+(s.book?'<span class="badge" title="booking"></span>':'')+'<span class="chev">▼</span></summary><div class="more">';
+    if (s.p) h += '<p>'+esc(t(s.p))+'</p>';
+    if (s.tips) h += '<ul>'+s.tips.map(z=>'<li>'+esc(t(z))+'</li>').join("")+'</ul>';
+    if (s.book) h += '<span class="tag warn">⏰ '+esc(t(s.book))+'</span>';
+    if (s.tel) h += '<span class="tag nav">'+t(UI.navTel)+s.tel+'</span>';
+    if (s.k === "spot"){
+      h += '<div class="acts">';
+      if (s.q) h += '<a href="https://www.google.com/search?tbm=isch&q='+encodeURIComponent((s.jp||s.q)+(lang==="en"?" winter":" 冬"))+'" target="_blank" rel="noopener">'+t(UI.photos)+'</a><a href="'+gmap(s.q)+'" target="_blank" rel="noopener">'+t(UI.mapB)+'</a>';
+      if (s.tel) h += '<a href="tel:+81'+s.tel.replace(/^0/,"").replace(/-/g,"")+'">'+t(UI.call)+'</a>';
+      h += '<button data-stop="'+i+'" aria-pressed="'+isDone+'">'+t(isDone?UI.done:UI.mark)+'</button></div>';
+    }
+    h += '</div></details></div></li>';
+  });
+  h += '</ol>';
+
+  h += '<div class="sec"><h3>🍜 '+t(UI.eat)+'</h3><span>'+(x.eat.length>1?t(UI.swipe):"")+'</span></div><div class="eats">';
+  x.eat.forEach(e => h += '<div class="eat"><span class="ml">'+esc(t(e[0]))+'</span><h4>'+esc(t(e[1]))+'</h4><p>'+esc(t(e[2]))+'</p><span class="pr">'+fx(esc(t(e[3])))+'</span></div>');
+  h += '</div>';
+
+  if (x.stay){
+    h += '<div class="sec"><h3>🌙 '+t(UI.sleep)+'</h3></div><div class="staycard"><span class="moon">'+(cur===3||cur===4?"♨️":"🏨")+'</span><h4>'+esc(t(x.stay.area))+'</h4><div class="ty">'+esc(t(x.stay.type))+'</div><span class="price">'+fx(esc(t(x.stay.price)))+'</span><p>'+esc(t(x.stay.ex))+'</p><p>'+esc(t(x.stay.why))+'</p></div>';
+  }
+
+  const tot = x.cost.reduce((a,c)=>a+c[1],0);
+  h += '<div class="sec"><h3>💴 '+t(UI.costT)+'</h3></div><div class="cost"><div class="tot"><b>'+yen(tot)+'</b><span>'+t(UI.pp)+'</span></div><div class="bar">';
+  x.cost.forEach(c => h += '<i style="width:'+(c[1]/tot*100)+'%;background:'+CATC[cat(c[0])]+'"></i>');
+  h += '</div>';
+  x.cost.forEach(c => h += '<div class="crow"><span><span class="dot" style="background:'+CATC[cat(c[0])]+'"></span>'+esc(t(c[0]))+'</span><b>'+yen(c[1])+'</b></div>');
+  h += '</div>' + ([2,3,4,5].includes(cur) ? '<p class="note">🚗 '+t(UI.carNote)+'</p>' : '');
+
+  const pv = DAYS[cur-1], nx = DAYS[cur+1];
+  h += '<div class="pager"><button id="pv"'+(pv?'':' disabled')+'>← '+t(UI.prev)+(pv?'<b>'+esc(t(pv.short))+'</b>':'<b>&nbsp;</b>')+'</button><button id="nx"'+(nx?'':' disabled')+'>'+t(UI.next)+' →'+(nx?'<b>'+esc(t(nx.short))+'</b>':'<b>&nbsp;</b>')+'</button></div>';
+  h += '</div>';
+  $("#dayview").innerHTML = h;
+  wireMap();
+  $("#dayview").querySelectorAll(".rleg").forEach(b => { const pick = e => { if (e.target.closest("a")) return; const n=+b.dataset.leg; selLeg = selLeg===n ? -1 : n; mapView=null; redrawMap(); markLegs(); $("#dmap").scrollIntoView && $("#dmap").scrollIntoView({behavior:"smooth",block:"center"}); };
+    b.onclick = pick; b.onkeydown = e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(e); } }; });
+  $("#dayview").querySelectorAll("button[data-stop]").forEach(b => b.onclick = () => {
+    const m = store.get("done-"+cur) || {}; m[b.dataset.stop] = !m[b.dataset.stop]; store.set("done-"+cur, m);
+    const li = b.closest(".st"); const on = !!m[b.dataset.stop];
+    li.classList.toggle("done", on); b.setAttribute("aria-pressed", on); b.textContent = t(on?UI.done:UI.mark);
+  });
+  const pvb = $("#pv"), nxb = $("#nx");
+  if (pvb) pvb.onclick = () => go(cur-1, true);
+  if (nxb) nxb.onclick = () => go(cur+1, true);
+}
+function firstOpen(d){ return d.stops.findIndex(s => s.k === "spot"); }
+
+function go(i, scroll){
+  if (i < 0 || i > 7) return;
+  cur = i; selLeg = -1; mapView = null; store.set("day", cur); renderStrip(); renderDay();
+  if (scroll) $("#strip").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function ringSVG(n,m){
+  const r = 34, c = 2*Math.PI*r, f = m ? n/m : 0;
+  return '<svg width="84" height="84" viewBox="0 0 84 84"><circle cx="42" cy="42" r="'+r+'" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="8"/><circle cx="42" cy="42" r="'+r+'" fill="none" stroke="#FF8A6B" stroke-width="8" stroke-linecap="round" stroke-dasharray="'+(c*f)+' '+c+'" transform="rotate(-90 42 42)"/><text x="42" y="47" text-anchor="middle" fill="#F4F7FF" font-family="var(--mono)" font-size="16" font-weight="700">'+n+'/'+m+'</text></svg>';
+}
+
+function renderPrep(){
+  const st = store.get("prep") || {};
+  const total = PREP.reduce((a,g)=>a+g.items.length,0);
+  const n = PREP.reduce((a,g)=>a+g.items.filter(it=>st[it[0]]).length,0);
+  let h = '<div class="fade"><div class="ring">'+ringSVG(n,total)+'<div><h3>'+t(UI.prepT)+'</h3><p>'+t(UI.prepTip)+'</p></div></div>';
+  PREP.forEach(g => {
+    h += '<div class="grp"><h4>'+esc(t(g.g))+'</h4>';
+    g.items.forEach(([id,a,b]) => { const sub = t(b);
+      h += '<label class="chk"><input type="checkbox" data-id="'+id+'"'+(st[id]?" checked":"")+'><span>'+esc(t(a))+(sub?'<small>'+esc(sub)+'</small>':'')+'</span></label>'; });
+    h += '</div>';
+  });
+  $("#view-prep").innerHTML = h + '</div>';
+  $("#view-prep").querySelectorAll("input").forEach(c => c.onchange = () => {
+    const s = store.get("prep") || {}; s[c.dataset.id] = c.checked; store.set("prep", s);
+    const n2 = PREP.reduce((a,g)=>a+g.items.filter(it=>s[it[0]]).length,0);
+    $("#view-prep .ring svg").outerHTML = ringSVG(n2,total);
+  });
+}
+
+function renderInfo(){
+  const perP = EXTRA.reduce((a,x)=>a+x.cost.reduce((b,c)=>b+c[1],0),0);
+  const carT = CAR.reduce((a,c)=>a+c[1],0);
+  const flightY = Math.round(FLIGHT_RM/rate);
+  const dayT = EXTRA.map(x=>x.cost.reduce((b,c)=>b+c[1],0)), mx = Math.max(...dayT);
+  let h = '<div class="fade"><div class="sec"><h3>🆘 '+t(UI.sos)+'</h3></div><div class="sos" style="margin-top:0">';
+  SOS.forEach(([a,b]) => h += '<a href="tel:'+b.replace(/-/g,"").replace("#","%23")+'"><b>'+b+'</b><span>'+esc(t(a))+'</span></a>');
+  h += '</div>';
+  h += '<div class="sec"><h3>💴 '+t(UI.budT)+'</h3><span>'+t(UI.budSub)+'</span></div>';
+  h += '<div class="fxcard"><div class="fxrow">¥100 = RM <input id="fxIn" type="number" inputmode="decimal" step="0.01" min="0.5" max="10" value="'+(rate*100).toFixed(2)+'"></div><div class="seg3" id="fxSeg"><button data-cur="jpy" aria-pressed="'+(money==="jpy")+'">¥</button><button data-cur="myr" aria-pressed="'+(money==="myr")+'">RM</button><button data-cur="both" aria-pressed="'+(money==="both")+'">¥+RM</button></div><p class="fxnote">'+t(UI.fxNote)+'</p></div><div class="bud">';
+  DAYS.forEach((d,i) => h += '<div class="brow"><span>D'+(i+1)+' '+esc(t(d.short))+'</span><span class="bt"><i style="width:'+(dayT[i]/mx*100)+'%;background:'+THEME[i].c+'"></i></span><b>'+yen(dayT[i])+'</b></div>');
+  h += '<div class="crow" style="margin-top:10px;border-top:1px solid var(--line);padding-top:10px"><span>'+t(UI.perP)+'</span><b>'+yen(perP)+'</b></div>';
+  h += '<div class="crow"><span>'+t(UI.flight)+'</span><b>'+yen(flightY)+'</b></div>';
+  h += '<div class="crow"><span><b style="font-family:var(--sans);font-weight:700">'+t(UI.flightSub)+'</b></span><b>'+yen(perP+flightY)+'</b></div>';
+  CAR.forEach(c => h += '<div class="crow" style="margin-top:0"><span>🚗 '+esc(t(c[0]))+'</span><b>'+yen(c[1])+'</b></div>');
+  h += '<div class="crow"><span><b style="font-family:var(--sans);font-weight:700">'+t(UI.car)+'</b></span><b>'+yen(carT)+'</b></div></div>';
+  const pp = Math.round((perP+flightY+carT/2)/1000)*1000;
+  h += '<div class="split" style="grid-template-columns:1fr 1fr"><div><b>'+yen(pp)+'</b><span>'+t(UI.pp2)+'</span></div><div><b>'+yen(pp*2)+'</b><span>'+t(UI.tot2)+'</span></div></div><p class="note">'+t(UI.budNote)+'</p>';
+  h += '<div class="sec"><h3>❄️ '+t(UI.driveT)+'</h3></div><div class="list">' + DRIVE_TIPS.map((z,i)=>'<div><i>'+String(i+1).padStart(2,"0")+'</i><span>'+esc(t(z))+'</span></div>').join("") + '</div>';
+  h += '<div class="sec"><h3>💡 '+t(UI.tipsT)+'</h3></div><div class="list">' + TIPS.map((z,i)=>'<div><i>'+String(i+1).padStart(2,"0")+'</i><span>'+esc(t(z))+'</span></div>').join("") + '</div></div>';
+  $("#view-info").innerHTML = h;
+  const inp = $("#fxIn");
+  if (inp) inp.onchange = () => { const v = parseFloat(inp.value); if (v > 0) { rate = v/100; try{localStorage.setItem("kanto27:rate", JSON.stringify(rate));}catch(e){} renderAll(); } };
+  document.querySelectorAll("#fxSeg button").forEach(b => b.onclick = () => setMoney(b.dataset.cur));
+}
+function setMoney(m){ money = m; try{localStorage.setItem("kanto27:money", JSON.stringify(m));}catch(e){} renderAll(); }
+
+function renderAll(){ renderHero(); renderStrip(); renderDay(); renderPrep(); renderInfo(); }
+
+document.querySelectorAll("#curT button").forEach(b => b.onclick = () => setMoney(b.dataset.cur));
+document.querySelectorAll(".lang button[data-lang]").forEach(b => b.onclick = () => {
+  lang = b.dataset.lang; try { localStorage.setItem("kanto27:lang", JSON.stringify(lang)); } catch(e) {}
+  renderAll();
+});
+document.querySelectorAll(".tabbar button").forEach(b => b.onclick = () => {
+  view = b.dataset.view;
+  document.querySelectorAll(".tabbar button").forEach(x => x.setAttribute("aria-selected", x===b));
+  ["plan","prep","info"].forEach(v => $("#view-"+v).hidden = v !== view);
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+
+/* swipe between days */
+(function(){
+  let sx=0, sy=0, tracking=false;
+  const el = document.getElementById("dayview");
+  el.addEventListener("touchstart", e => { if (e.target.closest(".eats")) return; sx=e.touches[0].clientX; sy=e.touches[0].clientY; tracking=true; }, {passive:true});
+  el.addEventListener("touchend", e => {
+    if (!tracking) return; tracking=false;
+    const dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy)*1.6) go(cur + (dx < 0 ? 1 : -1));
+  }, {passive:true});
+})();
+
+/* snow */
+(function(){
+  const cv = document.getElementById("snow"), ctx = cv.getContext && cv.getContext("2d");
+  if (!ctx || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  let W, H, flakes = [];
+  function size(){ const r = cv.getBoundingClientRect(), dpr = Math.min(devicePixelRatio||1,2); W=r.width; H=r.height; cv.width=W*dpr; cv.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+  size(); addEventListener("resize", size);
+  for (let i=0;i<70;i++) flakes.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*2+.6,s:Math.random()*.6+.25,d:Math.random()*Math.PI*2});
+  (function tick(){
+    ctx.clearRect(0,0,W,H); ctx.fillStyle="rgba(244,247,255,.75)";
+    for (const f of flakes){ f.y += f.s; f.d += .01; f.x += Math.sin(f.d)*.3; if (f.y > H+4){ f.y=-4; f.x=Math.random()*W; }
+      ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,Math.PI*2); ctx.fill(); }
+    requestAnimationFrame(tick);
+  })();
+})();
+
+renderAll();
+</script>
+</body>
+</html>
