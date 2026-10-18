@@ -10,7 +10,7 @@ Originally built on claude.ai as an Artifact, now maintained here.
 - `index.html` — the whole app: HTML, CSS and JS in one file, no build step, no dependencies.
   The only external resource is Google Fonts (Noto Sans SC, Noto Serif SC, JetBrains Mono).
 - `README.md` — how to run and host it.
-- `img/` — header collage images and `day1..8.webp` day-card photos.
+- `img/` — header collage, `day1..8.webp` day-card photos, `stay1..7.webp` per-night stay photos.
 
 ## How to run
 Open `index.html` in a browser, or serve the folder:
@@ -57,6 +57,8 @@ All reads/writes are wrapped in try/catch; the app must work with storage unavai
 - Phone numbers in stops are used for Japanese car-navigation search; only add ones you have verified.
 
 ## Header, map and photos
+- Stay card: per-night photo `img/stay{N}.webp` (gpt-image-2.5), night badge, price, night-of-stay dots and a Google Maps lodging search. `STAYN` holds [night, nights in stay, search query] per day.
+- Translate tab (`renderTalk`): MyMemory free API (no key, CORS ok) for zh/en ↔ ja, history in `trhist`, browser speech for mic and playback, `PHR` offline phrasebook, `#showja` full-screen show-staff overlay.
 - Day card (`.dayhero`): full-bleed photo `img/day{N}.webp` (gpt-image-2.5-sunburst, 1024², photoreal per-day scene), Ken Burns drift, story-style progress bars (tap to jump), swipe left/right to change day (`wireDayHero`), neighbouring days preloaded. Falls back to the day colour gradient if an image is missing.
 - Header backdrop: `img/hero-portrait.webp` (phones) and `img/hero-wide.webp` (≥700px), generated with OpenAI `gpt-image-2.5-sunburst` (18 Oct 2026). Navy scrim in `.hero-bg::after` keeps the title readable; motion = slow Ken Burns drift (`kb`), fade-in, title rise, and the snow canvas. All disabled under prefers-reduced-motion.
 - The map is a Google Maps iframe using `maps.google.com/maps?...&output=embed` (no API key). Leg modes map to `dirflg` d/r/w; transit routes take only two points.

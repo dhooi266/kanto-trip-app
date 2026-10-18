@@ -213,12 +213,27 @@ a{color:inherit}
 .eat .pr{margin-top:12px;font-family:var(--mono);font-size:13px;font-weight:700}
 
 /* STAY */
-.staycard{background:var(--night);color:var(--snow);border-radius:24px;padding:20px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.staycard .moon{position:absolute;right:18px;top:16px;font-size:34px}
-.staycard h4{font-family:var(--serif);font-size:22px;margin:0 50px 4px 0;line-height:1.25}
-.staycard .ty{opacity:.75;font-size:14px}
-.staycard .price{display:inline-block;margin-top:12px;background:rgba(255,255,255,.12);border-radius:10px;padding:6px 12px;font-family:var(--mono);font-size:13px}
-.staycard p{margin:12px 0 0;font-size:14px;opacity:.85}
+/* Stay card: per-night photo (img/stayN.webp) with night badge, price and nearby-search button */
+.staycard{background:var(--night);color:var(--snow);border-radius:24px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.sc-photo{position:relative;aspect-ratio:16/10;overflow:hidden;background:linear-gradient(135deg,var(--dc),var(--night))}
+.sc-photo i{position:absolute;inset:-4%;background:var(--img) center/cover no-repeat;animation:dhIn 1.1s ease-out both,kb 30s ease-in-out 1.1s infinite alternate}
+.sc-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,20,38,.45) 0%,rgba(13,20,38,0) 28%,rgba(13,20,38,0) 50%,rgba(13,20,38,.92) 100%)}
+.sc-tags{position:absolute;left:12px;right:12px;top:12px;display:flex;justify-content:space-between;gap:8px;z-index:1}
+.sc-tags span{background:rgba(13,20,38,.5);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:4px 10px;font-size:12px;font-family:var(--mono);letter-spacing:.04em}
+.sc-title{position:absolute;left:16px;right:16px;bottom:12px;z-index:1}
+.staycard h4{font-family:var(--serif);font-size:23px;margin:0 0 2px;line-height:1.25;text-shadow:0 2px 12px rgba(0,0,0,.6)}
+.staycard .ty{opacity:.85;font-size:13px;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.sc-body{padding:14px 16px 16px}
+.sc-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.staycard .price{display:inline-block;background:#FF8A6B;color:var(--night);border-radius:12px;padding:7px 12px;font-family:var(--mono);font-size:13px;font-weight:700}
+.sc-nights{display:flex;align-items:center;gap:5px;font-size:12px;opacity:.85;margin-left:auto}
+.sc-nights i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--snow);display:inline-block}
+.sc-nights i.on{background:var(--snow)}
+.staycard p{margin:12px 0 0;font-size:14px;line-height:1.6;opacity:.88;display:flex;gap:8px}
+.staycard p span{flex:0 0 auto}
+.staycard p span+span{flex:1 1 auto;min-width:0}
+.sc-find{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px;padding:10px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);color:var(--snow);text-decoration:none;font-weight:700;font-size:14px}
+@media (prefers-reduced-motion:reduce){.sc-photo i{animation:none}}
 
 /* COST */
 .cost{background:var(--surface);border-radius:20px;padding:18px;box-shadow:var(--shadow)}
@@ -272,6 +287,44 @@ a{color:inherit}
 .split span{font-size:12px;opacity:.75}
 
 /* TAB BAR */
+/* Translator tab */
+.tr{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:14px}
+.trdir{display:flex;gap:6px;flex-wrap:wrap}
+.trdir button,.phcats button{border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.trdir button[aria-pressed="true"],.phcats button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.tr textarea{display:block;width:100%;margin-top:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-2);color:var(--ink);font:inherit;font-size:17px;line-height:1.5;padding:12px 14px;resize:vertical;min-height:92px}
+.tr textarea:focus{outline:2px solid var(--dc);outline-offset:1px}
+.tracts{display:flex;gap:8px;margin-top:10px}
+.tracts button{flex:1;border:0;border-radius:14px;padding:12px;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+.tracts .primary{background:var(--dc);color:#fff}
+.tracts .ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line)}
+.tracts .ghost.rec{background:#E5484D;color:#fff;border-color:#E5484D}
+.tracts button:disabled{opacity:.6}
+.trres{margin-top:14px;border-radius:18px;padding:16px;background:linear-gradient(135deg,var(--night),var(--night-2));color:var(--snow);animation:rise .4s ease-out both}
+.trres .big{font-size:24px;font-weight:700;line-height:1.45;word-break:break-word}
+.trres .from{margin-top:6px;font-size:13px;opacity:.7}
+.trres.err{background:var(--surface-2);color:var(--ink-2);font-size:14px}
+.trres.err a{color:var(--ink)}
+.tracts2{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.tracts2 button,.tracts2 a{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:var(--snow);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;text-decoration:none;cursor:pointer}
+.trhist{display:flex;gap:6px;overflow-x:auto;margin-top:12px;padding-bottom:2px;scrollbar-width:none}
+.trhist button{flex:0 0 auto;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);border-radius:10px;padding:5px 10px;font:inherit;font-size:12px;cursor:pointer}
+.trcam{display:flex;align-items:center;gap:8px;margin-top:12px;padding:12px 14px;border-radius:16px;background:var(--surface);box-shadow:var(--shadow);color:var(--ink);text-decoration:none;font-weight:700;font-size:14px}
+.phcats{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.phcats button{flex:0 0 auto}
+.phl{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.phr{display:flex;align-items:stretch;background:var(--surface);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.phsay{flex:1;min-width:0;border:0;background:none;text-align:left;padding:12px 14px;font:inherit;color:var(--ink);cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.phsay b{font-size:18px;line-height:1.4}
+.phsay span{font-size:13px;color:var(--ink-2)}
+.phsay em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.phsay:active{background:var(--surface-2)}
+.phshow{flex:0 0 48px;border:0;border-left:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font-size:18px;cursor:pointer}
+#showja{position:fixed;inset:0;z-index:60;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;cursor:pointer}
+#showja[hidden]{display:none}
+#showja b{display:block;font-size:clamp(30px,9vw,64px);line-height:1.35;font-weight:900;word-break:break-word}
+#showja span{display:block;margin-top:18px;font-size:16px;color:#555}
+#showja small{display:block;margin-top:28px;font-size:12px;color:#999}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 10px calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;justify-content:center}
 .tabbar .in{display:flex;gap:6px;max-width:480px;width:100%}
 .tabbar button{flex:1;border:0;background:transparent;border-radius:14px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--ink-3)}
@@ -304,14 +357,17 @@ a{color:inherit}
     </section>
     <section id="view-prep" hidden></section>
     <section id="view-info" hidden></section>
+    <section id="view-talk" hidden></section>
   </main>
   <p class="foot" id="foot"></p>
 </div>
 
+<div id="showja" hidden role="dialog" aria-modal="true" lang="ja"><div><b></b><span></span><small>タップで閉じる · tap to close</small></div></div>
 <nav class="tabbar" role="tablist"><div class="in">
   <button role="tab" data-view="plan" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6l6-3 6 3 6-3v15l-6 3-6-3-6 3z"/><path d="M9 3v15M15 6v15"/></svg><span></span></button>
   <button role="tab" data-view="prep" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 9l2 2 4-4M8 15h8"/></svg><span></span></button>
   <button role="tab" data-view="info" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg><span></span></button>
+  <button role="tab" data-view="talk" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-5 4z"/><path d="M9 9h6M12 8v1m-2 4c2-1 3-2.5 3.5-4M11 10c.8 1.6 2.2 2.6 4 3"/></svg><span></span></button>
 </div></nav>
 
 <script>
@@ -326,7 +382,7 @@ const UI = {
   sub:_("老东京的下町、海边古都镰仓、伊豆的木造温泉旅馆、昭和温泉乡热海。不赶路，最后一天留给东京购物。","Old Tokyo lanes, seaside Kamakura, a wooden ryokan in Izu and Showa-era Atami. No rushing, and a final day for Tokyo shopping."),
   stats:_(["天","公里自驾","晚温泉","天出发"],["days","km driven","onsen nights","days to go"]),
   live:_("旅行第","Day"), over:_("完成","done"),
-  tabs:[_("行程","Plan"),_("清单","Checklist"),_("信息","Info")],
+  tabs:[_("行程","Plan"),_("清单","Checklist"),_("信息","Info"),_("翻译","Translate")],
   drive:_("车程","Drive"), fare:_("车费","Fares"), stay:_("住","Stay"),
   openRoute:_("导航当天路线 →","Navigate today's route →"),
   map:_("ROUTE · 当天路段","ROUTE · TODAY"),
@@ -360,6 +416,8 @@ const THEME = [
   {c:"#D9862A",c2:"#7A3E12",e:"🛍️"},
   {c:"#5C6C8C",c2:"#2B3550",e:"🛫"}
 ];
+/* per night: [night of this stay, nights in this stay, Google Maps lodging search] */
+const STAYN = [[1,2,"ryokan Yanaka Asakusa"],[2,2,"ryokan Yanaka Asakusa"],[1,1,"hotel with parking near Kamakura Station"],[1,2,"ryokan Shuzenji Onsen"],[2,2,"ryokan Shuzenji Onsen"],[1,2,"hotel near Higashi-ginza Station"],[2,2,"hotel near Higashi-ginza Station"]];
 const gmap = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
 const gdir = pts => "https://www.google.com/maps/dir/" + pts.map(p => encodeURIComponent(p).replace(/%20/g,"+")).join("/");
 
@@ -806,7 +864,9 @@ function renderDay(){
   h += '</div>';
 
   if (x.stay){
-    h += '<div class="sec"><h3>🌙 '+t(UI.sleep)+'</h3></div><div class="staycard"><span class="moon">'+(cur===3||cur===4?"♨️":"🏨")+'</span><h4>'+esc(t(x.stay.area))+'</h4><div class="ty">'+esc(t(x.stay.type))+'</div><span class="price">'+fx(esc(t(x.stay.price)))+'</span><p>'+esc(t(x.stay.ex))+'</p><p>'+esc(t(x.stay.why))+'</p></div>';
+    const sn = STAYN[cur], [smo,sda] = d.d.split("/");
+    h += '<div class="sec"><h3>🌙 '+t(UI.sleep)+'</h3></div><div class="staycard"><div class="sc-photo" style="--img:url(img/stay'+(cur+1)+'.webp)"><i></i><div class="sc-tags"><span>🌙 '+(lang==="en"?"NIGHT "+(cur+1)+" · JAN "+sda:"第"+(cur+1)+"晚 · "+smo+"/"+sda)+'</span><span>'+(cur===3||cur===4?"♨️ "+t(_("温泉","Onsen")):"🏨 "+t(_("住宿","Stay")))+'</span></div><div class="sc-title"><h4>'+esc(t(x.stay.area))+'</h4><div class="ty">'+esc(t(x.stay.type))+'</div></div></div>';
+    h += '<div class="sc-body"><div class="sc-row"><span class="price">'+fx(esc(t(x.stay.price)))+'</span><span class="sc-nights">'+Array.from({length:sn[1]},(z,k)=>'<i class="'+(k<sn[0]?"on":"")+'"></i>').join("")+' '+(lang==="en"?"night "+sn[0]+" of "+sn[1]:"第"+sn[0]+"／"+sn[1]+"晚")+'</span></div><p><span>💡</span><span>'+esc(t(x.stay.ex))+'</span></p><p><span>✨</span><span>'+esc(t(x.stay.why))+'</span></p><a class="sc-find" href="'+gmap(sn[2])+'" target="_blank" rel="noopener">🔍 '+t(_("在Google地图找附近住宿","Find places to stay nearby"))+' ↗</a></div></div>';
   }
 
   const tot = x.cost.reduce((a,c)=>a+c[1],0);
@@ -833,15 +893,10 @@ function renderDay(){
   if (pvb) pvb.onclick = () => go(cur-1, true);
   if (nxb) nxb.onclick = () => go(cur+1, true);
 }
-/* day card: tap a progress bar to jump, swipe sideways to change day, preload neighbours */
+/* day card: tap a progress bar to jump (swiping is handled for the whole #dayview below), preload neighbours */
 function wireDayHero(){
   const el = $("#dayhero"); if (!el) return;
   el.querySelectorAll("button[data-go]").forEach(b => b.onclick = () => go(+b.dataset.go, false));
-  let x0 = null, y0 = 0;
-  el.addEventListener("pointerdown", e => { if (e.target.closest("a,button")) return; x0 = e.clientX; y0 = e.clientY; });
-  el.addEventListener("pointerup", e => { if (x0 === null) return; const dx = e.clientX - x0, dy = e.clientY - y0; x0 = null;
-    if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)*1.5) go(cur + (dx < 0 ? 1 : -1), false); });
-  el.addEventListener("pointercancel", () => { x0 = null; });
   [cur-1, cur+1].forEach(n => { if (n >= 0 && n <= 7) new Image().src = "img/day"+(n+1)+".webp"; });
 }
 function firstOpen(d){ return d.stops.findIndex(s => s.k === "spot"); }
@@ -903,7 +958,135 @@ function renderInfo(){
 }
 function setMoney(m){ money = m; try{localStorage.setItem("kanto27:money", JSON.stringify(m));}catch(e){} renderAll(); }
 
-function renderAll(){ renderHero(); renderStrip(); renderDay(); renderPrep(); renderInfo(); }
+/* ---- Japanese translator: MyMemory free API (no key) + offline phrasebook + speech ---- */
+const PHR = [
+ {e:"🙂",c:_("基本","Basics"),p:[
+  ["你好","Hello","こんにちは","konnichiwa"],
+  ["谢谢","Thank you","ありがとうございます","arigatō gozaimasu"],
+  ["不好意思／请问","Excuse me","すみません","sumimasen"],
+  ["请给我这个","This one, please","これをください","kore o kudasai"],
+  ["多少钱？","How much is it?","いくらですか？","ikura desu ka?"],
+  ["洗手间在哪里？","Where is the toilet?","トイレはどこですか？","toire wa doko desu ka?"],
+  ["可以刷卡吗？","Can I pay by card?","カードで払えますか？","kādo de haraemasu ka?"],
+  ["我不会说日语","I don't speak Japanese","日本語が話せません","nihongo ga hanasemasen"]]},
+ {e:"♨️",c:_("旅馆","Ryokan"),p:[
+  ["我有预订，名字是＿＿","I have a reservation under ___","予約しています。名前は＿＿です。","yoyaku shite imasu. namae wa ___ desu."],
+  ["入住前可以寄存行李吗？","Can you keep our bags until check-in?","チェックインまで荷物を預かってもらえますか？","chekkuin made nimotsu o azukatte moraemasu ka?"],
+  ["晚餐几点？","What time is dinner?","夕食は何時ですか？","yūshoku wa nanji desu ka?"],
+  ["早餐几点开始？","What time does breakfast start?","朝食は何時からですか？","chōshoku wa nanji kara desu ka?"],
+  ["有包场的私人温泉吗？","Is there a private bath?","貸切風呂はありますか？","kashikiri-buro wa arimasu ka?"],
+  ["有停车场吗？","Is there parking?","駐車場はありますか？","chūshajō wa arimasu ka?"],
+  ["请再给一条毛巾","One more towel, please","タオルをもう一枚ください","taoru o mō ichimai kudasai"]]},
+ {e:"🍜",c:_("餐厅","Food"),p:[
+  ["两位","Two people","二人です","futari desu"],
+  ["要等多久？","How long is the wait?","どのくらい待ちますか？","dono kurai machimasu ka?"],
+  ["有英文菜单吗？","Do you have an English menu?","英語のメニューはありますか？","eigo no menyū wa arimasu ka?"],
+  ["推荐什么？","What do you recommend?","おすすめは何ですか？","osusume wa nan desu ka?"],
+  ["请给我水","Water, please","お水をください","o-mizu o kudasai"],
+  ["请结账","The bill, please","お会計をお願いします","o-kaikei o onegai shimasu"],
+  ["很好吃！","It was delicious!","とても美味しかったです！","totemo oishikatta desu!"]]},
+ {e:"🚗",c:_("开车","Driving"),p:[
+  ["普通汽油，加满","Regular, full tank","レギュラー満タンでお願いします","regyurā mantan de onegai shimasu"],
+  ["用信用卡付","By credit card","クレジットカードで","kurejitto kādo de"],
+  ["附近有停车场吗？","Is there a car park nearby?","近くに駐車場はありますか？","chikaku ni chūshajō wa arimasu ka?"],
+  ["我来还车","I'm returning the car","車を返しに来ました","kuruma o kaeshi ni kimashita"],
+  ["ETC卡插好了吗？","Is the ETC card inserted?","ETCカードは入っていますか？","ETC kādo wa haitte imasu ka?"],
+  ["需要雪地轮胎或雪链吗？","Do we need snow tyres or chains?","スタッドレスタイヤかチェーンは必要ですか？","sutaddoresu taiya ka chēn wa hitsuyō desu ka?"]]},
+ {e:"🚃",c:_("交通","Trains"),p:[
+  ["去羽田机场在几号站台？","Which platform for Haneda Airport?","羽田空港行きは何番線ですか？","Haneda kūkō-yuki wa nanban-sen desu ka?"],
+  ["这趟车停浅草吗？","Does this train stop at Asakusa?","この電車は浅草に止まりますか？","kono densha wa Asakusa ni tomarimasu ka?"],
+  ["我想给交通卡充值","I'd like to top up my IC card","ICカードにチャージしたいです","IC kādo ni chāji shitai desu"],
+  ["请到这个地址（出租车）","To this address, please (taxi)","この住所までお願いします","kono jūsho made onegai shimasu"]]},
+ {e:"🛍",c:_("购物","Shopping"),p:[
+  ["可以免税吗？","Can I get tax-free?","免税できますか？","menzei dekimasu ka?"],
+  ["可以试穿吗？","Can I try it on?","試着してもいいですか？","shichaku shite mo ii desu ka?"],
+  ["不用袋子","No bag, thanks","袋は要りません","fukuro wa irimasen"],
+  ["可以包装成礼物吗？","Can you gift-wrap it?","プレゼント用に包んでもらえますか？","purezento-yō ni tsutsunde moraemasu ka?"]]},
+ {e:"🆘",c:_("紧急","Emergency"),p:[
+  ["请帮帮我！","Please help!","助けてください！","tasukete kudasai!"],
+  ["请叫救护车","Please call an ambulance","救急車を呼んでください","kyūkyūsha o yonde kudasai"],
+  ["请带我去医院","Please take me to a hospital","病院に連れて行ってください","byōin ni tsurete itte kudasai"],
+  ["我迷路了","I'm lost","道に迷いました","michi ni mayoimashita"],
+  ["我的钱包丢了","I lost my wallet","財布をなくしました","saifu o nakushimashita"],
+  ["发生了交通事故","There's been a car accident","交通事故にあいました","kōtsū jiko ni aimashita"]]}
+];
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let trDir = ["zh","en","ja"].includes(store.get("trdir")) ? store.get("trdir") : "zh", trOut = null, phCat = 0;
+const trPair = () => trDir==="ja" ? "ja|"+(lang==="en"?"en":"zh-CN") : (trDir==="zh"?"zh-CN":"en")+"|ja";
+const gTrans = q => { const [sl,tl] = trPair().split("|"); return "https://translate.google.com/?sl="+sl+"&tl="+tl+"&op=translate&text="+encodeURIComponent(q); };
+function say(txt, l){
+  try { if (!window.speechSynthesis) return; const u = new SpeechSynthesisUtterance(txt); u.lang = l || "ja-JP"; u.rate = .9;
+    const v = speechSynthesis.getVoices().find(v => (v.lang||"").replace("_","-").toLowerCase().startsWith(u.lang.slice(0,2).toLowerCase())); if (v) u.voice = v;
+    speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e) {}
+}
+function showJa(ja, sub){ const o = $("#showja"); o.querySelector("b").textContent = ja; o.querySelector("span").textContent = sub || ""; o.hidden = false; }
+function trOutHTML(){
+  if (!trOut) return "";
+  if (trOut.err) return '<div class="trres err">'+t(_("暂时翻译不了（可能没网络，或今天的免费额度用完了）。","Couldn't translate right now (offline, or today's free quota is used up)."))+' <a href="'+gTrans(trOut.src)+'" target="_blank" rel="noopener">'+t(_("用Google翻译打开","Open in Google Translate"))+' ↗</a></div>';
+  const toJa = trOut.dir !== "ja";
+  return '<div class="trres"><div class="big" lang="'+(toJa?"ja":lang==="en"?"en":"zh")+'">'+esc(trOut.res)+'</div><div class="from">'+esc(trOut.src)+'</div><div class="tracts2"><button data-tr="say">🔊 '+t(_("读出日语","Play Japanese"))+'</button>'+(toJa?'<button data-tr="show">⛶ '+t(_("给店员看","Show staff"))+'</button>':'')+'<button data-tr="copy">📋 '+t(_("复制","Copy"))+'</button><a href="'+gTrans(trOut.src)+'" target="_blank" rel="noopener">Google ↗</a></div></div>';
+}
+function wireTrOut(){
+  const box = $("#trOut"); if (!box || !trOut || trOut.err) return;
+  const ja = trOut.dir !== "ja" ? trOut.res : trOut.src;
+  box.querySelectorAll("button[data-tr]").forEach(b => b.onclick = () => {
+    const k = b.dataset.tr;
+    if (k === "say") say(ja);
+    else if (k === "show") showJa(ja, trOut.src);
+    else if (k === "copy") { try { navigator.clipboard.writeText(trOut.res); b.textContent = "✓ "+t(_("已复制","Copied")); } catch(e) {} }
+  });
+}
+async function translate(){
+  const inp = $("#trIn"), q = (inp.value||"").trim(), btn = $("#trGo"); if (!q) { inp.focus(); return; }
+  btn.disabled = true; btn.textContent = t(_("翻译中…","Translating…"));
+  const dir = trDir;
+  try {
+    const r = await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(q)+"&langpair="+encodeURIComponent(trPair()));
+    const j = await r.json(), raw = j && j.responseData && j.responseData.translatedText;
+    if (!raw || +j.responseStatus !== 200 || /MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(raw)) throw 0;
+    const d = document.createElement("textarea"); d.innerHTML = raw;
+    trOut = {src:q, res:d.value, dir};
+    const hist = (store.get("trhist") || []).filter(x => x.src !== q); hist.unshift(trOut); store.set("trhist", hist.slice(0,8));
+  } catch(e) { trOut = {src:q, err:1, dir}; }
+  renderTalk();
+}
+function renderTalk(){
+  const el = $("#view-talk"); if (!el) return;
+  const keep = $("#trIn") ? $("#trIn").value : (trOut ? trOut.src : "");
+  const ph = { zh:_("输入中文，例如：附近有便利店吗？","Type Chinese…"), en:_("Type English…","Type English, e.g. Is there a convenience store nearby?"), ja:_("输入或粘贴日语（例如店员写的字）","Type or paste Japanese (e.g. what staff wrote)") }[trDir];
+  let h = '<div class="sec"><h3>🗣 '+t(_("日语翻译","Japanese translator"))+'</h3></div><div class="tr"><div class="trdir" role="group">';
+  [["zh","中文 → 日本語"],["en","English → 日本語"],["ja",lang==="en"?"日本語 → English":"日本語 → 中文"]].forEach(([k,l]) => h += '<button data-dir="'+k+'" aria-pressed="'+(trDir===k)+'">'+l+'</button>');
+  h += '</div><textarea id="trIn" maxlength="300" placeholder="'+esc(t(ph))+'">'+esc(keep)+'</textarea><div class="tracts">';
+  if (SR) h += '<button id="trMic" class="ghost">🎤 '+t(_("说话","Speak"))+'</button>';
+  h += '<button id="trGo" class="primary">'+t(_("翻译","Translate"))+'</button></div><div id="trOut">'+trOutHTML()+'</div>';
+  const hist = store.get("trhist") || [];
+  if (hist.length) h += '<div class="trhist">'+hist.map((x,i) => '<button data-h="'+i+'">'+esc(x.src)+'</button>').join("")+'</div>';
+  h += '</div><a class="trcam" href="https://translate.google.com/?sl=ja&tl='+(lang==="en"?"en":"zh-CN")+'&op=images" target="_blank" rel="noopener">📷 '+t(_("拍照翻译菜单、招牌（Google翻译）","Translate a menu or sign from a photo (Google Translate)"))+' ↗</a>';
+  h += '<p class="note">'+t(_("自由翻译需要网络（免费服务MyMemory，每天有额度）；下面的常用句离线也能用。发音用手机自带的日语语音。","Free-text translation needs a connection (free MyMemory service, daily limit). The phrasebook below works offline. Pronunciation uses your phone's built-in Japanese voice."))+'</p>';
+  h += '<div class="sec"><h3>📖 '+t(_("常用句","Phrasebook"))+'</h3><span>'+t(_("点一下听发音","tap to hear it"))+'</span></div><div class="phcats">';
+  PHR.forEach((g,i) => h += '<button data-cat="'+i+'" aria-pressed="'+(i===phCat)+'">'+g.e+' '+t(g.c)+'</button>');
+  h += '</div><div class="phl">';
+  PHR[phCat].p.forEach((p,i) => h += '<div class="phr"><button class="phsay" data-ph="'+i+'"><b lang="ja">'+esc(p[2])+'</b><span>'+esc(lang==="en"?p[1]:p[0])+'</span><em>'+esc(p[3])+'</em></button><button class="phshow" data-ph="'+i+'" aria-label="'+esc(t(_("全屏给店员看","Show full screen")))+'">⛶</button></div>');
+  el.innerHTML = '<div class="fade">' + h + '</div></div>';
+  el.querySelectorAll("button[data-dir]").forEach(b => b.onclick = () => { trDir = b.dataset.dir; store.set("trdir", trDir); trOut = null; renderTalk(); });
+  $("#trGo").onclick = translate;
+  $("#trIn").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); translate(); } };
+  el.querySelectorAll("button[data-h]").forEach(b => b.onclick = () => { const x = hist[+b.dataset.h]; trDir = x.dir; trOut = x; $("#trIn").value = x.src; renderTalk(); });
+  el.querySelectorAll("button[data-cat]").forEach(b => b.onclick = () => { phCat = +b.dataset.cat; renderTalk(); });
+  el.querySelectorAll(".phsay").forEach(b => b.onclick = () => say(PHR[phCat].p[+b.dataset.ph][2]));
+  el.querySelectorAll(".phshow").forEach(b => b.onclick = () => { const p = PHR[phCat].p[+b.dataset.ph]; showJa(p[2], lang==="en"?p[1]:p[0]); });
+  const mic = $("#trMic");
+  if (mic) mic.onclick = () => {
+    try { const r = new SR(); r.lang = trDir==="zh" ? "zh-CN" : trDir==="en" ? "en-US" : "ja-JP"; r.interimResults = false; r.maxAlternatives = 1;
+      r.onresult = e => { $("#trIn").value = e.results[0][0].transcript; translate(); };
+      r.onend = () => { mic.classList.remove("rec"); mic.textContent = "🎤 "+t(_("说话","Speak")); };
+      r.onerror = r.onend; mic.classList.add("rec"); mic.textContent = "🎙 "+t(_("在听…","Listening…")); r.start();
+    } catch(e) {}
+  };
+  wireTrOut();
+}
+function renderAll(){ renderHero(); renderStrip(); renderDay(); renderPrep(); renderInfo(); renderTalk(); }
+$("#showja").onclick = () => { $("#showja").hidden = true; };
 
 document.querySelectorAll("#curT button").forEach(b => b.onclick = () => setMoney(b.dataset.cur));
 document.querySelectorAll(".lang button[data-lang]").forEach(b => b.onclick = () => {
@@ -913,7 +1096,7 @@ document.querySelectorAll(".lang button[data-lang]").forEach(b => b.onclick = ()
 document.querySelectorAll(".tabbar button").forEach(b => b.onclick = () => {
   view = b.dataset.view;
   document.querySelectorAll(".tabbar button").forEach(x => x.setAttribute("aria-selected", x===b));
-  ["plan","prep","info"].forEach(v => $("#view-"+v).hidden = v !== view);
+  ["plan","prep","info","talk"].forEach(v => $("#view-"+v).hidden = v !== view);
   window.scrollTo({top:0,behavior:"smooth"});
 });
 
