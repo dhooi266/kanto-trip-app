@@ -10,6 +10,7 @@ Originally built on claude.ai as an Artifact, now maintained here.
 - `index.html` — the whole app: HTML, CSS and JS in one file, no build step, no dependencies.
   The only external resource is Google Fonts (Noto Sans SC, Noto Serif SC, JetBrains Mono).
 - `README.md` — how to run and host it.
+- `img/` — header collage images.
 
 ## How to run
 Open `index.html` in a browser, or serve the folder:
@@ -55,7 +56,8 @@ All reads/writes are wrapped in try/catch; the app must work with storage unavai
   or "~¥1,500–2,000" are auto-converted to RM by `fx()`, so keep that format.
 - Phone numbers in stops are used for Japanese car-navigation search; only add ones you have verified.
 
-## Map and photos
+## Header, map and photos
+- Header backdrop: `img/hero-portrait.webp` (phones) and `img/hero-wide.webp` (≥700px), generated with OpenAI `gpt-image-2.5-sunburst` (18 Oct 2026). Navy scrim in `.hero-bg::after` keeps the title readable; motion = slow Ken Burns drift (`kb`), fade-in, title rise, and the snow canvas. All disabled under prefers-reduced-motion.
 - The map is a Google Maps iframe using `maps.google.com/maps?...&output=embed` (no API key). Leg modes map to `dirflg` d/r/w; transit routes take only two points.
 - Photos load from upload/thumb.wikimedia.org; a failed image removes itself.
 
