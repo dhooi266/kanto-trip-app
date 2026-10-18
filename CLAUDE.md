@@ -32,12 +32,10 @@ the current language. Always add BOTH languages when you add or change text.
 | `PL` | Named places used by the route legs (`n` label, `q` Google Maps query) |
 | `MODE` | Leg modes: `d` drive, `t` train, `w` walk |
 | `LEGS` | Per day: `legs[]` = `[mode, fromPlace, toPlace]`, optional `full[]` whole-day driving chain |
-| `GEO` | Lat/lon for every `PL` key (used by the in-app map) |
-| `VIA` | Intermediate lat/lon points per leg (`"from>to"`) so lines follow real road/rail corridors |
-| `LAND` | Coastline polygons for Kanto/Izu (Natural Earth 1:10m via world-atlas, public domain) |
+| `PHOTO` | Stop photos: key `"day-stopIndex"` → `[imageUrl, creditPageUrl]` (Wikimedia Commons, credited on the photo). Stop indexes count every entry in `stops[]`, so update keys if you insert or remove a stop |
 
 Rendering functions: `renderHero`, `renderStrip`, `renderDay` (timeline, map, legs, food, stay,
-costs), `renderPrep`, `renderInfo`, `dayMapSVG` / `wireMap` (zoomable SVG route map),
+costs), `renderPrep`, `renderInfo`, `dayMapInner` / `embedUrl` / `wireMap` (keyless Google Maps embed: whole-day route by default, one leg when tapped),
 `yen()` and `fx()` (¥ / RM / both currency display), `renderAll()`.
 
 Day count is 8 in several places (`cur > 7`, `i > 7`, countdown end date 2027-01-31, `/8`
@@ -57,8 +55,13 @@ All reads/writes are wrapped in try/catch; the app must work with storage unavai
   or "~¥1,500–2,000" are auto-converted to RM by `fx()`, so keep that format.
 - Phone numbers in stops are used for Japanese car-navigation search; only add ones you have verified.
 
-## Ideas that were blocked on claude.ai but work once self-hosted
-- A real interactive map (Leaflet + OpenStreetMap tiles, or a Google Maps embed with an API key)
-  in place of or alongside the SVG map.
-- Real photos per stop (claude.ai blocked external images).
+## Map and photos
+- The map is a Google Maps iframe using `maps.google.com/maps?...&output=embed` (no API key). Leg modes map to `dirflg` d/r/w; transit routes take only two points.
+- Photos load from upload/thumb.wikimedia.org; a failed image removes itself.
+
+## Hosting
+GitHub Pages: repo dhooi266/kanto-trip-app (public, branch main) → https://dhooi266.github.io/kanto-trip-app/. Push to main to update. The repo is public: no booking numbers or passport details.
+Local preview: `node .serve.js` (port 3030, git-ignored), or the `kanto-trip-app` entry in the parent .claude/launch.json.
+
+## Ideas
 - Syncing checklist/visited state across devices (needs a small backend or a service like Supabase).

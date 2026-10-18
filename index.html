@@ -105,17 +105,13 @@ a{color:inherit}
 
 /* MAP */
 
-.dmap{margin-top:14px;border-radius:24px;overflow:hidden;background:var(--sea);box-shadow:var(--shadow);position:relative;touch-action:none;user-select:none;-webkit-user-select:none}
-.dmap svg{display:block;width:100%;height:auto;cursor:grab}
-.dmap svg:active{cursor:grabbing}
-.dmap .lbl{font-family:var(--sans);font-size:12px;font-weight:700;fill:var(--ink);paint-order:stroke;stroke:var(--sea-halo);stroke-width:3.5px;stroke-linejoin:round}
-.dmap .num{font-family:var(--mono);font-size:11px;font-weight:700;fill:#fff}
-.zoom{position:absolute;right:max(10px,env(safe-area-inset-right,0px));top:10px;display:flex;flex-direction:column;gap:6px}
-.zoom button{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:18px;font-weight:700;line-height:1;box-shadow:var(--shadow)}
-.dlegend{position:absolute;left:10px;bottom:10px;display:flex;gap:10px;flex-wrap:wrap;background:color-mix(in srgb,var(--surface) 85%,transparent);border-radius:10px;padding:5px 9px;font-size:11px;color:var(--ink-2);max-width:calc(100% - 20px)}
-.dlegend i{display:inline-block;width:18px;height:0;border-top:3px solid var(--dc);vertical-align:middle;margin-right:4px}
-.dlegend i.t{border-top-style:dashed}.dlegend i.w{border-top-style:dotted}
-.dhint{position:absolute;left:10px;top:10px;font-size:11px;color:var(--ink-3);background:color-mix(in srgb,var(--surface) 85%,transparent);border-radius:8px;padding:3px 8px}
+.dmap{margin-top:14px;border-radius:24px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow)}
+.mwrap{position:relative;height:340px;background:var(--surface-2)}
+.mwrap span{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--ink-3)}
+.mwrap iframe{position:relative;display:block;width:100%;height:100%;border:0}
+.dcap{display:flex;align-items:center;gap:8px;padding:10px 12px}
+.dcap span{flex:1;min-width:0;font-size:14px;font-weight:700;line-height:1.35}
+.dcap a,.dcap button{flex:0 0 auto;font:inherit;font-size:12px;color:var(--ink-2);text-decoration:none;padding:6px 10px;border-radius:10px;background:var(--surface-2);border:0;cursor:pointer;white-space:nowrap}
 .rleg{cursor:pointer;border:0;width:100%;text-align:left;font:inherit;color:inherit}
 .rleg[aria-pressed="true"]{outline:2px solid var(--dc);outline-offset:-2px}
 .rleg a{font-style:normal;color:var(--ink-3);text-decoration:none;font-size:13px;padding:4px 6px;border-radius:8px;background:var(--surface-2)}
@@ -150,6 +146,12 @@ a{color:inherit}
 .card .chev{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;transition:transform .2s;font-size:12px;color:var(--ink-2)}
 .card details[open] .chev{transform:rotate(180deg)}
 .card .more{padding:0 14px 14px}
+.card .thb{flex:0 0 auto;width:48px;height:48px;border-radius:12px;object-fit:cover;background:var(--surface-2)}
+.card details[open] .thb{display:none}
+.card .ph{margin:0 0 12px;border-radius:14px;overflow:hidden;position:relative;background:var(--surface-2)}
+.card .ph img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.card .ph figcaption{position:absolute;right:8px;bottom:8px;font-size:10px;line-height:1}
+.card .ph a{display:inline-block;color:#fff;background:rgba(0,0,0,.5);padding:4px 7px;border-radius:7px;text-decoration:none}
 .card .more p{margin:0;color:var(--ink-2);font-size:15px}
 .card .more ul{margin:8px 0 0;padding-left:18px;color:var(--ink-2);font-size:14px}
 .st.done h4{text-decoration:line-through;text-decoration-color:var(--ink-3);color:var(--ink-3)}
@@ -568,105 +570,72 @@ const LEGS = [
  {legs:[["w","hgz","tsukiji"],["t","tsukiji","nihon"],["t","nihon","itoya"],["t","itoya","kappa"],["t","kappa","hgz"]]},
  {legs:[["t","hgz","hnd"]]}
 ];
+/* ---- Stop photos: key "day-stopIndex" → [image, credit page]. Wikimedia Commons (free licences, credited in-app) ---- */
+const PHOTO = {
+ "0-0":["https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/960px-All_haneda.jpg","https://commons.wikimedia.org/wiki/File:All_haneda.jpg"],
+ "0-3":["https://thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Day2-2_%2840909714314%29.jpg/960px-Day2-2_%2840909714314%29.jpg","https://commons.wikimedia.org/wiki/File:Day2-2_(40909714314).jpg"],
+ "1-0":["https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Sensoji_2023.jpg/960px-Sensoji_2023.jpg","https://commons.wikimedia.org/wiki/File:Sensoji_2023.jpg"],
+ "1-1":["https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Cafe_by_Koichi_Suzuki_in_Kanda-Jinbocho%2C_Tokyo.jpg/960px-Cafe_by_Koichi_Suzuki_in_Kanda-Jinbocho%2C_Tokyo.jpg","https://commons.wikimedia.org/wiki/File:Cafe_by_Koichi_Suzuki_in_Kanda-Jinbocho%2C_Tokyo.jpg"],
+ "1-2":["https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Tempura_01.jpg/960px-Tempura_01.jpg","https://commons.wikimedia.org/wiki/File:Tempura_01.jpg"],
+ "1-4":["https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6f/Yanaka_Ginza_Street_from_Yuyake_Dandan_%28Oct_2024%29.jpg/960px-Yanaka_Ginza_Street_from_Yuyake_Dandan_%28Oct_2024%29.jpg","https://commons.wikimedia.org/wiki/File:Yanaka_Ginza_Street_from_Yuyake_Dandan_(Oct_2024).jpg"],
+ "1-5":["https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Nezu_Shrine_2010.jpg/960px-Nezu_Shrine_2010.jpg","https://commons.wikimedia.org/wiki/File:Nezu_Shrine_2010.jpg"],
+ "2-3":["https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Komachi_Street%2C_Kanagawa_02.jpg/960px-Komachi_Street%2C_Kanagawa_02.jpg","https://commons.wikimedia.org/wiki/File:Komachi_Street%2C_Kanagawa_02.jpg"],
+ "2-5":["https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cf/230128_Kamakura_Daibutsu_Japan04s3.jpg/960px-230128_Kamakura_Daibutsu_Japan04s3.jpg","https://commons.wikimedia.org/wiki/File:230128_Kamakura_Daibutsu_Japan04s3.jpg"],
+ "2-6":["https://upload.wikimedia.org/wikipedia/commons/0/0b/HasederaKannondo20120716.jpg","https://commons.wikimedia.org/wiki/File:HasederaKannondo20120716.jpg"],
+ "2-7":["https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Shichirigahama_from_Inamuragasaki.jpg/960px-Shichirigahama_from_Inamuragasaki.jpg","https://commons.wikimedia.org/wiki/File:Shichirigahama_from_Inamuragasaki.jpg"],
+ "3-0":["https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/H%C5%8Dkoku-ji%2C_Main_Hall_001.jpg/960px-H%C5%8Dkoku-ji%2C_Main_Hall_001.jpg","https://commons.wikimedia.org/wiki/File:H%C5%8Dkoku-ji%2C_Main_Hall_001.jpg"],
+ "3-1":["https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/TsurugaokaHachiman-M8867.jpg/960px-TsurugaokaHachiman-M8867.jpg","https://commons.wikimedia.org/wiki/File:TsurugaokaHachiman-M8867.jpg"],
+ "3-2":["https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9a/Dried_soba_noodles_by_FotoosVanRobin.jpg/960px-Dried_soba_noodles_by_FotoosVanRobin.jpg","https://commons.wikimedia.org/wiki/File:Dried_soba_noodles_by_FotoosVanRobin.jpg"],
+ "3-5":["https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/181124_Shuzenji_Onsen_Izu_Shizuoka_pref_Japan01s3.jpg/960px-181124_Shuzenji_Onsen_Izu_Shizuoka_pref_Japan01s3.jpg","https://commons.wikimedia.org/wiki/File:181124_Shuzenji_Onsen_Izu_Shizuoka_pref_Japan01s3.jpg"],
+ "3-6":["https://thumb.wikimedia.org/wikipedia/commons/thumb/6/69/Jisaku_Kaiseki_Ryori_01.jpg/960px-Jisaku_Kaiseki_Ryori_01.jpg","https://commons.wikimedia.org/wiki/File:Jisaku_Kaiseki_Ryori_01.jpg"],
+ "4-0":["https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/181124_Shuzenji_Izu_Shizuoka_pref_Japan04s3.jpg/960px-181124_Shuzenji_Izu_Shizuoka_pref_Japan04s3.jpg","https://commons.wikimedia.org/wiki/File:181124_Shuzenji_Izu_Shizuoka_pref_Japan04s3.jpg"],
+ "4-1":["https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/20061022132302.JPG/960px-20061022132302.JPG","https://commons.wikimedia.org/wiki/File:20061022132302.JPG"],
+ "4-3":["https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fc/Joren_Falls_2011-02-26.jpg/960px-Joren_Falls_2011-02-26.jpg","https://commons.wikimedia.org/wiki/File:Joren_Falls_2011-02-26.jpg"],
+ "4-4":["https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Old_Amagi_tunnel_Izu_city_side_entrance%2CIzu_city%2CJapan.jpg/960px-Old_Amagi_tunnel_Izu_city_side_entrance%2CIzu_city%2CJapan.jpg","https://commons.wikimedia.org/wiki/File:Old_Amagi_tunnel_Izu_city_side_entrance%2CIzu_city%2CJapan.jpg"],
+ "5-1":["https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/181123_Kiunkaku_Atami_Shizuoka_pref_Japan02n.jpg/960px-181123_Kiunkaku_Atami_Shizuoka_pref_Japan02n.jpg","https://commons.wikimedia.org/wiki/File:181123_Kiunkaku_Atami_Shizuoka_pref_Japan02n.jpg"],
+ "5-2":["https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2d/RZ_Atami_Ginza_Theater_A.jpg/960px-RZ_Atami_Ginza_Theater_A.jpg","https://commons.wikimedia.org/wiki/File:RZ_Atami_Ginza_Theater_A.jpg"],
+ "5-3":["https://thumb.wikimedia.org/wikipedia/commons/thumb/4/48/Atami_baien_-_March_7_2021_various_14_34_49_754000.jpeg/960px-Atami_baien_-_March_7_2021_various_14_34_49_754000.jpeg","https://commons.wikimedia.org/wiki/File:Atami_baien_-_March_7_2021_various_14_34_49_754000.jpeg"],
+ "6-0":["https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/2018_Tsukiji_fish_market.jpg/960px-2018_Tsukiji_fish_market.jpg","https://commons.wikimedia.org/wiki/File:2018_Tsukiji_fish_market.jpg"],
+ "6-2":["https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/%E5%B0%8F%E5%B7%9D%E8%8F%8A%E9%B0%BB%E9%AD%9A%E9%A3%AF_%2849287165332%29.jpg/960px-%E5%B0%8F%E5%B7%9D%E8%8F%8A%E9%B0%BB%E9%AD%9A%E9%A3%AF_%2849287165332%29.jpg","https://commons.wikimedia.org/wiki/File:%E5%B0%8F%E5%B7%9D%E8%8F%8A%E9%B0%BB%E9%AD%9A%E9%A3%AF_(49287165332).jpg"],
+ "6-3":["https://thumb.wikimedia.org/wikipedia/commons/thumb/9/92/Itoya_ginza.jpg/960px-Itoya_ginza.jpg","https://commons.wikimedia.org/wiki/File:Itoya_ginza.jpg"],
+ "6-4":["https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/Kappabashi-dori_streetcorner_%28Kitchen_town_-_southern_end%29_Tokyo_Japan.jpg/960px-Kappabashi-dori_streetcorner_%28Kitchen_town_-_southern_end%29_Tokyo_Japan.jpg","https://commons.wikimedia.org/wiki/File:Kappabashi-dori_streetcorner_(Kitchen_town_-_southern_end)_Tokyo_Japan.jpg"],
+ "6-5":["https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Sukiyaki_01.jpg/960px-Sukiyaki_01.jpg","https://commons.wikimedia.org/wiki/File:Sukiyaki_01.jpg"],
+ "7-1":["https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7d/All_haneda.jpg/960px-All_haneda.jpg","https://commons.wikimedia.org/wiki/File:All_haneda.jpg"]
+};
 const gUrl = (m,o,d,via) => "https://www.google.com/maps/dir/?api=1&origin="+encodeURIComponent(PL[o].q)+"&destination="+encodeURIComponent(PL[d].q)+(via&&via.length?"&waypoints="+encodeURIComponent(via.map(k=>PL[k].q).join("|")):"")+"&travelmode="+MODE[m].g;
 function routesHTML(i){
   const L = LEGS[i]; if (!L) return "";
-  let h = '<div class="sec"><h3>🧭 '+t(_("分段路线","Route legs"))+'</h3><span>'+t(_("点一段，地图放大显示","tap a leg to zoom the map"))+'</span></div><div class="routes">';
+  let h = '<div class="sec"><h3>🧭 '+t(_("分段路线","Route legs"))+'</h3><span>'+t(_("点一段，地图显示该段","tap a leg to show it on the map"))+'</span></div><div class="routes">';
   if (L.full){ const a=L.full; h += '<a class="rfull" href="'+gUrl("d",a[0],a[a.length-1],a.slice(1,-1))+'" target="_blank" rel="noopener"><span>🚗 '+t(_("全天开车路线","Whole-day drive"))+'</span><b>'+a.map(k=>esc(t(PL[k].n))).join(" → ")+'</b></a>'; }
   L.legs.forEach((g,n) => { const M = MODE[g[0]];
     h += '<div class="rleg" role="button" tabindex="0" data-leg="'+n+'" aria-pressed="'+(selLeg===n)+'"><i>'+(n+1)+'</i><span class="rm2">'+M.e+' '+t(M.l)+'</span><b>'+esc(t(PL[g[1]].n))+' → '+esc(t(PL[g[2]].n))+'</b><a href="'+gUrl(g[0],g[1],g[2])+'" target="_blank" rel="noopener" aria-label="Google Maps">G ↗</a></div>'; });
-  return h + '</div><p class="note">'+t(_("地图上的路线按真实地理位置绘制，走向为近似；要实际导航时，点每段右边的“G ↗”打开Google地图。","Routes are drawn on real geography and follow the approximate road and rail corridors. For live navigation, tap “G ↗” on any leg to open Google Maps."))+'</p>';
+  return h + '</div><p class="note">'+t(_("上面是真实的Google地图，可直接拖动、缩放。要开始导航，点每段右边的“G ↗”打开Google地图App。","The map above is live Google Maps: drag and zoom right there. To start navigating, tap “G ↗” on any leg to open the Google Maps app."))+'</p>';
 }
 
 
-/* ---- In-app route map (real coordinates) ---- */
-const LAND = [[[140.6372,36.5397],[140.6228,36.5059],[140.6084,36.4333],[140.612,36.4181],[140.6228,36.3793],[140.6264,36.3641],[140.6156,36.3371],[140.5796,36.305],[140.5652,36.283],[140.5652,36.2459],[140.5796,36.1614],[140.6084,36.0956],[140.6444,36.0128],[140.7884,35.8085],[140.7704,35.6971],[140.72,35.6819],[140.7164,35.6988],[140.6624,35.6886],[140.5976,35.6515],[140.4824,35.5654],[140.4248,35.4911],[140.3852,35.3813],[140.4068,35.329],[140.414,35.302],[140.4032,35.2597],[140.3996,35.2226],[140.3924,35.1973],[140.378,35.177],[140.3492,35.1804],[140.3312,35.1584],[140.3348,35.1415],[140.3204,35.1297],[140.3024,35.1331],[140.2952,35.1466],[140.2772,35.1314],[140.252,35.1348],[140.2376,35.1128],[140.2016,35.1145],[140.1548,35.1179],[140.1332,35.123],[140.1044,35.0976],[140.1008,35.0757],[140.0756,35.0588],[140.054,35.0588],[140.0216,35.0385],[139.9892,35.02],[139.982,35.0081],[139.9748,34.9896],[139.964,34.9761],[139.964,34.9592],[139.9604,34.9406],[139.9532,34.9288],[139.9424,34.9186],[139.928,34.9068],[139.8992,34.9034],[139.8812,34.9018],[139.8704,34.9051],[139.856,34.9018],[139.8416,34.9001],[139.838,34.9051],[139.8236,34.9119],[139.8236,34.922],[139.8236,34.9355],[139.8092,34.944],[139.7804,34.9541],[139.7552,34.9558],[139.7516,34.9642],[139.7516,34.9761],[139.766,34.9761],[139.784,34.9744],[139.7948,34.9727],[139.8092,34.9761],[139.82,34.9811],[139.8272,34.9896],[139.8416,34.9913],[139.8596,34.9862],[139.8668,34.9913],[139.8704,34.9997],[139.8668,35.0132],[139.856,35.0216],[139.8344,35.0267],[139.8344,35.0368],[139.8452,35.047],[139.8488,35.0588],[139.8488,35.0689],[139.838,35.0875],[139.8344,35.0993],[139.838,35.1348],[139.82,35.1584],[139.8236,35.1702],[139.82,35.1854],[139.8236,35.199],[139.8524,35.2141],[139.8668,35.2243],[139.8668,35.2462],[139.8488,35.2716],[139.8488,35.2935],[139.8092,35.3053],[139.7804,35.3138],[139.7804,35.3188],[139.802,35.3172],[139.8236,35.329],[139.8236,35.3475],[139.838,35.3594],[139.8452,35.3763],[139.892,35.3644],[139.9064,35.3779],[139.9064,35.3931],[139.8992,35.4235],[139.9136,35.4337],[139.9424,35.4421],[139.9604,35.4556],[139.982,35.459],[140.0072,35.4742],[140.0216,35.4911],[140.0432,35.513],[140.072,35.5434],[140.09,35.54],[140.0972,35.5552],[140.1008,35.5671],[140.0864,35.5671],[140.0828,35.5856],[140.0792,35.6042],[140.0648,35.616],[140.0468,35.6312],[140.0324,35.6414],[140.0072,35.6599],[139.9964,35.6566],[139.982,35.6684],[139.9496,35.6718],[139.9208,35.6616],[139.9388,35.6363],[139.9136,35.6245],[139.8956,35.6143],[139.892,35.6228],[139.8812,35.6245],[139.8704,35.6312],[139.8632,35.6312],[139.8488,35.638],[139.8416,35.6295],[139.838,35.6143],[139.8236,35.6228],[139.82,35.638],[139.8056,35.638],[139.802,35.6194],[139.7876,35.6025],[139.7732,35.6177],[139.7768,35.6414],[139.766,35.6532],[139.7588,35.6312],[139.7696,35.6008],[139.784,35.5806],[139.784,35.5687],[139.7984,35.54],[139.7876,35.5265],[139.7876,35.513],[139.7876,35.5113],[139.7768,35.5012],[139.7444,35.4843],[139.7156,35.4641],[139.6868,35.4607],[139.6652,35.4674],[139.6508,35.4641],[139.6436,35.4539],[139.6616,35.4472],[139.6796,35.4387],[139.6868,35.432],[139.6832,35.4185],[139.6868,35.3999],[139.676,35.4016],[139.6508,35.41],[139.6364,35.4016],[139.6436,35.3881],[139.658,35.3763],[139.6544,35.3391],[139.6508,35.3273],[139.6508,35.3104],[139.6472,35.2986],[139.658,35.2868],[139.6652,35.2986],[139.676,35.2918],[139.694,35.2682],[139.7336,35.2648],[139.7444,35.2496],[139.7264,35.2327],[139.73,35.2293],[139.73,35.226],[139.7336,35.2226],[139.7264,35.2074],[139.6904,35.2091],[139.6652,35.1939],[139.6616,35.1787],[139.6688,35.1601],[139.6796,35.15],[139.6868,35.1399],[139.676,35.1365],[139.6652,35.1348],[139.64,35.1399],[139.6256,35.1314],[139.6148,35.1348],[139.6112,35.1415],[139.6148,35.1534],[139.6148,35.1736],[139.6004,35.2023],[139.6256,35.2125],[139.6184,35.2192],[139.604,35.2243],[139.5968,35.2395],[139.568,35.2682],[139.568,35.2766],[139.5608,35.2868],[139.55,35.2884],[139.5428,35.3087],[139.5284,35.302],[139.5068,35.3036],[139.4852,35.3003],[139.4672,35.3138],[139.4132,35.3188],[139.3304,35.3036],[139.2836,35.2969],[139.2332,35.2851],[139.1828,35.2631],[139.1468,35.2344],[139.1432,35.1838],[139.1576,35.1365],[139.1216,35.15],[139.0892,35.1095],[139.0784,35.0757],[139.0748,35.0537],[139.1072,35.0487],[139.1,35.0301],[139.0964,35.0115],[139.0856,34.998],[139.1,34.9744],[139.1324,34.9659],[139.1432,34.9423],[139.1468,34.9051],[139.1396,34.8714],[139.118,34.868],[139.1,34.8562],[139.0892,34.8427],[139.0856,34.8292],[139.0748,34.8089],[139.0604,34.792],[139.0532,34.7785],[139.0424,34.7684],[139.028,34.765],[139.0172,34.7549],[139.01,34.7464],[138.9992,34.7329],[139.0028,34.7211],[138.9956,34.7143],[138.9884,34.7008],[138.9848,34.6839],[138.9884,34.6654],[138.992,34.6502],[138.9812,34.6451],[138.974,34.6451],[138.9632,34.6519],[138.9416,34.6603],[138.8948,34.6282],[138.8624,34.613],[138.8336,34.5961],[138.8192,34.6029],[138.8048,34.613],[138.794,34.6265],[138.7724,34.6468],[138.7796,34.6637],[138.7724,34.6704],[138.7652,34.6755],[138.758,34.6789],[138.7508,34.6822],[138.7472,34.6907],[138.7472,34.7093],[138.7436,34.7295],[138.758,34.738],[138.7616,34.7481],[138.776,34.7515],[138.758,34.7819],[138.7472,34.814],[138.758,34.8292],[138.7616,34.846],[138.7616,34.8494],[138.7616,34.8697],[138.7544,34.8798],[138.7616,34.8933],[138.776,34.9051],[138.7904,34.9068],[138.7796,34.922],[138.7724,34.9322],[138.7652,34.9558],[138.7616,34.9794],[138.776,35.0031],[138.7868,35.0267],[138.8264,35.0233],[138.8552,35.0183],[138.8768,35.02],[138.8948,35.02],[138.9092,35.0301],[138.8552,35.0791],[138.8372,35.0993],[138.8048,35.1213],[138.7436,35.1348],[138.6968,35.1382],[138.6644,35.1263],[138.6356,35.1162],[138.5852,35.1145],[138.5528,35.0959],[138.5276,35.0504],[138.4988,35.0318],[138.4952,35.0014],[138.506,34.9913],[138.506,35.0115],[138.5204,35.02],[138.5312,35.0166],[138.5132,34.9794],[138.47,34.9592],[138.4304,34.944],[138.4016,34.9322],[138.3656,34.917],[138.3548,34.9034],[138.3476,34.8883],[138.3368,34.8747],[138.3296,34.8545],[138.3296,34.846],[138.3404,34.8258],[138.326,34.8072],[138.3152,34.7988],[138.2936,34.765],[138.2504,34.7397],[138.2144,34.7126],[138.2,34.6603],[138.1928,34.6417],[138.2,34.6215],[138.2252,34.6164],[138.2396,34.6029],[138.2324,34.5944],[138.1892,34.6012],[138.0488,34.6552],[137.5,34.66],[137.5,37.2],[140.64,37.2]],[[139.4168,34.7802],[139.4384,34.7717],[139.4492,34.7565],[139.4564,34.738],[139.46,34.7143],[139.4564,34.6907],[139.4528,34.6789],[139.442,34.6772],[139.4204,34.6772],[139.3592,34.7025],[139.352,34.7194],[139.352,34.7667],[139.3556,34.7971],[139.4024,34.7886],[139.4168,34.7802]]];
-const GEO = {hnd:[35.5494,139.7798],hndCar:[35.5494,139.7798],asa:[35.7110,139.7967],hoppy:[35.7140,139.7926],senso:[35.7148,139.7967],
- yanaka:[35.7276,139.7657],nezu:[35.7203,139.7607],komachi:[35.3205,139.5527],kmkSta:[35.3190,139.5505],hase:[35.3125,139.5355],
- daibutsu:[35.3167,139.5357],hasedera:[35.3123,139.5332],shichiri:[35.3065,139.5107],hokoku:[35.3197,139.5617],hachiman:[35.3259,139.5564],
- shuzen:[34.9700,138.9300],chikurin:[34.9708,138.9286],shuzenT:[34.9707,138.9306],joren:[34.8633,138.9310],amagi:[34.8170,138.9460],
- kiun:[35.0977,139.0700],baien:[35.0910,139.0560],hgz:[35.6694,139.7671],yura:[35.6747,139.7628],tsukiji:[35.6654,139.7707],
- nihon:[35.6856,139.7735],itoya:[35.6720,139.7672],kappa:[35.7128,139.7880]};
-/* intermediate points so lines follow the real road/rail corridor (approximate) */
-const VIA = {
- "hnd>asa":[[35.628,139.739],[35.646,139.747],[35.669,139.767],[35.700,139.787]],
- "asa>hnd":[[35.700,139.787],[35.669,139.767],[35.646,139.747],[35.628,139.739]],
- "hgz>hnd":[[35.646,139.747],[35.628,139.739]],"hnd>hgz":[[35.628,139.739],[35.646,139.747]],
- "senso>yanaka":[[35.712,139.777],[35.728,139.771]],"nezu>asa":[[35.712,139.777]],
- "hndCar>komachi":[[35.500,139.680],[35.444,139.620],[35.380,139.600],[35.335,139.585]],
- "hase>shichiri":[[35.307,139.523]],"shichiri>kmkSta":[[35.307,139.523],[35.3125,139.5355]],
- "hachiman>shuzen":[[35.307,139.500],[35.300,139.420],[35.270,139.250],[35.256,139.160],[35.190,139.040],[35.125,138.925],[35.030,138.935]],
- "shuzen>joren":[[34.935,138.940],[34.895,138.935]],"joren>amagi":[[34.840,138.942]],"amagi>shuzen":[[34.840,138.942],[34.895,138.935],[34.935,138.940]],
- "shuzen>kiun":[[35.030,138.935],[35.080,138.960],[35.100,139.030]],
- "baien>hndCar":[[35.150,139.100],[35.256,139.160],[35.430,139.360],[35.530,139.550],[35.560,139.700]],
- "itoya>kappa":[[35.712,139.777],[35.7115,139.7845]],"kappa>hgz":[[35.7115,139.7845],[35.700,139.787]],
- "tsukiji>nihon":[[35.6745,139.7700]]
-};
-let mapView = null, selLeg = -1;
-function legPts(g){ const via = VIA[g[1]+">"+g[2]] || []; return [GEO[g[1]], ...via, GEO[g[2]]]; }
-function fitView(pts){
-  let a=90,b=-90,c=180,d=-180; pts.forEach(([la,lo])=>{a=Math.min(a,la);b=Math.max(b,la);c=Math.min(c,lo);d=Math.max(d,lo);});
-  const cl=(a+b)/2, k=Math.cos(cl*Math.PI/180);
-  let spanLo=Math.max((d-c)*1.3,(b-a)*1.3/k*1.2,0.012);
-  return {la:cl, lo:(c+d)/2, span:spanLo};
+/* ---- In-app Google Map (keyless embed, no API key needed) ---- */
+let selLeg = -1;
+const GFLAG = {d:"d",t:"r",w:"w"};
+/* stops in order of first appearance; the car-rental desk counts as Haneda */
+function dayStops(L){ const o = []; L.legs.forEach(g => [g[1],g[2]].forEach(k => { k = k==="hndCar" ? "hnd" : k; if (!o.includes(k)) o.push(k); })); return o; }
+function mapSpec(){
+  const L = LEGS[cur];
+  if (selLeg >= 0){ const g = L.legs[selLeg]; return {pts:[g[1],g[2]], m:g[0], cap:(selLeg+1)+". "+MODE[g[0]].e+" "+t(PL[g[1]].n)+" → "+t(PL[g[2]].n)}; }
+  if (L.full) return {pts:L.full, m:"d", cap:"🚗 "+t(_("全天开车路线","Whole-day drive"))};
+  return {pts:dayStops(L), m:"d", cap:"📍 "+t(_("今天所有地点","All of today's stops"))};
 }
-function dayMapSVG(){
-  const L = LEGS[cur]; const W=360,H=300;
-  if (!mapView) {
-    const pts = selLeg>=0 ? legPts(L.legs[selLeg]) : L.legs.flatMap(legPts);
-    mapView = fitView(pts);
-  }
-  const v = mapView, k = Math.cos(v.la*Math.PI/180), s = W/v.span;
-  const X = lo => (lo - v.lo)*s + W/2, Y = la => (v.la - la)*s/k + H/2;
-  /* note: 1 deg lat = 1/cos(lat) deg lon in distance */
-  const P = ([la,lo]) => X(lo).toFixed(1)+","+Y(la).toFixed(1);
-  let o = '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(t(DAYS[cur].title))+'"><rect width="'+W+'" height="'+H+'" fill="var(--sea)"/>';
-  o += LAND.map(r=>'<path d="M'+r.map(([lo,la])=>X(lo).toFixed(1)+","+Y(la).toFixed(1)).join("L")+'Z" fill="var(--land)" stroke="var(--land-edge)" stroke-width="1"/>').join("");
-  /* scale bar */
-  const kmPerPx = v.span*111.32*k/W, steps=[0.1,0.2,0.5,1,2,5,10,20,50]; let km=steps[0]; for(const st of steps){ if(st/kmPerPx < 110) km=st; }
-  const bw = km/kmPerPx;
-  o += '<g transform="translate('+(W-bw-12)+','+(H-14)+')"><rect x="-4" y="-14" width="'+(bw+8)+'" height="20" rx="5" fill="var(--surface)" opacity=".85"/><line x1="0" y1="0" x2="'+bw.toFixed(1)+'" y2="0" stroke="var(--ink)" stroke-width="2"/><text x="'+(bw/2).toFixed(1)+'" y="-4" text-anchor="middle" font-size="10" font-family="var(--mono)" fill="var(--ink)">'+(km<1?(km*1000)+" m":km+" km")+'</text></g>';
-  /* legs */
-  L.legs.forEach((g,i) => {
-    const on = selLeg<0 || selLeg===i, dash = g[0]==="t" ? '8 6' : g[0]==="w" ? '2 5' : '';
-    o += '<polyline points="'+legPts(g).map(P).join(" ")+'" fill="none" stroke="var(--dc)" stroke-width="'+(on?(g[0]==="w"?3.5:4.5):2.5)+'" stroke-linecap="round" stroke-linejoin="round" opacity="'+(on?1:.3)+'"'+(dash?' stroke-dasharray="'+dash+'"':'')+'/>';
-  });
-  /* stops, numbered in order of first appearance */
-  const order = []; L.legs.forEach(g => { [g[1],g[2]].forEach(kk => { const key = kk==="hndCar"?"hnd":kk; if (!order.includes(key)) order.push(key); }); });
-  const placed = [];
-  order.forEach((kk,n) => {
-    const [la,lo] = GEO[kk], x = X(lo), y = Y(la);
-    if (x<-20||x>W+20||y<-20||y>H+20) return;
-    const near = placed.some(([px,py]) => Math.hypot(px-x,py-y) < 16);
-    placed.push([x,y]);
-    o += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="10" fill="var(--dc)" stroke="#fff" stroke-width="2"/><text class="num" x="'+x.toFixed(1)+'" y="'+(y+4).toFixed(1)+'" text-anchor="middle">'+(n+1)+'</text>';
-    if (!near) { const right = x < W-90; o += '<text class="lbl" x="'+(right?x+14:x-14).toFixed(1)+'" y="'+(y+4).toFixed(1)+'" text-anchor="'+(right?"start":"end")+'">'+esc(t(PL[kk].n))+'</text>'; }
-  });
-  return o + '</svg>';
+function embedUrl(s){
+  const q = k => encodeURIComponent(PL[k].q), hl = "&hl="+(lang==="en"?"en":"zh-CN")+"&output=embed";
+  if (s.pts.length < 2) return "https://maps.google.com/maps?q="+q(s.pts[0])+hl;
+  return "https://maps.google.com/maps?saddr="+q(s.pts[0])+"&daddr="+s.pts.slice(1).map(q).join("+to:")+"&dirflg="+GFLAG[s.m]+hl;
 }
-function dayMapHTML(){
-  return '<div class="dmap" id="dmap"><div id="dmapSvg">'+dayMapSVG()+'</div><span class="dhint">'+t(_("拖动・双指缩放","Drag · pinch to zoom"))+'</span><div class="zoom"><button id="zIn" aria-label="Zoom in">+</button><button id="zOut" aria-label="Zoom out">−</button><button id="zFit" aria-label="Fit route">⤢</button></div><div class="dlegend"><span><i></i>'+t(MODE.d.l)+'</span><span><i class="t"></i>'+t(MODE.t.l)+'</span><span><i class="w"></i>'+t(MODE.w.l)+'</span></div></div>';
+function dayMapInner(){
+  const s = mapSpec(), a = s.pts, open = gUrl(s.m, a[0], a[a.length-1], a.slice(1,-1));
+  return '<div class="dcap"><span>'+esc(s.cap)+'</span>'+(selLeg>=0?'<button id="zFit">'+t(_("看全天","Whole day"))+'</button>':'')+'<a href="'+open+'" target="_blank" rel="noopener">Google Maps ↗</a></div><div class="mwrap"><span>'+t(_("地图加载中…","Loading map…"))+'</span><iframe title="'+esc(s.cap)+'" src="'+embedUrl(s)+'" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>';
 }
-function redrawMap(){ const el = $("#dmapSvg"); if (el) el.innerHTML = dayMapSVG(); }
-function wireMap(){
-  const box = $("#dmap"); if (!box) return;
-  const zoom = f => { mapView.span = Math.min(Math.max(mapView.span*f, 0.004), 3); redrawMap(); };
-  $("#zIn").onclick = () => zoom(0.6); $("#zOut").onclick = () => zoom(1.6);
-  $("#zFit").onclick = () => { selLeg=-1; mapView=null; redrawMap(); markLegs(); };
-  const ptrs = new Map(); let startDist = 0, startSpan = 0;
-  const svgEl = () => box.querySelector("svg");
-  box.addEventListener("pointerdown", e => { if (e.target.closest("button")) return; box.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
-    if (ptrs.size===2){ const [a,b]=[...ptrs.values()]; startDist=Math.hypot(a.x-b.x,a.y-b.y); startSpan=mapView.span; } });
-  box.addEventListener("pointermove", e => { if (!ptrs.has(e.pointerId)) return; const prev = ptrs.get(e.pointerId); const cur2 = {x:e.clientX,y:e.clientY}; ptrs.set(e.pointerId,cur2);
-    const r = svgEl().getBoundingClientRect(), scale = 360/r.width;
-    if (ptrs.size===1){ const k=Math.cos(mapView.la*Math.PI/180), s=360/mapView.span;
-      mapView.lo -= (cur2.x-prev.x)*scale/s; mapView.la += (cur2.y-prev.y)*scale/s*k; redrawMap(); }
-    else if (ptrs.size===2 && startDist){ const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y);
-      mapView.span = Math.min(Math.max(startSpan*startDist/d,0.004),3); redrawMap(); } });
-  const end = e => { ptrs.delete(e.pointerId); if (ptrs.size<2) startDist=0; };
-  box.addEventListener("pointerup", end); box.addEventListener("pointercancel", end);
-  box.addEventListener("wheel", e => { e.preventDefault(); zoom(e.deltaY>0?1.25:0.8); }, {passive:false});
-}
+function dayMapHTML(){ return '<div class="dmap" id="dmap">'+dayMapInner()+'</div>'; }
+function redrawMap(){ const el = $("#dmap"); if (el){ el.innerHTML = dayMapInner(); wireMap(); } }
+function wireMap(){ const b = $("#zFit"); if (b) b.onclick = () => { selLeg = -1; redrawMap(); markLegs(); }; }
 function markLegs(){ document.querySelectorAll(".rleg").forEach(b => b.setAttribute("aria-pressed", +b.dataset.leg===selLeg)); }
 
 const $ = s => document.querySelector(s);
@@ -777,8 +746,9 @@ function renderDay(){
   h += '<div class="sec"><h3>'+t(UI.plan)+'</h3><span>'+t(UI.stops)(nSpots)+'</span></div><ol class="tl">';
   d.stops.forEach((s,i) => {
     if (s.k === "drive"){ h += '<li class="leg"><span>'+(isTrain?"🚃 ":"🚗 ")+esc(t(s.n))+'</span></li>'; return; }
-    const isDone = !!done[i];
-    h += '<li class="st '+s.k+(isDone?" done":"")+'"><span class="tm">'+esc(t(s.t))+'</span><span class="nd"></span><div class="card"><details'+(i===firstOpen(d)?" open":"")+'><summary><div class="ttl"><h4>'+esc(t(s.n))+'</h4>'+(s.jp?'<div class="jp">'+esc(s.jp)+'</div>':'')+'</div>'+(s.book?'<span class="badge" title="booking"></span>':'')+'<span class="chev">▼</span></summary><div class="more">';
+    const isDone = !!done[i], ph = PHOTO[cur+"-"+i];
+    h += '<li class="st '+s.k+(isDone?" done":"")+'"><span class="tm">'+esc(t(s.t))+'</span><span class="nd"></span><div class="card"><details'+(i===firstOpen(d)?" open":"")+'><summary>'+(ph?'<img class="thb" src="'+ph[0]+'" alt="" loading="lazy" onerror="this.remove()">':'')+'<div class="ttl"><h4>'+esc(t(s.n))+'</h4>'+(s.jp?'<div class="jp">'+esc(s.jp)+'</div>':'')+'</div>'+(s.book?'<span class="badge" title="booking"></span>':'')+'<span class="chev">▼</span></summary><div class="more">';
+    if (ph) h += '<figure class="ph"><img src="'+ph[0]+'" alt="'+esc(t(s.n))+'" loading="lazy" onerror="this.parentNode.remove()"><figcaption><a href="'+ph[1]+'" target="_blank" rel="noopener">'+t(_("图片","Photo"))+' · Wikimedia Commons</a></figcaption></figure>';
     if (s.p) h += '<p>'+esc(t(s.p))+'</p>';
     if (s.tips) h += '<ul>'+s.tips.map(z=>'<li>'+esc(t(z))+'</li>').join("")+'</ul>';
     if (s.book) h += '<span class="tag warn">⏰ '+esc(t(s.book))+'</span>';
@@ -813,7 +783,7 @@ function renderDay(){
   h += '</div>';
   $("#dayview").innerHTML = h;
   wireMap();
-  $("#dayview").querySelectorAll(".rleg").forEach(b => { const pick = e => { if (e.target.closest("a")) return; const n=+b.dataset.leg; selLeg = selLeg===n ? -1 : n; mapView=null; redrawMap(); markLegs(); $("#dmap").scrollIntoView && $("#dmap").scrollIntoView({behavior:"smooth",block:"center"}); };
+  $("#dayview").querySelectorAll(".rleg").forEach(b => { const pick = e => { if (e.target.closest("a")) return; const n=+b.dataset.leg; selLeg = selLeg===n ? -1 : n; redrawMap(); markLegs(); $("#dmap").scrollIntoView && $("#dmap").scrollIntoView({behavior:"smooth",block:"center"}); };
     b.onclick = pick; b.onkeydown = e => { if (e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(e); } }; });
   $("#dayview").querySelectorAll("button[data-stop]").forEach(b => b.onclick = () => {
     const m = store.get("done-"+cur) || {}; m[b.dataset.stop] = !m[b.dataset.stop]; store.set("done-"+cur, m);
@@ -828,7 +798,7 @@ function firstOpen(d){ return d.stops.findIndex(s => s.k === "spot"); }
 
 function go(i, scroll){
   if (i < 0 || i > 7) return;
-  cur = i; selLeg = -1; mapView = null; store.set("day", cur); renderStrip(); renderDay();
+  cur = i; selLeg = -1; store.set("day", cur); renderStrip(); renderDay();
   if (scroll) $("#strip").scrollIntoView({behavior:"smooth",block:"start"});
 }
 
