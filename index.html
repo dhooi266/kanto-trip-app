@@ -317,6 +317,10 @@ a{color:inherit}
 .vform label{display:flex;flex-direction:column;gap:5px;font-size:12px;opacity:.9}
 .vform input,.vform select{font:inherit;font-size:15px;border:1px solid rgba(255,255,255,.25);background:rgba(13,20,38,.6);color:var(--snow);border-radius:10px;padding:9px 10px;width:100%}
 .vrow{display:flex;gap:8px;align-items:center}
+.vsend{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.vsend>button{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.1);color:var(--snow);border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;cursor:pointer}
+.vqr{background:#fff;padding:12px;border-radius:14px;line-height:0;color:#111;font-size:13px}
+.vqr img,.vqr canvas{display:block;width:220px;height:220px}
 .vrow input,.vrow select{flex:1;min-width:0}
 .vrow button[data-vt]{flex:0 0 auto;padding:8px 12px}
 .vwarn{margin:0;font-size:13px;line-height:1.55;color:#FFD2A6}
@@ -1248,6 +1252,7 @@ function voiceInner(){
         }
       }
     }
+    if (elKey) h += '<div class="vsend"><button id="elSend">📱 '+t(_("传到手机（扫二维码）","Send to phone (QR code)"))+'</button>'+(vQR?'<div id="elQR" class="vqr"></div><p class="vhint">'+t(_("用手机相机扫描，打开后点「导入」，这部手机就设置好了。二维码里有你的key，别截图或分享给别人。","Scan with the phone camera, open the link and tap Import; that phone is then set up. The code contains your key, so don\'t screenshot or share it."))+'</p><div class="vrow"><button id="elCopyLink">🔗 '+t(_("复制链接","Copy link"))+'</button><button id="elHideQR">'+t(_("隐藏","Hide"))+'</button></div>':'')+'</div>';
     h += '<p class="vhint">🔒 '+t(_("Key只保存在这部手机的浏览器里，不会上传到网页代码。每部手机设置一次。","The key stays in this phone's browser only, never in the page code. Set it once per phone."))+'</p></div>';
   }
   return h;
@@ -1270,6 +1275,36 @@ function paintVoice(){
     b.textContent = "⏳"; elSpeak(VTEST[l], l).then(() => { vMsg = ""; }).catch(e => { vErr(e); }).finally(() => paintVoice());
   });
   const rl = $("#elReload"); if (rl) rl.onclick = () => { elVoices = null; paintVoice(); elLoadVoices(); };
+  const sd = $("#elSend"); if (sd) sd.onclick = () => { vQR = !vQR; paintVoice(); };
+  const hq = $("#elHideQR"); if (hq) hq.onclick = () => { vQR = false; paintVoice(); };
+  const cl = $("#elCopyLink"); if (cl) cl.onclick = () => { try { navigator.clipboard.writeText(setupLink()); cl.textContent = "✓ "+t(_("已复制","Copied")); } catch(e) {} };
+  if (vQR && $("#elQR")) drawQR($("#elQR"), setupLink());
+}
+/* ---- Desktop → phone hand-over: the settings travel in the URL #fragment (never sent to the server),
+   the phone asks before importing and then wipes the fragment from the address bar. ---- */
+let vQR = false;
+const b64u = str => btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const unb64u = str => decodeURIComponent(escape(atob(str.replace(/-/g,"+").replace(/_/g,"/"))));
+const setupLink = () => location.origin + location.pathname + "#el=" + b64u(JSON.stringify({k:elKey, v:elPref, l:lang}));
+function drawQR(el, text){
+  const go = () => { el.innerHTML = ""; try { new QRCode(el, {text, width:220, height:220, correctLevel:QRCode.CorrectLevel.M}); } catch(e) { el.textContent = t(_("二维码生成失败，请用「复制链接」。","Couldn't draw the QR code; use Copy link.")); } };
+  if (window.QRCode) return go();
+  el.textContent = "…";
+  const sc = document.createElement("script"); sc.src = "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+  sc.onload = go; sc.onerror = () => { el.textContent = t(_("二维码工具加载失败，请用「复制链接」。","Couldn't load the QR tool; use Copy link.")); };
+  document.head.appendChild(sc);
+}
+function importSetup(){
+  const m = location.hash.match(/^#el=([A-Za-z0-9_-]+)$/); if (!m) return;
+  let d = null; try { d = JSON.parse(unb64u(m[1])); } catch(e) {}
+  try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {}
+  if (!d || typeof d.k !== "string" || !d.k) return;
+  if (!confirm(lang==="en" ? "Import the ElevenLabs voice settings from your other device onto this phone?" : "要把另一台设备的 ElevenLabs 语音设置导入到这部手机吗？")) return;
+  elKey = d.k; store.set("elkey", elKey);
+  if (d.v && typeof d.v === "object") { elPref = {}; ["ja","zh","en"].forEach(k => { if (typeof d.v[k] === "string") elPref[k] = d.v[k]; }); store.set("elv", elPref); }
+  elVoices = null; vMsg = "✓ " + t(_("已导入ElevenLabs设置，可以开始用了。","ElevenLabs settings imported; you're ready to go."));
+  const tb = document.querySelector('.tabbar button[data-view="talk"]'); if (tb) tb.click();
+  paintVoice();
 }
 function renderTalk(){
   const el = $("#view-talk"); if (!el) return;
@@ -1310,6 +1345,7 @@ function renderTalk(){
 }
 function renderAll(){ renderHero(); renderStrip(); renderDay(); renderPrep(); renderInfo(); renderTalk(); }
 $("#showja").onclick = () => { $("#showja").hidden = true; };
+addEventListener("hashchange", importSetup);
 
 document.querySelectorAll("#curT button").forEach(b => b.onclick = () => setMoney(b.dataset.cur));
 document.querySelectorAll(".lang button[data-lang]").forEach(b => b.onclick = () => {
@@ -1352,6 +1388,7 @@ document.querySelectorAll(".tabbar button").forEach(b => b.onclick = () => {
 })();
 
 renderAll();
+importSetup();
 </script>
 </body>
 </html>
