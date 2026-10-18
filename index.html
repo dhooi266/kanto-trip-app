@@ -1107,8 +1107,33 @@ async function mtMemory(q, pair){
   if (!raw || +j.responseStatus !== 200 || /MYMEMORY WARNING|QUERY LENGTH LIMIT/i.test(raw)) throw new Error("mt");
   const d = document.createElement("textarea"); d.innerHTML = raw; return d.value;
 }
-function unlockAudio(){ try { actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch(e) {} }
-async function playBuf(ab){ unlockAudio(); const buf = await actx.decodeAudioData(ab); const s = actx.createBufferSource(); s.buffer = buf; s.connect(actx.destination); s.start(); }
+/* Playback goes through one shared <audio> element, not Web Audio: on iPhone Web Audio is muted by the silent switch
+   and is routed to the earpiece after the mic was used. The element is "unlocked" by playing a tiny silent WAV inside
+   every tap, so the translated speech that arrives seconds later is allowed to play out loud. */
+let vAudio = null, silentURL = null;
+function silentWav(){
+  const n = 800, b = new ArrayBuffer(44 + n*2), d = new DataView(b), w = (o,s) => [...s].forEach((c,i) => d.setUint8(o+i, c.charCodeAt(0)));
+  w(0,"RIFF"); d.setUint32(4,36+n*2,true); w(8,"WAVE"); w(12,"fmt "); d.setUint32(16,16,true); d.setUint16(20,1,true); d.setUint16(22,1,true);
+  d.setUint32(24,8000,true); d.setUint32(28,16000,true); d.setUint16(32,2,true); d.setUint16(34,16,true); w(36,"data"); d.setUint32(40,n*2,true);
+  return URL.createObjectURL(new Blob([b], {type:"audio/wav"}));
+}
+const audioMode = m => { try { if (navigator.audioSession) navigator.audioSession.type = m; } catch(e) {} };
+function unlockAudio(){
+  try { if (!vAudio) { vAudio = new Audio(); vAudio.setAttribute("playsinline", ""); vAudio.preload = "auto"; }
+    if (!silentURL) silentURL = silentWav();
+    if (vAudio.paused) { vAudio.src = silentURL; const p = vAudio.play(); if (p) p.catch(() => {}); } } catch(e) {}
+  try { actx = actx || new (window.AudioContext||window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch(e) {}
+}
+let lastUrl = null;
+async function playBuf(ab){
+  audioMode("playback");
+  if (lastUrl) URL.revokeObjectURL(lastUrl);
+  lastUrl = URL.createObjectURL(new Blob([ab], {type:"audio/mpeg"}));
+  try { if (!vAudio) { vAudio = new Audio(); vAudio.setAttribute("playsinline", ""); } vAudio.pause(); vAudio.src = lastUrl; vAudio.currentTime = 0; await vAudio.play(); return; }
+  catch(e) { /* autoplay refused: fall back to Web Audio, then ask for a tap */ }
+  try { unlockAudio(); const buf = await actx.decodeAudioData(ab.slice(0)); const s = actx.createBufferSource(); s.buffer = buf; s.connect(actx.destination); s.start(); }
+  catch(e) { throw new Error("autoplay"); }
+}
 const elVoiceFor = l => elPref[l] || (elVoices && elVoices[0] && elVoices[0].voice_id) || EL_DEFAULT_VOICE;
 async function elSpeak(text, l){
   if (!elKey) { say(text, l==="ja" ? "ja-JP" : l==="zh" ? "zh-CN" : "en-US"); return; }
@@ -1146,7 +1171,8 @@ async function elLoadVoices(){
 const VTEST = {ja:"こんにちは。予約しています。よろしくお願いします。", zh:"你好，入住时间是下午三点。", en:"Hello, check-in is from three p.m."};
 function vErr(e){
   const m = e && e.message;
-  vMsg = m && m.startsWith("tts:") ? t(_("ElevenLabs声音播放失败：","ElevenLabs voice failed: "))+m.slice(4)+t(_("（检查声音ID或额度）"," (check the voice ID or credits)")) :
+  vMsg = m==="autoplay" ? t(_("iPhone没有自动播放声音，请点气泡右边的🔊听翻译。","iPhone blocked auto-play; tap 🔊 on the bubble to hear it.")) :
+         m && m.startsWith("tts:") ? t(_("ElevenLabs声音播放失败：","ElevenLabs voice failed: "))+m.slice(4)+t(_("（检查声音ID或额度）"," (check the voice ID or credits)")) :
          m==="key" ? t(_("ElevenLabs key无效或额度不足，请在设置里检查。","ElevenLabs key rejected or out of credits; check settings.")) :
          m==="empty" ? t(_("没听清楚，请再说一次。","Didn't catch that, please try again.")) :
          m==="mic" ? t(_("无法使用麦克风，请在浏览器允许麦克风权限。","Microphone blocked; allow mic access in your browser.")) :
@@ -1167,7 +1193,7 @@ async function finishTurn(who, heard){
 /* iPhone Safari only lets speechSynthesis talk after it has spoken once inside a tap, so prime it silently on every tap */
 function primeSpeech(){ try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } } catch(e) {} }
 async function startRec(who){
-  unlockAudio(); primeSpeech(); vMsg = "";
+  audioMode("auto"); unlockAudio(); primeSpeech(); vMsg = "";
   const from = who==="me" ? myL() : "ja";
   if (!elKey) { /* browser speech recognition fallback; every way it can end now says why */
     if (!SR) { vErr({message:"nosvc"}); paintVoice(); return; }
@@ -1217,7 +1243,7 @@ async function startRec(who){
   vrec = {who, stop:() => { if (mr.state !== "inactive") mr.stop(); }, timer:setTimeout(stopRec, 30000)};
   paintVoice();
 }
-function stopRec(){ if (!vrec) return; const r = vrec; vrec = null; clearTimeout(r.timer); r.stop(); paintVoice(); }
+function stopRec(){ if (!vrec) return; unlockAudio(); const r = vrec; vrec = null; clearTimeout(r.timer); r.stop(); paintVoice(); }
 function voiceInner(){
   const me = lang==="en" ? "English" : "中文";
   let h = '<div class="vlog" id="vlog">';
