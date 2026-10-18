@@ -299,6 +299,10 @@ a{color:inherit}
 .vb{position:relative;max-width:86%;border-radius:16px;padding:9px 40px 9px 12px;animation:rise .3s ease-out both}
 .vb.me{align-self:flex-end;background:var(--dc);border-bottom-right-radius:4px}
 .vb.them{align-self:flex-start;background:rgba(255,255,255,.12);border-bottom-left-radius:4px}
+.vo{position:relative}
+.vo+.vo{margin-top:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,.18)}
+.vo i{display:block;font-style:normal;font-size:10px;letter-spacing:.08em;opacity:.7;margin-top:2px}
+.vb .vo button{right:-34px}
 .vb small{display:block;font-size:12px;opacity:.75;line-height:1.4}
 .vb b{display:block;font-size:18px;line-height:1.45;margin-top:2px}
 .vb button{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:rgba(255,255,255,.16);color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer}
@@ -1060,10 +1064,10 @@ const fromJa = d => !!d && d.startsWith("ja");
 let trDir = normDir(store.get("trdir")), trOut = null, phCat = 0;
 const trPair = () => trDir==="jaz" ? "ja|zh-CN" : trDir==="jae" ? "ja|en" : (trDir==="zh"?"zh-CN":"en")+"|ja";
 const gTrans = q => { const [sl,tl] = trPair().split("|"); return "https://translate.google.com/?sl="+sl+"&tl="+tl+"&op=translate&text="+encodeURIComponent(q); };
-function say(txt, l){
+function say(txt, l, keep){
   try { if (!window.speechSynthesis) return; const u = new SpeechSynthesisUtterance(txt); u.lang = l || "ja-JP"; u.rate = .9;
     const v = speechSynthesis.getVoices().find(v => (v.lang||"").replace("_","-").toLowerCase().startsWith(u.lang.slice(0,2).toLowerCase())); if (v) u.voice = v;
-    speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e) {}
+    if (!keep) speechSynthesis.cancel(); speechSynthesis.speak(u); } catch(e) {}
 }
 function showJa(ja, sub){ const o = $("#showja"); o.querySelector("b").textContent = ja; o.querySelector("span").textContent = sub || ""; o.hidden = false; }
 function trOutHTML(){
@@ -1097,7 +1101,7 @@ async function translate(){
    Without a key it falls back to the browser's own speech recognition and voices. ---- */
 const EL = "https://api.elevenlabs.io/v1", EL_STT = "scribe_v2", EL_TTS = ["eleven_v4_turbo","eleven_flash_v2_5"], EL_DEFAULT_VOICE = "21m00Tcm4TlvDq8ikWAM";
 let vLive = "", elKey = store.get("elkey") || "", elVoices = null, elPref = store.get("elv") || {}, vlog = [], vrec = null, vBusy = false, vMsg = "", vShowSet = false, actx = null;
-let vLang = ["zh","en"].includes(store.get("vlang")) ? store.get("vlang") : (lang==="en" ? "en" : "zh");
+let vLang = ["zh","en","both"].includes(store.get("vlang")) ? store.get("vlang") : (lang==="en" ? "en" : "zh");
 const myL = () => vLang;
 const mmL = l => l==="zh" ? "zh-CN" : l;
 /* translate: Google free endpoint first (better Japanese, CORS ok, no key), MyMemory as fallback */
@@ -1107,7 +1111,7 @@ async function mt(q, pair){
     const g = await fetch("https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl="+sl+"&tl="+tl+"&q="+encodeURIComponent(q));
     if (g.ok) { const j = await g.json(); const out = (j[0]||[]).map(x => x && x[0] || "").join("").trim(); if (out) return out; }
   } catch(e) {}
-  return mtMemory(q, pair);
+  return mtMemory(q, pair.replace(/^auto\|/, (/[\u3400-\u9fff]/.test(q) ? "zh-CN" : "en") + "|"));
 }
 async function mtMemory(q, pair){
   const r = await fetch("https://api.mymemory.translated.net/get?q="+encodeURIComponent(q)+"&langpair="+encodeURIComponent(pair));
@@ -1137,14 +1141,15 @@ async function playBuf(ab){
   audioMode("playback");
   if (lastUrl) URL.revokeObjectURL(lastUrl);
   lastUrl = URL.createObjectURL(new Blob([ab], {type:"audio/mpeg"}));
-  try { if (!vAudio) { vAudio = new Audio(); vAudio.setAttribute("playsinline", ""); } vAudio.pause(); vAudio.src = lastUrl; vAudio.currentTime = 0; await vAudio.play(); return; }
+  try { if (!vAudio) { vAudio = new Audio(); vAudio.setAttribute("playsinline", ""); } vAudio.pause(); vAudio.src = lastUrl; vAudio.currentTime = 0; await vAudio.play();
+    await new Promise(res => { const done = () => { vAudio.onended = vAudio.onpause = null; res(); }; vAudio.onended = done; vAudio.onpause = done; setTimeout(done, 30000); }); return; }
   catch(e) { /* autoplay refused: fall back to Web Audio, then ask for a tap */ }
-  try { unlockAudio(); const buf = await actx.decodeAudioData(ab.slice(0)); const s = actx.createBufferSource(); s.buffer = buf; s.connect(actx.destination); s.start(); }
+  try { unlockAudio(); const buf = await actx.decodeAudioData(ab.slice(0)); const s = actx.createBufferSource(); s.buffer = buf; s.connect(actx.destination); await new Promise(res => { s.onended = res; s.start(); setTimeout(res, 30000); }); }
   catch(e) { throw new Error("autoplay"); }
 }
 const elVoiceFor = l => elPref[l] || (elVoices && elVoices[0] && elVoices[0].voice_id) || EL_DEFAULT_VOICE;
-async function elSpeak(text, l){
-  if (!elKey) { say(text, l==="ja" ? "ja-JP" : l==="zh" ? "zh-CN" : "en-US"); return; }
+async function elSpeak(text, l, queue){
+  if (!elKey) { say(text, l==="ja" ? "ja-JP" : l==="zh" ? "zh-CN" : "en-US", queue); return; }
   let last = "";
   for (const m of EL_TTS) {
     const r = await fetch(EL+"/text-to-speech/"+elVoiceFor(l)+"?output_format=mp3_44100_128", {method:"POST", headers:{"xi-api-key":elKey,"Content-Type":"application/json"}, body:JSON.stringify({text, model_id:m, language_code:l})});
@@ -1155,12 +1160,13 @@ async function elSpeak(text, l){
   throw new Error("tts:"+last);
 }
 async function elHear(blob, l){
-  const fd = new FormData(); fd.append("model_id", EL_STT); fd.append("language_code", l);
+  const fd = new FormData(); fd.append("model_id", EL_STT); if (l !== "auto") fd.append("language_code", l);
   fd.append("file", blob, "speech."+(/mp4|m4a|aac/.test(blob.type) ? "m4a" : "webm"));
   const r = await fetch(EL+"/speech-to-text", {method:"POST", headers:{"xi-api-key":elKey}, body:fd});
   if (r.status === 401) throw new Error("key");
   if (!r.ok) throw new Error("stt");
-  return ((await r.json()).text || "").trim();
+  const j = await r.json(), lc = (j.language_code || "").toLowerCase();
+  return {text:(j.text || "").trim(), lang: /^(zh|cmn|zho|chi|yue)/.test(lc) ? "zh" : /^(en|eng)/.test(lc) ? "en" : null};
 }
 /* voice list: v2 (paged, includes Voice Library voices added to My Voices) then v1; keep the API's reason when both fail */
 let elVoiceErr = null;
@@ -1192,22 +1198,28 @@ function vErr(e){
          m==="mt" ? t(_("翻译服务暂时不可用（没网络或今天额度用完）。","Translation service unavailable (offline or daily quota used).")) :
          t(_("出错了，请再试一次。","Something went wrong, please try again."));
 }
-async function finishTurn(who, heard){
-  const from = who==="me" ? myL() : "ja", to = who==="me" ? "ja" : myL();
-  const out = await mt(heard, mmL(from)+"|"+mmL(to));
-  vlog.push({who, heard, out, to}); vMsg = ""; paintVoice();
-  await elSpeak(out, to);
+async function finishTurn(who, heard, det){
+  let outs;
+  if (who === "me") {
+    const from = vLang==="both" ? (det || "auto") : vLang;
+    outs = [{l:"ja", text: await mt(heard, mmL(from)+"|ja")}];
+  } else {
+    const ls = vLang==="both" ? ["zh","en"] : [vLang];
+    outs = await Promise.all(ls.map(async l => ({l, text: await mt(heard, "ja|"+mmL(l))})));
+  }
+  vlog.push({who, heard, outs}); vMsg = ""; paintVoice();
+  for (let i = 0; i < outs.length; i++) await elSpeak(outs[i].text, outs[i].l, i > 0);
 }
 /* iPhone Safari only lets speechSynthesis talk after it has spoken once inside a tap, so prime it silently on every tap */
 function primeSpeech(){ try { if (window.speechSynthesis) { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; speechSynthesis.speak(u); } } catch(e) {} }
 async function startRec(who){
   audioMode("auto"); unlockAudio(); primeSpeech(); vMsg = "";
-  const from = who==="me" ? myL() : "ja";
+  const from = who==="me" ? (vLang==="both" ? "auto" : vLang) : "ja";
   if (!elKey) { /* browser speech recognition fallback; every way it can end now says why */
     if (!SR) { vErr({message:"nosvc"}); paintVoice(); return; }
     /* keep listening (continuous + interim results) and use whatever was heard when it ends: iPhone often never sends a
        "final" result, and stops at the first pause in single-shot mode. Ends by itself after ~1.8s of silence. */
-    const r = new SR(); r.lang = from==="ja" ? "ja-JP" : from==="zh" ? "zh-CN" : "en-US"; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
+    const r = new SR(); r.lang = from==="ja" ? "ja-JP" : from==="en" ? "en-US" : "zh-CN"; r.interimResults = true; r.continuous = true; r.maxAlternatives = 1;
     let heard = "", fatal = null, done = false, quiet = null, cap = null;
     const finish = async () => {
       if (done) return; done = true; clearTimeout(quiet); clearTimeout(cap);
@@ -1243,7 +1255,7 @@ async function startRec(who){
   mr.onstop = async () => {
     stream.getTracks().forEach(tr => tr.stop());
     vBusy = true; paintVoice();
-    try { const heard = await elHear(new Blob(chunks, {type:mr.mimeType || mime || "audio/webm"}), from); if (!heard) throw new Error("empty"); await finishTurn(who, heard); }
+    try { const got = await elHear(new Blob(chunks, {type:mr.mimeType || mime || "audio/webm"}), from); if (!got.text) throw new Error("empty"); await finishTurn(who, got.text, got.lang); }
     catch(e) { vErr(e); }
     vBusy = false; paintVoice();
   };
@@ -1253,18 +1265,19 @@ async function startRec(who){
 }
 function stopRec(){ if (!vrec) return; unlockAudio(); const r = vrec; vrec = null; clearTimeout(r.timer); r.stop(); paintVoice(); }
 function voiceInner(){
-  const me = vLang==="en" ? "English" : "中文";
-  let h0 = '<div class="vlang"><span>'+t(_("我的语言","My language"))+'</span><div class="trdir">'+[["zh","中文"],["en","English"]].map(([k,l]) => '<button data-vlang="'+k+'" aria-pressed="'+(vLang===k)+'"'+(vrec||vBusy?" disabled":"")+'>'+l+'</button>').join("")+'</div></div>';
+  const me = vLang==="en" ? "English" : vLang==="both" ? "中文 / English" : "中文", them = vLang==="both" ? "中文 + English" : me;
+  let h0 = '<div class="vlang"><span>'+t(_("我的语言","My language"))+'</span><div class="trdir">'+[["zh","中文"],["en","English"],["both","中文+EN"]].map(([k,l]) => '<button data-vlang="'+k+'" aria-pressed="'+(vLang===k)+'"'+(vrec||vBusy?" disabled":"")+'>'+l+'</button>').join("")+'</div></div>';
   let h = h0 + '<div class="vlog" id="vlog">';
-  if (!vlog.length) h += '<p class="vhint">'+(vLang==="en" ? t(_("轮流按下面的按钮说话：你说英文会翻成日语读出来；对方说日语会翻成英文读给你听。","Take turns: tap your button and speak English, it is read out in Japanese. Staff tap theirs and speak Japanese, you hear it in English.")) : t(_("轮流按下面的按钮说话：你说中文会翻成日语读出来；对方说日语会翻成中文读给你听。","Take turns: tap your button and speak Chinese, it is read out in Japanese. Staff tap theirs and speak Japanese, you hear it in Chinese.")))+'</p>';
-  vlog.forEach((x,i) => h += '<div class="vb '+(x.who==="me"?"me":"them")+'"><small>'+esc(x.heard)+'</small><b lang="'+(x.to==="ja"?"ja":x.to)+'">'+esc(x.out)+'</b><button data-vr="'+i+'" aria-label="Replay">🔊</button></div>');
+  if (!vlog.length) h += '<p class="vhint">'+(vLang==="both" ? t(_("轮流按下面的按钮说话：你说中文或英文都可以，会翻成日语读出来；对方说日语会同时翻成中文和英文，依次读出来。","Take turns: speak Chinese or English and it is read out in Japanese. Staff speak Japanese and you get both Chinese and English, read one after the other.")) : vLang==="en" ? t(_("轮流按下面的按钮说话：你说英文会翻成日语读出来；对方说日语会翻成英文读给你听。","Take turns: tap your button and speak English, it is read out in Japanese. Staff tap theirs and speak Japanese, you hear it in English.")) : t(_("轮流按下面的按钮说话：你说中文会翻成日语读出来；对方说日语会翻成中文读给你听。","Take turns: tap your button and speak Chinese, it is read out in Japanese. Staff tap theirs and speak Japanese, you hear it in Chinese.")))+'</p>';
+  vlog.forEach((x,i) => { const outs = x.outs || [{l:x.to, text:x.out}];
+    h += '<div class="vb '+(x.who==="me"?"me":"them")+'"><small>'+esc(x.heard)+'</small>'+outs.map((o,k) => '<div class="vo">'+(outs.length>1?'<i>'+(o.l==="zh"?"中文":o.l==="en"?"English":"日本語")+'</i>':'')+'<b lang="'+o.l+'">'+esc(o.text)+'</b><button data-vr="'+i+'" data-vk="'+k+'" aria-label="Replay">🔊</button></div>').join("")+'</div>'; });
   h += '</div>';
   if (vMsg) h += '<p class="vmsg">'+esc(vMsg)+'</p>';
   const btn = (who, label, sub) => { const rec = vrec && vrec.who===who;
     return '<button class="vbtn '+who+(rec?" rec":"")+'" data-who="'+who+'"'+(vBusy||(vrec&&!rec)?" disabled":"")+'><span>'+(rec?"⏹":"🎙")+'</span><b>'+(rec?t(_("说完点这里","Tap when done")):label)+'</b><small>'+(rec?(elKey?t(_("正在录音…","Recording…")):t(_("停顿2秒自动结束","Stops after a 2-second pause"))):sub)+'</small></button>'; };
   if (vrec && !elKey) h += '<p class="vlive" id="vlive">'+esc(vLive || t(_("正在听，请说话…","Listening, go ahead…")))+'</p>';
   else if (vrec) h += '<p class="vlive">'+t(_("正在录音，说完点按钮…","Recording, tap the button when done…"))+'</p>';
-  h += '<div class="vbtns">'+btn("me", t(_("我说","I speak")), me+" → 日本語")+btn("them", "相手が話す", "日本語 → "+me)+'</div>';
+  h += '<div class="vbtns">'+btn("me", t(_("我说","I speak")), me+" → 日本語")+btn("them", "相手が話す", "日本語 → "+them)+'</div>';
   if (vBusy) h += '<p class="vmsg busy">⏳ '+t(_("识别、翻译中…","Listening back and translating…"))+'</p>';
   h += '<div class="vset"><span>'+(elKey?"🟢 ElevenLabs":"⚪ "+t(_("手机自带语音","Built-in phone voice")))+'</span>'+(vlog.length?'<button id="vClear">'+t(_("清空","Clear"))+'</button>':'')+'<button id="vSetBtn">⚙ '+t(_("设置","Settings"))+'</button></div>';
   if (vShowSet) {
@@ -1272,7 +1285,8 @@ function voiceInner(){
     if (elKey) {
       if (!elVoices) h += '<p class="vhint">'+t(_("正在读取你的声音列表…","Loading your voices…"))+'</p>';
       else {
-        const langs = [["ja",t(_("日语声音","Japanese voice"))],[myL(),vLang==="en"?t(_("英文声音","English voice")):t(_("中文声音","Chinese voice"))]];
+        const VLAB = {ja:t(_("日语声音","Japanese voice")), zh:t(_("中文声音","Chinese voice")), en:t(_("英文声音","English voice"))};
+        const langs = ["ja"].concat(vLang==="both" ? ["zh","en"] : [vLang]).map(l => [l, VLAB[l]]);
         if (!elVoices.length) {
           const c = elVoiceErr && elVoiceErr.code;
           h += '<p class="vwarn">⚠ '+(c==="missing_permissions" ? t(_("这个key没有「Voices 读取」权限，所以读不到声音列表。到 ElevenLabs → Developers → API Keys → 编辑这个key，把 Voices 设为 Read，然后点「重新读取」。","This key has no Voices read permission, so the list can't load. In ElevenLabs → Developers → API Keys, edit the key, set Voices to Read, then tap Reload.")) :
@@ -1298,7 +1312,7 @@ function paintVoice(){
   const lg = $("#vlog"); if (lg) lg.scrollTop = lg.scrollHeight;
   box.querySelectorAll("button[data-vlang]").forEach(b => b.onclick = () => { vLang = b.dataset.vlang; store.set("vlang", vLang); paintVoice(); });
   box.querySelectorAll(".vbtn").forEach(b => b.onclick = () => { if (vrec && vrec.who === b.dataset.who) stopRec(); else if (!vrec && !vBusy) startRec(b.dataset.who); });
-  box.querySelectorAll("button[data-vr]").forEach(b => b.onclick = () => { unlockAudio(); const x = vlog[+b.dataset.vr]; elSpeak(x.out, x.to).catch(e => { vErr(e); paintVoice(); }); });
+  box.querySelectorAll("button[data-vr]").forEach(b => b.onclick = () => { unlockAudio(); const x = vlog[+b.dataset.vr], o = (x.outs || [{l:x.to, text:x.out}])[+b.dataset.vk || 0]; elSpeak(o.text, o.l).catch(e => { vErr(e); paintVoice(); }); });
   const c = $("#vClear"); if (c) c.onclick = () => { vlog = []; vMsg = ""; paintVoice(); };
   $("#vSetBtn").onclick = () => { vShowSet = !vShowSet; if (vShowSet && elKey && !elVoices) elLoadVoices(); paintVoice(); };
   const sv = $("#elSave"); if (sv) sv.onclick = () => { const k = ($("#elKeyIn").value || "").trim(); if (!k) return; elKey = k; store.set("elkey", k); elVoices = null; vMsg = ""; elLoadVoices(); paintVoice(); };
