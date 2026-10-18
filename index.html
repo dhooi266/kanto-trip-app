@@ -316,7 +316,11 @@ a{color:inherit}
 .vform{margin-top:10px;display:flex;flex-direction:column;gap:10px;background:rgba(255,255,255,.06);border-radius:14px;padding:12px}
 .vform label{display:flex;flex-direction:column;gap:5px;font-size:12px;opacity:.9}
 .vform input,.vform select{font:inherit;font-size:15px;border:1px solid rgba(255,255,255,.25);background:rgba(13,20,38,.6);color:var(--snow);border-radius:10px;padding:9px 10px;width:100%}
-.vrow{display:flex;gap:8px}
+.vrow{display:flex;gap:8px;align-items:center}
+.vrow input,.vrow select{flex:1;min-width:0}
+.vrow button[data-vt]{flex:0 0 auto;padding:8px 12px}
+.vwarn{margin:0;font-size:13px;line-height:1.55;color:#FFD2A6}
+.vlink{border:0;background:none;color:var(--snow);font-size:14px;cursor:pointer;padding:0 4px}
 @media (prefers-reduced-motion:reduce){.vbtn.rec,.vb{animation:none}}
 /* Translator tab */
 .tr{background:var(--surface);border-radius:22px;box-shadow:var(--shadow);padding:14px}
@@ -1104,12 +1108,14 @@ async function playBuf(ab){ unlockAudio(); const buf = await actx.decodeAudioDat
 const elVoiceFor = l => elPref[l] || (elVoices && elVoices[0] && elVoices[0].voice_id) || EL_DEFAULT_VOICE;
 async function elSpeak(text, l){
   if (!elKey) { say(text, l==="ja" ? "ja-JP" : l==="zh" ? "zh-CN" : "en-US"); return; }
+  let last = "";
   for (const m of EL_TTS) {
     const r = await fetch(EL+"/text-to-speech/"+elVoiceFor(l)+"?output_format=mp3_44100_128", {method:"POST", headers:{"xi-api-key":elKey,"Content-Type":"application/json"}, body:JSON.stringify({text, model_id:m, language_code:l})});
     if (r.ok) { await playBuf(await r.arrayBuffer()); return; }
     if (r.status === 401) throw new Error("key");
+    const j = await r.json().catch(() => ({})); last = (j.detail && (j.detail.message || j.detail.status)) || ("HTTP "+r.status);
   }
-  throw new Error("tts");
+  throw new Error("tts:"+last);
 }
 async function elHear(blob, l){
   const fd = new FormData(); fd.append("model_id", EL_STT); fd.append("language_code", l);
@@ -1119,15 +1125,25 @@ async function elHear(blob, l){
   if (!r.ok) throw new Error("stt");
   return ((await r.json()).text || "").trim();
 }
+/* voice list: v2 (paged, includes Voice Library voices added to My Voices) then v1; keep the API's reason when both fail */
+let elVoiceErr = null;
 async function elLoadVoices(){
   if (!elKey) return;
-  try { const r = await fetch(EL+"/voices", {headers:{"xi-api-key":elKey}}); if (!r.ok) throw 0; elVoices = ((await r.json()).voices || []).map(v => ({voice_id:v.voice_id, name:v.name})); }
-  catch(e) { elVoices = []; }
-  paintVoice();
+  elVoiceErr = null;
+  for (const u of [EL.replace("/v1","/v2")+"/voices?page_size=100", EL+"/voices"]) {
+    try {
+      const r = await fetch(u, {headers:{"xi-api-key":elKey}}); const j = await r.json().catch(() => ({}));
+      if (r.ok && j.voices) { elVoices = j.voices.map(v => ({voice_id:v.voice_id, name:v.name + (v.labels && (v.labels.language || v.labels.accent) ? " · "+(v.labels.language || v.labels.accent) : "")})); paintVoice(); return; }
+      elVoiceErr = {status:r.status, code:(j.detail && j.detail.status) || "", msg:(j.detail && j.detail.message) || ""};
+    } catch(e) { elVoiceErr = {status:0, code:"network", msg:""}; }
+  }
+  elVoices = []; paintVoice();
 }
+const VTEST = {ja:"こんにちは。予約しています。よろしくお願いします。", zh:"你好，入住时间是下午三点。", en:"Hello, check-in is from three p.m."};
 function vErr(e){
   const m = e && e.message;
-  vMsg = m==="key" ? t(_("ElevenLabs key无效或额度不足，请在设置里检查。","ElevenLabs key rejected or out of credits; check settings.")) :
+  vMsg = m && m.startsWith("tts:") ? t(_("ElevenLabs声音播放失败：","ElevenLabs voice failed: "))+m.slice(4)+t(_("（检查声音ID或额度）"," (check the voice ID or credits)")) :
+         m==="key" ? t(_("ElevenLabs key无效或额度不足，请在设置里检查。","ElevenLabs key rejected or out of credits; check settings.")) :
          m==="empty" ? t(_("没听清楚，请再说一次。","Didn't catch that, please try again.")) :
          m==="mic" ? t(_("无法使用麦克风，请在浏览器允许麦克风权限。","Microphone blocked; allow mic access in your browser.")) :
          m==="denied" ? t(_("麦克风权限被拒绝：请到手机 设置 → Safari（或你用的浏览器）→ 麦克风，允许本网站，然后刷新页面。","Microphone permission denied: allow the mic for this site in your phone's browser settings, then reload.")) :
@@ -1216,8 +1232,21 @@ function voiceInner(){
     h += '<div class="vform"><label>ElevenLabs API key<input id="elKeyIn" type="password" autocomplete="off" spellcheck="false" placeholder="'+(elKey?"••••••••"+esc(elKey.slice(-4)):"sk_…")+'"></label><div class="vrow"><button id="elSave">'+t(_("保存","Save"))+'</button>'+(elKey?'<button id="elDel">'+t(_("删除key","Remove key"))+'</button>':'')+'</div>';
     if (elKey) {
       if (!elVoices) h += '<p class="vhint">'+t(_("正在读取你的声音列表…","Loading your voices…"))+'</p>';
-      else if (!elVoices.length) h += '<p class="vhint">'+t(_("读取不到声音列表（key可能没有voices权限），会用默认声音。","Couldn't load your voice list (the key may lack voice access); the default voice is used."))+'</p>';
-      else [["ja",t(_("日语声音","Japanese voice"))],[myL(),t(_("中文声音","English voice"))]].forEach(([l,lab]) => h += '<label>'+lab+'<select data-vl="'+l+'">'+elVoices.map(v => '<option value="'+v.voice_id+'"'+(elVoiceFor(l)===v.voice_id?" selected":"")+'>'+esc(v.name)+'</option>').join("")+'</select></label>');
+      else {
+        const langs = [["ja",t(_("日语声音","Japanese voice"))],[myL(),t(_("中文声音","English voice"))]];
+        if (!elVoices.length) {
+          const c = elVoiceErr && elVoiceErr.code;
+          h += '<p class="vwarn">⚠ '+(c==="missing_permissions" ? t(_("这个key没有「Voices 读取」权限，所以读不到声音列表。到 ElevenLabs → Developers → API Keys → 编辑这个key，把 Voices 设为 Read，然后点「重新读取」。","This key has no Voices read permission, so the list can't load. In ElevenLabs → Developers → API Keys, edit the key, set Voices to Read, then tap Reload.")) :
+            c==="invalid_api_key" ? t(_("ElevenLabs说这个key无效，请重新复制整串key再保存。","ElevenLabs says this key is invalid; copy the whole key again and save.")) :
+            c==="network" ? t(_("连不上ElevenLabs，请检查网络。","Can't reach ElevenLabs; check the connection.")) :
+            t(_("读取声音列表失败","Couldn't load the voice list"))+(elVoiceErr ? " ("+elVoiceErr.status+(elVoiceErr.msg?": "+esc(elVoiceErr.msg):"")+")" : ""))+'</p><div class="vrow"><button id="elReload">🔄 '+t(_("重新读取","Reload"))+'</button></div>';
+          h += '<p class="vhint">'+t(_("也可以直接贴上声音ID：在 ElevenLabs 的 My Voices 里点声音 → ⋯ → Copy voice ID。","Or paste a voice ID directly: in ElevenLabs My Voices, tap a voice → ⋯ → Copy voice ID."))+'</p>';
+          langs.forEach(([l,lab]) => h += '<label>'+lab+' ID<div class="vrow"><input data-vid="'+l+'" value="'+esc(elPref[l]||"")+'" placeholder="'+t(_("留空 = 默认声音","blank = default voice"))+'" autocomplete="off" spellcheck="false"><button data-vt="'+l+'">🔊</button></div></label>');
+        } else {
+          langs.forEach(([l,lab]) => h += '<label>'+lab+'<div class="vrow"><select data-vl="'+l+'">'+elVoices.map(v => '<option value="'+v.voice_id+'"'+(elVoiceFor(l)===v.voice_id?" selected":"")+'>'+esc(v.name)+'</option>').join("")+'</select><button data-vt="'+l+'">🔊</button></div></label>');
+          h += '<p class="vhint">'+t(_("列表只显示 My Voices 里的声音；在 Voice Library 找日语/中文声音，点 Add to My Voices 后回来点🔄。","Only voices in My Voices are listed; add Japanese/Chinese voices from the Voice Library, then reload."))+' <button id="elReload" class="vlink">🔄</button></p>';
+        }
+      }
     }
     h += '<p class="vhint">🔒 '+t(_("Key只保存在这部手机的浏览器里，不会上传到网页代码。每部手机设置一次。","The key stays in this phone's browser only, never in the page code. Set it once per phone."))+'</p></div>';
   }
@@ -1234,6 +1263,13 @@ function paintVoice(){
   const sv = $("#elSave"); if (sv) sv.onclick = () => { const k = ($("#elKeyIn").value || "").trim(); if (!k) return; elKey = k; store.set("elkey", k); elVoices = null; vMsg = ""; elLoadVoices(); paintVoice(); };
   const dl = $("#elDel"); if (dl) dl.onclick = () => { elKey = ""; elVoices = null; try { localStorage.removeItem("kanto27:elkey"); } catch(e) {} paintVoice(); };
   box.querySelectorAll("select[data-vl]").forEach(s => s.onchange = () => { elPref[s.dataset.vl] = s.value; store.set("elv", elPref); });
+  box.querySelectorAll("input[data-vid]").forEach(i => i.onchange = () => { const v = i.value.trim(); if (v) elPref[i.dataset.vid] = v; else delete elPref[i.dataset.vid]; store.set("elv", elPref); });
+  box.querySelectorAll("button[data-vt]").forEach(b => b.onclick = () => {
+    unlockAudio(); const l = b.dataset.vt, inp = box.querySelector('input[data-vid="'+l+'"]');
+    if (inp) inp.onchange();
+    b.textContent = "⏳"; elSpeak(VTEST[l], l).then(() => { vMsg = ""; }).catch(e => { vErr(e); }).finally(() => paintVoice());
+  });
+  const rl = $("#elReload"); if (rl) rl.onclick = () => { elVoices = null; paintVoice(); elLoadVoices(); };
 }
 function renderTalk(){
   const el = $("#view-talk"); if (!el) return;
