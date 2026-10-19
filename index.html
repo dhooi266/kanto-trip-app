@@ -390,6 +390,20 @@ a{color:inherit}
 .abar button{flex:0 0 auto;border:0;border-radius:999px;padding:7px 12px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:#FF8A6B;color:var(--night)}
 .abar button.x{background:rgba(255,255,255,.12);color:var(--snow);padding:7px 10px}
 .abar.off{background:#5B6478}
+.abar[role="button"]{cursor:pointer}
+#instguide{position:fixed;inset:0;z-index:70;background:rgba(10,14,26,.6);display:flex;align-items:flex-end;justify-content:center;padding:12px}
+#instguide[hidden]{display:none}
+.ig{width:100%;max-width:440px;background:var(--surface);color:var(--ink);border-radius:24px;padding:18px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:var(--shadow);animation:rise .3s ease-out both}
+.ighead{display:flex;gap:12px;align-items:center}
+.ighead img{width:48px;height:48px;border-radius:12px}
+.ighead b{display:block;font-size:17px}
+.ighead small{display:block;font-size:12px;color:var(--ink-3);margin-top:2px}
+.ig ol{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-direction:column;gap:12px}
+.ig li{display:flex;gap:12px;align-items:flex-start}
+.ig li i{flex:0 0 34px;height:34px;border-radius:10px;background:var(--surface-2);display:grid;place-items:center;font-style:normal;font-weight:700;font-size:15px}
+.ig li b{display:block;font-size:15px;line-height:1.45}
+.ig li small{display:block;font-size:12px;color:var(--ink-3);line-height:1.45;margin-top:2px}
+#igClose{margin-top:16px;width:100%;border:0;border-radius:14px;padding:12px;font:inherit;font-weight:700;background:var(--night);color:var(--snow);cursor:pointer}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 10px calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;justify-content:center}
 .tabbar .in{display:flex;gap:6px;max-width:480px;width:100%}
 .tabbar button{flex:1;border:0;background:transparent;border-radius:14px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--ink-3)}
@@ -1470,11 +1484,29 @@ function paintBars(){
   if (!isStandalone() && !instDismissed()) {
     if (instEvt) h += '<div class="abar"><img src="img/icons/icon-192.png" alt=""><span><b>'+t(_("安装到手机","Install the app"))+'</b><br>'+t(_("像App一样打开，没网络也能看行程。","Opens like an app and works without signal."))+'</span><button id="instGo">'+t(_("安装","Install"))+'</button><button class="x" id="instX" aria-label="Close">✕</button></div>';
     else if (isIOS() && iosOtherBrowser()) h += '<div class="abar"><img src="img/icons/icon-192.png" alt=""><span>'+t(_("要安装成App，请用 <b>Safari</b> 打开这个网页。","To install it as an app, open this page in <b>Safari</b>."))+'</span><button class="x" id="instX" aria-label="Close">✕</button></div>';
-    else if (isIOS()) h += '<div class="abar"><img src="img/icons/icon-192.png" alt=""><span><b>'+t(_("加到主屏幕","Add to Home Screen"))+'</b><br>'+t(_("点下方 分享 ⬆️ → 「添加到主屏幕」，就像App一样，没网络也能用。","Tap Share ⬆️ below → “Add to Home Screen”. It then opens like an app and works offline."))+'</span><button class="x" id="instX" aria-label="Close">✕</button></div>';
+    else if (isIOS()) h += '<div class="abar" id="instTap" role="button" tabindex="0"><img src="img/icons/icon-192.png" alt=""><span><b>'+t(_("加到主屏幕，像App一样用","Add to Home Screen, use it like an app"))+'</b><br>'+t(_("Safari右下角 ••• → 分享 → 添加到主屏幕","Safari ••• (bottom right) → Share → Add to Home Screen"))+'</span><button id="instHow">'+t(_("怎么做","How"))+'</button><button class="x" id="instX" aria-label="Close">✕</button></div>';
   }
   box.innerHTML = h;
   const go = $("#instGo"); if (go) go.onclick = async () => { const e = instEvt; instEvt = null; paintBars(); try { e.prompt(); await e.userChoice; } catch(err) {} };
-  const x = $("#instX"); if (x) x.onclick = () => { store.set("instdismiss", Date.now()); paintBars(); };
+  const x = $("#instX"); if (x) x.onclick = e => { e.stopPropagation(); store.set("instdismiss", Date.now()); paintBars(); };
+  const tap = $("#instTap"); if (tap) tap.onclick = e => { if (!e.target.closest("#instX")) showInstallGuide(); };
+}
+/* iPhone can't be asked to install from a web page, so show the exact taps instead */
+function showInstallGuide(){
+  const steps = [
+    ["•••", _("点 Safari 右下角的「•••」","Tap “•••” at the bottom right of Safari"), _("旧版Safari：直接点底部中间的分享 ⬆️，跳到第3步","Older Safari: tap Share ⬆️ in the bottom bar and skip to step 3")],
+    ["⬆️", _("点「分享」","Tap “Share”"), null],
+    ["➕", _("往下滑，点「添加到主屏幕」","Scroll down and tap “Add to Home Screen”"), _("找不到就点最下面的「编辑操作」把它加进来","Not listed? Tap “Edit Actions” at the bottom to add it")],
+    ["✅", _("打开「作为网页App打开」，再点右上角「添加」","Keep “Open as Web App” on, then tap “Add”"), null],
+    ["🏮", _("回到主屏幕，点灯笼图标打开","Go to the Home Screen and open the lantern icon"), _("在App里重新设置一次ElevenLabs key（App和Safari分开保存）","Set your ElevenLabs key once more inside the app (it is stored separately from Safari)")]
+  ];
+  let g = $("#instguide");
+  if (!g) { g = document.createElement("div"); g.id = "instguide"; g.setAttribute("role","dialog"); g.setAttribute("aria-modal","true"); document.body.appendChild(g); }
+  g.innerHTML = '<div class="ig"><div class="ighead"><img src="img/icons/icon-192.png" alt=""><div><b>'+t(_("安装到iPhone主屏幕","Install on your iPhone Home Screen"))+'</b><small>'+t(_("网页不能自己安装，需要你在Safari里点几下","A web page can't install itself; it takes a few taps in Safari"))+'</small></div></div><ol>'+
+    steps.map(([ic, a, b]) => '<li><i>'+ic+'</i><div><b>'+esc(t(a))+'</b>'+(b?'<small>'+esc(t(b))+'</small>':'')+'</div></li>').join("")+
+    '</ol><button id="igClose">'+t(_("知道了","Got it"))+'</button></div>';
+  g.hidden = false;
+  g.onclick = e => { if (e.target === g || e.target.id === "igClose") g.hidden = true; };
 }
 addEventListener("beforeinstallprompt", e => { e.preventDefault(); instEvt = e; paintBars(); });
 addEventListener("appinstalled", () => { instEvt = null; paintBars(); });

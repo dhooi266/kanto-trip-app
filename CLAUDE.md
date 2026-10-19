@@ -72,7 +72,7 @@ GitHub Pages: repo dhooi266/kanto-trip-app (public, branch main) → https://dho
 Local preview: `node .serve.js` (port 3030, git-ignored), or the `kanto-trip-app` entry in the parent .claude/launch.json.
 
 ## Install prompt
-`paintBars()` shows, above the tab bar: an offline notice when `navigator.onLine` is false; an Install button on Android/Chrome (`beforeinstallprompt`); Share → Add to Home Screen steps on iPhone Safari; "open in Safari" for other iOS browsers. Dismissal hides it for 3 days (`kanto27:instdismiss`).
+`paintBars()` shows, above the tab bar: an offline notice when `navigator.onLine` is false; an Install button on Android/Chrome (`beforeinstallprompt`); on iPhone Safari a bar (••• → Share → Add to Home Screen, new Safari layout) that opens `showInstallGuide()`, a 5-step sheet, when tapped; "open in Safari" for other iOS browsers. Dismissal hides it for 3 days (`kanto27:instdismiss`).
 
 ## Ideas
 - Syncing checklist/visited state across devices (needs a small backend or a service like Supabase).
