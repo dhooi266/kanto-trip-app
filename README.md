@@ -26,6 +26,13 @@ Example requests:
 - "Replace the SVG map with a Leaflet map using OpenStreetMap tiles"
 - "Add a photo for each stop from the photos/ folder"
 
+## Install on your phone
+Open https://dhooi266.github.io/kanto-trip-app/ and:
+- **iPhone (Safari):** Share → Add to Home Screen
+- **Android (Chrome):** tap Install in the bar at the bottom (or menu → Install app)
+
+It opens full-screen like an app and the itinerary, photos, checklist and phrasebook work offline.
+
 ## Put it online (optional)
 It's one static file, so any static host works:
 - **Netlify Drop**: drag this folder onto app.netlify.com/drop

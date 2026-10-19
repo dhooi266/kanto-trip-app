@@ -10,6 +10,8 @@ Originally built on claude.ai as an Artifact, now maintained here.
 - `index.html` — the whole app: HTML, CSS and JS in one file, no build step, no dependencies.
   The only external resource is Google Fonts (Noto Sans SC, Noto Serif SC, JetBrains Mono).
 - `README.md` — how to run and host it.
+- `manifest.webmanifest`, `sw.js` — installable app (PWA). `sw.js`: page network-first with cached fallback, own images cache-first (precached CORE list), Google Fonts / Wikimedia / cdnjs stale-while-revalidate in `kanto27-runtime`, APIs and Maps untouched. Bump `VERSION` in sw.js when the CORE list changes. The page posts a `warm` message so all `PHOTO` stop photos download once for offline.
+- `img/icons/` — app icon (gpt-image-2.5 lantern + Fuji) at 512/192/180/32.
 - `img/` — header collage, `day1..8.webp` day-card photos, `stay1..7.webp` per-night stay photos.
 
 ## How to run
@@ -68,6 +70,9 @@ All reads/writes are wrapped in try/catch; the app must work with storage unavai
 ## Hosting
 GitHub Pages: repo dhooi266/kanto-trip-app (public, branch main) → https://dhooi266.github.io/kanto-trip-app/. Push to main to update. The repo is public: no booking numbers or passport details.
 Local preview: `node .serve.js` (port 3030, git-ignored), or the `kanto-trip-app` entry in the parent .claude/launch.json.
+
+## Install prompt
+`paintBars()` shows, above the tab bar: an offline notice when `navigator.onLine` is false; an Install button on Android/Chrome (`beforeinstallprompt`); Share → Add to Home Screen steps on iPhone Safari; "open in Safari" for other iOS browsers. Dismissal hides it for 3 days (`kanto27:instdismiss`).
 
 ## Ideas
 - Syncing checklist/visited state across devices (needs a small backend or a service like Supabase).
