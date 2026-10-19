@@ -71,6 +71,9 @@ All reads/writes are wrapped in try/catch; the app must work with storage unavai
 GitHub Pages: repo dhooi266/kanto-trip-app (public, branch main) → https://dhooi266.github.io/kanto-trip-app/. Push to main to update. The repo is public: no booking numbers or passport details.
 Local preview: `node .serve.js` (port 3030, git-ignored), or the `kanto-trip-app` entry in the parent .claude/launch.json.
 
+## My bookings (Info tab, `paintBookings`)
+Import Booking.com / Trip.com / Agoda / airline confirmations: pasted email text, screenshots (shrunk to 1800px JPEG), PDFs (`input_file`) or .ics/.eml/.txt, sent to the OpenAI Responses API (`AI_MODEL` = gpt-5.4-mini, strict JSON schema `BK_SCHEMA`, CORS ok) with the user's own key in localStorage `kanto27:aikey`. Results are reviewed (checkboxes) before saving to `kanto27:bookings`; also manual add / edit / delete. NEVER commit bookings or keys: the repo is public. `bkStay(i)` puts booked hotels on the stay card for the nights they cover; `bkOn(i)` adds flight/car/train pills to the day card. ⛶ uses `#showja` with booking no., PIN, dates. Phone-to-phone transfer: `#bk=<base64url JSON>` link/QR, `importBookings()` asks, merges by `bkKey` and strips the fragment. The AI key also rides along in the voice settings link (`a`).
+
 ## Install prompt
 `paintBars()` shows, above the tab bar: an offline notice when `navigator.onLine` is false; an Install button on Android/Chrome (`beforeinstallprompt`); on iPhone Safari a bar (••• → Share → Add to Home Screen, new Safari layout) that opens `showInstallGuide()`, a 5-step sheet, when tapped; "open in Safari" for other iOS browsers. Dismissal hides it for 3 days (`kanto27:instdismiss`).
 

@@ -379,7 +379,7 @@ a{color:inherit}
 #showja{position:fixed;inset:0;z-index:60;background:#fff;color:#111;display:flex;align-items:center;justify-content:center;padding:28px;text-align:center;cursor:pointer}
 #showja[hidden]{display:none}
 #showja b{display:block;font-size:clamp(30px,9vw,64px);line-height:1.35;font-weight:900;word-break:break-word}
-#showja span{display:block;margin-top:18px;font-size:16px;color:#555}
+#showja span{display:block;margin-top:18px;font-size:16px;color:#555;white-space:pre-line;line-height:1.6}
 #showja small{display:block;margin-top:28px;font-size:12px;color:#999}
 /* install prompt + offline notice, sitting just above the tab bar */
 #appbars{position:fixed;left:0;right:0;bottom:calc(68px + env(safe-area-inset-bottom,0px));z-index:19;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0 12px;pointer-events:none}
@@ -404,6 +404,54 @@ a{color:inherit}
 .ig li b{display:block;font-size:15px;line-height:1.45}
 .ig li small{display:block;font-size:12px;color:var(--ink-3);line-height:1.45;margin-top:2px}
 #igClose{margin-top:16px;width:100%;border:0;border-radius:14px;padding:12px;font:inherit;font-weight:700;background:var(--night);color:var(--snow);cursor:pointer}
+/* bookings */
+#bk .sec:first-child{margin-top:4px}
+.bkempty{background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:14px;font-size:14px;line-height:1.6;color:var(--ink-2)}
+.bklist{display:flex;flex-direction:column;gap:10px}
+.bk{background:var(--surface);color:var(--ink);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px}
+.bkh{display:flex;gap:10px;align-items:flex-start}
+.bkh i{font-style:normal;font-size:22px;line-height:1.2}
+.bkh div{flex:1;min-width:0}
+.bkh b{display:block;font-size:16px;line-height:1.35}
+.bkh small{display:block;font-size:13px;opacity:.75}
+.bkh em{font-style:normal;font-size:11px;padding:3px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.bkw{margin-top:6px;font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+.bkc{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.bkc span{font-size:12px;padding:4px 8px;border-radius:8px;background:var(--surface-2);color:var(--ink-2)}
+.bkc b{font-family:var(--mono);color:var(--ink);user-select:all}
+.bk p{margin:8px 0 0;font-size:13px;line-height:1.5;color:var(--ink-2)}
+.bka{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.bka a,.bka button{border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:999px;padding:6px 11px;font:inherit;font-size:12px;text-decoration:none;cursor:pointer}
+.bkbtns{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.bkbtns button,.bkimp .vrow button,.bkform .vrow button,.bkimp .wide{border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:14px;padding:10px 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.bkbtns .primary,.bkimp .primary,.bkform .primary{background:var(--dc);border-color:var(--dc);color:#fff}
+.bkimp .wide{width:100%;margin-top:10px}
+.bkimp,.bkform{margin-top:12px;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding:14px;display:flex;flex-direction:column;gap:10px}
+.bkimp label,.bkform label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--ink-2)}
+.bkimp input,.bkimp textarea,.bkform input,.bkform select{font:inherit;font-size:15px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);border-radius:12px;padding:9px 11px;width:100%;min-width:0}
+.bkimp textarea{resize:vertical;min-height:110px;line-height:1.5}
+.bkimp .vhint{color:var(--ink-3);opacity:1}
+.bkimp .vlink{color:var(--ink-2);font-size:12px;text-decoration:underline}
+.bkimp .vmsg{color:#C2410C}
+.bkfile{flex-direction:row!important;align-items:center;justify-content:center;border:1.5px dashed var(--line);border-radius:14px;padding:12px;font-size:14px!important;font-weight:700;color:var(--ink)!important;cursor:pointer}
+.bkfile input{display:none}
+.bkchips{display:flex;flex-wrap:wrap;gap:6px}
+.bkchips span{font-size:12px;background:var(--surface-2);border-radius:999px;padding:4px 6px 4px 10px;color:var(--ink-2)}
+.bkchips button{border:0;background:none;color:var(--ink-3);cursor:pointer}
+.bkpick{display:flex!important;flex-direction:row!important;gap:10px;align-items:flex-start}
+.bkpick input{width:auto!important;margin-top:16px}
+.bkpick .bk{flex:1;min-width:0;box-shadow:none;border:1px solid var(--line)}
+.bk2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bkok{margin:0 0 8px;color:#15803D;font-weight:700;font-size:14px}
+.bksend{margin-top:12px;background:var(--night);color:var(--snow);border-radius:18px;padding:14px}
+.sc-booked{margin-bottom:12px}
+.sc-booked>span{display:inline-block;font-size:12px;font-weight:700;color:#86EFAC;margin-bottom:6px}
+.staycard .bk{background:rgba(255,255,255,.08);color:var(--snow);box-shadow:none;border:1px solid rgba(255,255,255,.16)}
+.staycard .bkh em,.staycard .bkc span{background:rgba(255,255,255,.1);color:var(--snow)}
+.staycard .bkc b{color:var(--snow)}
+.staycard .bkw{color:rgba(244,247,255,.8)}
+.staycard .bka a,.staycard .bka button{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);color:var(--snow)}
+.pill.bkpill{background:rgba(134,239,172,.22);border-color:rgba(134,239,172,.5)}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:6px 10px calc(env(safe-area-inset-bottom,0px) + 6px);display:flex;justify-content:center}
 .tabbar .in{display:flex;gap:6px;max-width:480px;width:100%}
 .tabbar button{flex:1;border:0;background:transparent;border-radius:14px;padding:6px 0;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--ink-3)}
@@ -914,6 +962,7 @@ function renderDay(){
   if (t(d.km) !== "—") h += '<span class="pill">'+(/d/.test(t(d.km))?"🛣 ":"🧭 ")+'<b>'+esc(t(d.km))+'</b></span>';
   if (t(d.drive) !== "—") h += '<span class="pill">'+(isTrain?"🚃 ":"🚗 ")+'<b>'+fx(esc(t(d.drive)))+'</b></span>';
   if (t(d.stay) !== "—") h += '<span class="pill">🛏 <b>'+esc(t(d.stay))+'</b></span>';
+  bkOn(cur).forEach(b => h += '<span class="pill bkpill">'+(BKICON[b.kind]||"📌")+' <b>'+esc(b.flight_no || b.title)+(b.kind==="flight" ? " "+[b.start_time, b.end_time].filter(Boolean).join("→") : b.start_date===dayISO(cur) && b.start_time ? " "+b.start_time : b.end_time ? " → "+b.end_time : "")+'</b></span>');
   h += '</div><div class="dh-foot">' + (LEGS[cur] ? '<a class="go" href="#routes">'+t(_("🧭 分段路线 ↓","🧭 Route legs ↓"))+'</a>' : '') + '<span class="dh-swipe">'+t(_("← 滑动切换日期 →","← swipe for other days →"))+'</span></div></div></div>';
   h += dayMapHTML();
   h += '<div id="routes">'+routesHTML(cur)+'</div>';
@@ -946,7 +995,7 @@ function renderDay(){
   if (x.stay){
     const sn = STAYN[cur], [smo,sda] = d.d.split("/");
     h += '<div class="sec"><h3>🌙 '+t(UI.sleep)+'</h3></div><div class="staycard"><div class="sc-photo" style="--img:url(img/stay'+(cur+1)+'.webp)"><i></i><div class="sc-tags"><span>🌙 '+(lang==="en"?"NIGHT "+(cur+1)+" · JAN "+sda:"第"+(cur+1)+"晚 · "+smo+"/"+sda)+'</span><span>'+(cur===3||cur===4?"♨️ "+t(_("温泉","Onsen")):"🏨 "+t(_("住宿","Stay")))+'</span></div><div class="sc-title"><h4>'+esc(t(x.stay.area))+'</h4><div class="ty">'+esc(t(x.stay.type))+'</div></div></div>';
-    h += '<div class="sc-body"><div class="sc-row"><span class="price">'+fx(esc(t(x.stay.price)))+'</span><span class="sc-nights">'+Array.from({length:sn[1]},(z,k)=>'<i class="'+(k<sn[0]?"on":"")+'"></i>').join("")+' '+(lang==="en"?"night "+sn[0]+" of "+sn[1]:"第"+sn[0]+"／"+sn[1]+"晚")+'</span></div><p><span>💡</span><span>'+esc(t(x.stay.ex))+'</span></p><p><span>✨</span><span>'+esc(t(x.stay.why))+'</span></p><a class="sc-find" href="'+gmap(sn[2])+'" target="_blank" rel="noopener">🔍 '+t(_("在Google地图找附近住宿","Find places to stay nearby"))+' ↗</a></div></div>';
+    h += '<div class="sc-body">'+bkStay(cur).map(b => '<div class="sc-booked"><span>✅ '+t(_("已预订","Booked"))+'</span>'+bkCard(b, {compact:true})+'</div>').join("")+'<div class="sc-row"><span class="price">'+fx(esc(t(x.stay.price)))+'</span><span class="sc-nights">'+Array.from({length:sn[1]},(z,k)=>'<i class="'+(k<sn[0]?"on":"")+'"></i>').join("")+' '+(lang==="en"?"night "+sn[0]+" of "+sn[1]:"第"+sn[0]+"／"+sn[1]+"晚")+'</span></div><p><span>💡</span><span>'+esc(t(x.stay.ex))+'</span></p><p><span>✨</span><span>'+esc(t(x.stay.why))+'</span></p><a class="sc-find" href="'+gmap(sn[2])+'" target="_blank" rel="noopener">🔍 '+t(_("在Google地图找附近住宿","Find places to stay nearby"))+' ↗</a></div></div>';
   }
 
   const tot = x.cost.reduce((a,c)=>a+c[1],0);
@@ -1367,7 +1416,7 @@ function paintVoice(){
 let vQR = false;
 const b64u = str => btoa(unescape(encodeURIComponent(str))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 const unb64u = str => decodeURIComponent(escape(atob(str.replace(/-/g,"+").replace(/_/g,"/"))));
-const setupLink = () => location.origin + location.pathname + "#el=" + b64u(JSON.stringify({k:elKey, v:elPref, l:lang}));
+const setupLink = () => location.origin + location.pathname + "#el=" + b64u(JSON.stringify({k:elKey, v:elPref, l:lang, a:aiKey}));
 function drawQR(el, text){
   const go = () => { el.innerHTML = ""; try { new QRCode(el, {text, width:220, height:220, correctLevel:QRCode.CorrectLevel.M}); } catch(e) { el.textContent = t(_("二维码生成失败，请用「复制链接」。","Couldn't draw the QR code; use Copy link.")); } };
   if (window.QRCode) return go();
@@ -1383,6 +1432,7 @@ function importSetup(){
   if (!d || typeof d.k !== "string" || !d.k) return;
   if (!confirm(lang==="en" ? "Import the ElevenLabs voice settings from your other device onto this phone?" : "要把另一台设备的 ElevenLabs 语音设置导入到这部手机吗？")) return;
   elKey = d.k; store.set("elkey", elKey);
+  if (typeof d.a === "string" && d.a) { aiKey = d.a; store.set("aikey", aiKey); }
   if (d.v && typeof d.v === "object") { elPref = {}; ["ja","zh","en"].forEach(k => { if (typeof d.v[k] === "string") elPref[k] = d.v[k]; }); store.set("elv", elPref); }
   elVoices = null; vMsg = "✓ " + t(_("已导入ElevenLabs设置，可以开始用了。","ElevenLabs settings imported; you're ready to go."));
   const tb = document.querySelector('.tabbar button[data-view="talk"]'); if (tb) tb.click();
@@ -1425,7 +1475,167 @@ function renderTalk(){
   wireTrOut();
   paintVoice();
 }
-function renderAll(){ renderHero(); renderStrip(); renderDay(); renderPrep(); renderInfo(); renderTalk(); }
+/* ---- My bookings: AI import of Booking.com / Trip.com / Agoda / airline confirmations (OpenAI Responses API,
+   key typed in by the user and kept on this phone). Bookings live ONLY in localStorage kanto27:bookings, never in
+   the page source (the repo is public). Moved between phones with a #bk= link / QR, like the voice settings. ---- */
+const AI_MODEL = "gpt-5.4-mini";
+let BK = Array.isArray(store.get("bookings")) ? store.get("bookings") : [], aiKey = store.get("aikey") || "";
+let bkOpen = false, bkFiles = [], bkFound = null, bkBusy = false, bkMsg = "", bkEdit = null, bkQR = false;
+const BKF = ["kind","title","title_ja","provider","confirmation","pin","start_date","start_time","end_date","end_time","from","to","flight_no","seat","address","phone","guests","price","notes"];
+const BKICON = {hotel:"🏨", flight:"✈️", car:"🚗", train:"🚄", activity:"🎟", other:"📌"};
+const BKKIND = {hotel:_("酒店／旅馆","Hotel"), flight:_("航班","Flight"), car:_("租车","Car rental"), train:_("火车","Train"), activity:_("活动／门票","Activity"), other:_("其他","Other")};
+const dayISO = i => { const [m,d] = DAYS[i].d.split("/"); return "2027-"+m.padStart(2,"0")+"-"+d.padStart(2,"0"); };
+const bkKey = b => [b.kind, (b.confirmation||"").replace(/\W/g,""), b.start_date||"", (b.flight_no||b.title||"").replace(/\s/g,"")].join("|");
+function saveBK(){ BK.sort((a,b) => (a.start_date||"9").localeCompare(b.start_date||"9") || (a.start_time||"").localeCompare(b.start_time||"")); store.set("bookings", BK); }
+function cleanBK(b){ const o = {}; BKF.forEach(k => { const v = b[k]; if (v !== null && v !== undefined && String(v).trim() !== "") o[k] = String(v).trim(); }); if (!BKICON[o.kind]) o.kind = "other"; if (!o.title) o.title = t(BKKIND[o.kind]); return o; }
+function mergeBK(list){
+  let added = 0;
+  list.map(cleanBK).forEach(b => { const k = bkKey(b), i = BK.findIndex(x => bkKey(x) === k);
+    if (i >= 0) BK[i] = Object.assign({}, BK[i], b); else { BK.push(Object.assign({id: Date.now().toString(36)+Math.random().toString(36).slice(2,6)}, b)); added++; } });
+  saveBK(); return added;
+}
+const fmtD = (d, tm) => { if (!d) return tm || ""; const p = d.split("-"); return (lang==="en" ? (+p[1])+"/"+(+p[2]) : (+p[1])+"月"+(+p[2])+"日") + (tm ? " "+tm : ""); };
+const bkWhen = b => b.kind === "flight" ? [b.from, b.start_time].filter(Boolean).join(" ")+" → "+[b.to, b.end_time].filter(Boolean).join(" ")+(b.start_date ? " · "+fmtD(b.start_date) : "")
+  : fmtD(b.start_date, b.start_time) + (b.end_date ? " → "+fmtD(b.end_date, b.end_time) : "");
+/* bookings that touch day i: hotels for the nights they cover, everything else on its start or end date */
+const bkStay = i => { const d = dayISO(i); return BK.filter(b => b.kind === "hotel" && b.start_date && b.start_date <= d && (b.end_date ? d < b.end_date : d === b.start_date)); };
+const bkOn = i => { const d = dayISO(i); return BK.filter(b => b.kind !== "hotel" && (b.start_date === d || b.end_date === d)); };
+function bkCard(b, opt){
+  opt = opt || {};
+  let h = '<div class="bk"><div class="bkh"><i>'+(BKICON[b.kind]||"📌")+'</i><div><b>'+esc(b.title||"")+'</b>'+(b.title_ja?'<small lang="ja">'+esc(b.title_ja)+'</small>':'')+'</div>'+(b.provider?'<em>'+esc(b.provider)+'</em>':'')+'</div>';
+  const w = bkWhen(b); if (w.trim()) h += '<div class="bkw">'+esc(w)+'</div>';
+  const c = [b.confirmation && t(_("确认号","Conf."))+' <b>'+esc(b.confirmation)+'</b>', b.pin && 'PIN <b>'+esc(b.pin)+'</b>', b.flight_no && b.kind!=="flight" && esc(b.flight_no), b.seat && t(_("座位","Seat"))+' <b>'+esc(b.seat)+'</b>', b.guests && esc(b.guests), b.price && esc(b.price)].filter(Boolean);
+  if (c.length) h += '<div class="bkc">'+c.map(x => '<span>'+x+'</span>').join("")+'</div>';
+  if (b.notes && !opt.compact) h += '<p>'+esc(b.notes)+'</p>';
+  if (!opt.preview) h += '<div class="bka">'+(b.address?'<a href="'+gmap((b.title_ja||b.title)+" "+b.address)+'" target="_blank" rel="noopener">📍 '+t(_("地图","Map"))+'</a>':'')+(b.phone?'<a href="tel:'+esc(b.phone.replace(/[^\d+]/g,""))+'">📞 '+t(_("电话","Call"))+'</a>':'')+'<button data-bkshow="'+b.id+'">⛶ '+t(_("给前台看","Show staff"))+'</button>'+(opt.compact?'':'<button data-bked="'+b.id+'" aria-label="Edit">✏️</button><button data-bkdel="'+b.id+'" aria-label="Delete">🗑</button>')+'</div>';
+  return h + '</div>';
+}
+function bkShow(b){
+  const L = [];
+  if (b.confirmation) L.push("予約番号 Booking no.: "+b.confirmation);
+  if (b.pin) L.push("PIN: "+b.pin);
+  if (b.kind === "hotel") { if (b.start_date) L.push("チェックイン Check-in: "+b.start_date+(b.start_time?" "+b.start_time:"")); if (b.end_date) L.push("チェックアウト Check-out: "+b.end_date+(b.end_time?" "+b.end_time:"")); }
+  else { if (b.flight_no) L.push("便名 Flight: "+b.flight_no); if (b.start_date) L.push(b.start_date+" "+(b.start_time||"")+(b.from?"  "+b.from:"")+(b.to?" → "+b.to:"")); if (b.seat) L.push("座席 Seat: "+b.seat); }
+  if (b.guests) L.push(b.guests);
+  showJa(b.title_ja || b.title, L.join("\n"));
+}
+const readURL = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(f); });
+async function shrinkImage(f){
+  const url = await readURL(f);
+  try { const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
+    const k = Math.min(1, 1800 / Math.max(img.width, img.height)), c = document.createElement("canvas");
+    c.width = Math.round(img.width*k); c.height = Math.round(img.height*k); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL("image/jpeg", .85); } catch(e) { return url; }
+}
+const S_ = {type:["string","null"]};
+const BK_SCHEMA = {type:"object", additionalProperties:false, required:["bookings"], properties:{bookings:{type:"array", items:{type:"object", additionalProperties:false, required:BKF,
+  properties:{kind:{type:"string", enum:["hotel","flight","car","train","activity","other"]}, title:{type:"string"}, title_ja:S_, provider:S_, confirmation:S_, pin:S_, start_date:S_, start_time:S_, end_date:S_, end_time:S_, from:S_, to:S_, flight_no:S_, seat:S_, address:S_, phone:S_, guests:S_, price:S_, notes:S_}}}}};
+async function bkExtract(){
+  const ta = $("#bkText"), text = ta ? ta.value.trim() : "";
+  if (!text && !bkFiles.length) { bkMsg = t(_("先粘贴确认邮件内容，或加上截图／PDF。","Paste the confirmation email, or add a screenshot / PDF first.")); paintBookings(); return; }
+  if (!aiKey) { bkMsg = t(_("先在上面保存OpenAI API key。","Save your OpenAI API key above first.")); paintBookings(); return; }
+  bkBusy = true; bkMsg = ""; bkFound = null; paintBookings();
+  try {
+    const content = [{type:"input_text", text:"Trip dates: 23–30 January 2027, Japan (travellers fly in from Malaysia/Vietnam).\n\n"+(text || "(see attached files)")}];
+    for (const f of bkFiles) {
+      if (/^image\//.test(f.type)) content.push({type:"input_image", image_url: await shrinkImage(f)});
+      else if (f.type === "application/pdf" || /\.pdf$/i.test(f.name)) content.push({type:"input_file", filename:f.name, file_data: await readURL(f)});
+      else content.push({type:"input_text", text:"File "+f.name+":\n"+(await f.text()).slice(0, 60000)});
+    }
+    const r = await fetch("https://api.openai.com/v1/responses", {method:"POST", headers:{Authorization:"Bearer "+aiKey, "Content-Type":"application/json"}, body:JSON.stringify({
+      model:AI_MODEL, reasoning:{effort:"low"},
+      input:[{role:"system", content:"Extract every travel booking (hotel, flight, car rental, train, activity) from the user's confirmation emails, screenshots, PDFs or calendar files. One item per hotel stay and one per flight segment. Dates as YYYY-MM-DD and times HH:MM 24h local time. title = property name, or airline + flight number. title_ja = the property's Japanese name if it appears, else null. provider = the booking site or airline that issued it. confirmation = booking/confirmation number; pin = PIN, PNR or airline booking reference. guests like '2 adults'. price exactly as shown with currency. notes: room type, meals, baggage, cancellation deadline, passenger names, in one short line. Never invent values; use null when missing."},
+             {role:"user", content}],
+      text:{format:{type:"json_schema", name:"bookings", strict:true, schema:BK_SCHEMA}}})});
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401) throw new Error("key");
+    if (!r.ok || j.error) throw new Error((j.error && j.error.message) || ("HTTP "+r.status));
+    const out = (j.output || []).flatMap(o => o.content || []).find(c => c.type === "output_text");
+    bkFound = ((out && JSON.parse(out.text).bookings) || []).map(cleanBK);
+    if (!bkFound.length) bkMsg = t(_("没有找到预订资料，换一张更清楚的截图，或贴上邮件全文试试。","No booking found; try a clearer screenshot or the full email text."));
+  } catch(e) {
+    bkMsg = e.message === "key" ? t(_("OpenAI key无效，请重新粘贴。","OpenAI key rejected; paste it again.")) : t(_("识别失败：","Couldn't read it: "))+e.message;
+  }
+  bkBusy = false; paintBookings();
+}
+const bkLink = () => location.origin + location.pathname + "#bk=" + b64u(JSON.stringify(BK.map(b => { const o = Object.assign({}, b); delete o.id; return o; })));
+function bkFormHTML(b){
+  const F = (k, lab, type) => '<label>'+lab+'<input data-bf="'+k+'" type="'+(type||"text")+'" value="'+esc(b[k]||"")+'"></label>';
+  return '<div class="bkform"><label>'+t(_("类型","Type"))+'<select data-bf="kind">'+Object.keys(BKICON).map(k => '<option value="'+k+'"'+(b.kind===k?" selected":"")+'>'+BKICON[k]+' '+t(BKKIND[k])+'</option>').join("")+'</select></label>'+
+    F("title", t(_("名称（酒店／航空公司+航班）","Name (hotel, or airline + flight)")))+F("title_ja", t(_("日文名称","Japanese name")))+F("provider", t(_("预订平台","Booked via")))+
+    '<div class="bk2">'+F("confirmation", t(_("确认号","Confirmation no.")))+F("pin", "PIN / PNR")+'</div>'+
+    '<div class="bk2">'+F("start_date", t(_("开始日期","Start date")), "date")+F("start_time", t(_("时间","Time")), "time")+'</div>'+
+    '<div class="bk2">'+F("end_date", t(_("结束日期","End date")), "date")+F("end_time", t(_("时间","Time")), "time")+'</div>'+
+    '<div class="bk2">'+F("from", t(_("出发地","From")))+F("to", t(_("目的地","To")))+'</div>'+
+    '<div class="bk2">'+F("flight_no", t(_("航班号","Flight no.")))+F("seat", t(_("座位","Seat")))+'</div>'+
+    F("address", t(_("地址","Address")))+'<div class="bk2">'+F("phone", t(_("电话","Phone")), "tel")+F("guests", t(_("人数","Guests")))+'</div>'+F("price", t(_("价格","Price")))+F("notes", t(_("备注","Notes")))+
+    '<div class="vrow"><button id="bkSave" class="primary">'+t(_("保存","Save"))+'</button><button id="bkCancel">'+t(_("取消","Cancel"))+'</button></div></div>';
+}
+function paintBookings(){
+  const view = $("#view-info"); if (!view) return;
+  let box = $("#bk"); if (!box) { box = document.createElement("div"); box.id = "bk"; view.insertBefore(box, view.firstChild); }
+  let h = '<div class="sec"><h3>🧳 '+t(_("我的预订","My bookings"))+'</h3><span>'+(BK.length?BK.length+" "+t(_("项","items")):"")+'</span></div>';
+  if (bkEdit) h += bkFormHTML(bkEdit);
+  else if (!BK.length && !bkOpen) h += '<div class="bkempty">'+t(_("把 Booking.com、Trip.com、Agoda 或航空公司的确认邮件／截图／PDF 交给AI，自动整理成酒店和航班卡片，并显示在每天的行程里。","Give AI your Booking.com, Trip.com, Agoda or airline confirmation emails, screenshots or PDFs; it turns them into hotel and flight cards that also show up in each day's plan."))+'</div>';
+  if (!bkEdit) h += '<div class="bklist">'+BK.map(b => bkCard(b)).join("")+'</div>';
+  if (!bkEdit) h += '<div class="bkbtns"><button id="bkOpen" class="primary">📥 '+t(_("导入预订","Import bookings"))+'</button><button id="bkManual">✍️ '+t(_("手动添加","Add manually"))+'</button>'+(BK.length?'<button id="bkSend">📱 '+t(_("传到另一部手机","Send to other phone"))+'</button>':'')+'</div>';
+  if (bkQR && BK.length && !bkEdit) h += '<div class="vsend bksend"><div id="bkQRbox" class="vqr"></div><p class="vhint">'+t(_("用另一部手机的相机扫描，打开后点「导入」。二维码里有你的预订资料，别分享给别人。","Scan with the other phone's camera, open it and tap Import. The code contains your bookings, so don't share it."))+'</p><div class="vrow"><button id="bkCopyLink">🔗 '+t(_("复制链接","Copy link"))+'</button><button id="bkHideQR">'+t(_("隐藏","Hide"))+'</button></div></div>';
+  if (bkOpen && !bkEdit) {
+    h += '<div class="bkimp">';
+    if (!aiKey) h += '<label>OpenAI API key<div class="vrow"><input id="aiKeyIn" type="password" autocomplete="off" spellcheck="false" placeholder="sk-…"><button id="aiKeySave">'+t(_("保存","Save"))+'</button></div></label><p class="vhint">'+t(_("用来让AI读预订。Key只保存在这部手机，不会放进网页。在 platform.openai.com → API keys 建一个。","Used to let AI read your bookings. The key stays on this phone only, never in the page. Create one at platform.openai.com → API keys."))+'</p>';
+    else h += '<p class="vhint">🟢 OpenAI · '+AI_MODEL+' <button id="aiKeyDel" class="vlink">'+t(_("更换key","Change key"))+'</button></p>';
+    h += '<textarea id="bkText" rows="5" placeholder="'+esc(t(_("把确认邮件全文复制粘贴到这里（可以一次贴好几封）","Paste the whole confirmation email here (several at once is fine)")))+'"></textarea>';
+    h += '<label class="bkfile">📎 '+t(_("加截图／PDF／日历文件","Add screenshots / PDF / calendar file"))+'<input id="bkFiles" type="file" multiple accept="image/*,application/pdf,.pdf,.ics,.eml,.txt,.html,.htm"></label>';
+    if (bkFiles.length) h += '<div class="bkchips">'+bkFiles.map((f,i) => '<span>'+esc(f.name)+' <button data-bkrm="'+i+'" aria-label="Remove">✕</button></span>').join("")+'</div>';
+    h += '<div class="vrow"><button id="bkGo" class="primary"'+(bkBusy?" disabled":"")+'>'+(bkBusy?"⏳ "+t(_("AI识别中…","Reading…")):"✨ "+t(_("AI识别","Read with AI")))+'</button><button id="bkClose">'+t(_("收起","Close"))+'</button></div>';
+    if (bkMsg) h += '<p class="vmsg">'+esc(bkMsg)+'</p>';
+    if (bkFound && bkFound.length) {
+      h += '<p class="vhint">'+t(_("找到以下预订，核对后保存：","Found these, check them and save:"))+'</p><div class="bklist">'+bkFound.map((b,i) => '<label class="bkpick"><input type="checkbox" data-bkpick="'+i+'" checked>'+bkCard(b, {preview:true})+'</label>').join("")+'</div><button id="bkSaveFound" class="primary wide">💾 '+t(_("保存选中的预订","Save selected bookings"))+'</button>';
+    }
+    h += '<p class="vhint">🔒 '+t(_("预订只保存在这部手机，不会上传到网站；AI识别时，内容会交给OpenAI处理。","Bookings are saved on this phone only, never on the website; when AI reads them the content is sent to OpenAI."))+'</p></div>';
+  }
+  box.innerHTML = h;
+  /* wiring */
+  const on = (id, fn) => { const el = $("#"+id); if (el) el.onclick = fn; };
+  on("bkOpen", () => { bkOpen = !bkOpen; bkQR = false; paintBookings(); });
+  on("bkManual", () => { bkEdit = {kind:"hotel"}; paintBookings(); });
+  on("bkSend", () => { bkQR = !bkQR; paintBookings(); });
+  on("bkHideQR", () => { bkQR = false; paintBookings(); });
+  on("bkCopyLink", e => { try { navigator.clipboard.writeText(bkLink()); e.target.textContent = "✓ "+t(_("已复制","Copied")); } catch(err) {} });
+  on("bkClose", () => { bkOpen = false; bkFound = null; bkMsg = ""; bkFiles = []; paintBookings(); });
+  on("bkGo", bkExtract);
+  on("aiKeySave", () => { const k = ($("#aiKeyIn").value || "").trim(); if (!k) return; aiKey = k; store.set("aikey", k); paintBookings(); });
+  on("aiKeyDel", () => { aiKey = ""; try { localStorage.removeItem("kanto27:aikey"); } catch(e) {} paintBookings(); });
+  on("bkCancel", () => { bkEdit = null; paintBookings(); });
+  on("bkSave", () => { const o = {}; box.querySelectorAll("[data-bf]").forEach(i => o[i.dataset.bf] = i.value);
+    const c = cleanBK(o); if (bkEdit.id) { const i = BK.findIndex(x => x.id === bkEdit.id); if (i >= 0) BK[i] = Object.assign({id:bkEdit.id}, c); saveBK(); } else mergeBK([c]);
+    bkEdit = null; renderDay(); paintBookings(); });
+  on("bkSaveFound", () => { const pick = bkFound.filter((b,i) => { const cb = box.querySelector('[data-bkpick="'+i+'"]'); return !cb || cb.checked; });
+    const n = mergeBK(pick); bkFound = null; bkFiles = []; bkOpen = false; bkMsg = ""; renderDay(); paintBookings();
+    const msg = document.createElement("p"); msg.className = "bkok"; msg.textContent = "✓ "+t(_("已保存","Saved"))+" "+pick.length+(n<pick.length?" ("+(pick.length-n)+" "+t(_("条已更新","updated"))+")":""); box.insertBefore(msg, box.children[1]); });
+  const fi = $("#bkFiles"); if (fi) fi.onchange = () => { bkFiles = bkFiles.concat(Array.from(fi.files || [])).slice(0, 8); paintBookings(); };
+  box.querySelectorAll("button[data-bkrm]").forEach(b => b.onclick = () => { bkFiles.splice(+b.dataset.bkrm, 1); paintBookings(); });
+  if (bkQR && $("#bkQRbox")) drawQR($("#bkQRbox"), bkLink());
+}
+/* buttons on booking cards anywhere (Info tab or stay card) */
+document.addEventListener("click", e => {
+  const s = e.target.closest("[data-bkshow]"), ed = e.target.closest("[data-bked]"), dl = e.target.closest("[data-bkdel]");
+  const find = id => BK.find(b => b.id === id);
+  if (s) { const b = find(s.dataset.bkshow); if (b) bkShow(b); }
+  else if (ed) { const b = find(ed.dataset.bked); if (b) { bkEdit = Object.assign({}, b); paintBookings(); $("#bk").scrollIntoView({behavior:"smooth", block:"start"}); } }
+  else if (dl) { const b = find(dl.dataset.bkdel); if (b && confirm(t(_("删除这个预订？","Delete this booking?"))+"\n"+b.title)) { BK = BK.filter(x => x.id !== b.id); saveBK(); renderDay(); paintBookings(); } }
+});
+function importBookings(){
+  const m = location.hash.match(/^#bk=([A-Za-z0-9_-]+)$/); if (!m) return;
+  let list = null; try { list = JSON.parse(unb64u(m[1])); } catch(e) {}
+  try { history.replaceState(null, "", location.pathname + location.search); } catch(e) {}
+  if (!Array.isArray(list) || !list.length) return;
+  if (!confirm(lang==="en" ? "Import "+list.length+" bookings from your other phone?" : "要把另一部手机的 "+list.length+" 个预订导入到这部手机吗？")) return;
+  mergeBK(list); renderDay();
+  const tb = document.querySelector('.tabbar button[data-view="info"]'); if (tb) tb.click();
+  paintBookings();
+}
+function renderAll(){ renderHero(); renderStrip(); renderDay(); renderPrep(); renderInfo(); paintBookings(); renderTalk(); }
 $("#showja").onclick = () => { $("#showja").hidden = true; };
 addEventListener("hashchange", importSetup);
 
@@ -1471,6 +1681,8 @@ document.querySelectorAll(".tabbar button").forEach(b => b.onclick = () => {
 
 renderAll();
 importSetup();
+importBookings();
+addEventListener("hashchange", importBookings);
 /* ---- installable app: service worker (offline), install prompt, offline notice ---- */
 let instEvt = null;
 const isStandalone = () => (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
