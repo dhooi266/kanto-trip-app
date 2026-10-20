@@ -84,3 +84,6 @@ Receipt photos (camera `capture="environment"` or gallery, up to 10) → OpenAI 
 
 ## Ideas
 - Syncing checklist/visited state across devices (needs a small backend or a service like Supabase).
+
+## Weather
+Open-Meteo, no key (`wxLoad`, `wxHTML`, copied from ../trip-planner). One fixed point per day (`WXP`). Within 15 days of a day: live forecast; further out: typical weather (same date ±3 days over the last 5 years). Card under the day hero + pill; cached on the device at `kanto27:wx`.
