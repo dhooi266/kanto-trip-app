@@ -1043,7 +1043,9 @@ function renderDay(){
   h += '<div class="dh-body"><h2>'+esc(t(d.title))+'</h2><p>'+esc(t(d.intro))+'</p><div class="pills">';
   if (t(d.km) !== "—") h += '<span class="pill">'+(/d/.test(t(d.km))?"🛣 ":"🧭 ")+'<b>'+esc(t(d.km))+'</b></span>';
   if (t(d.drive) !== "—") h += '<span class="pill">'+(isTrain?"🚃 ":"🚗 ")+'<b>'+fx(esc(t(d.drive)))+'</b></span>';
-  if (t(d.stay) !== "—") h += '<span class="pill">🛏 <b>'+esc(t(d.stay))+'</b></span>';
+  { const hbD = bkStay(cur)[0];
+    if (hbD) h += '<span class="pill bkpill">🛏 ✅ <b>'+esc(hbD.title)+'</b></span>';
+    else if (t(d.stay) !== "—") h += '<span class="pill">🛏 <b>'+esc(t(d.stay))+'</b></span>'; }
   bkOn(cur).forEach(b => h += '<span class="pill bkpill">'+(BKICON[b.kind]||"📌")+' <b>'+esc(b.flight_no || b.title)+(b.kind==="flight" ? " "+[b.start_time, b.end_time].filter(Boolean).join("→") : b.start_date===dayISO(cur) && b.start_time ? " "+b.start_time : b.end_time ? " → "+b.end_time : "")+'</b></span>');
   h += '</div><div class="dh-foot">' + (LEGS[cur] ? '<a class="go" href="#routes">'+t(_("🧭 分段路线 ↓","🧭 Route legs ↓"))+'</a>' : '') + '<span class="dh-swipe">'+t(_("← 滑动切换日期 →","← swipe for other days →"))+'</span></div></div></div>';
   h += dayMapHTML();
@@ -1051,14 +1053,17 @@ function renderDay(){
 
   const nSpots = d.stops.filter(s=>s.k!=="drive").length;
   h += '<div class="sec"><h3>'+t(UI.plan)+'</h3><span>'+t(UI.stops)(nSpots)+'</span></div><ol class="tl">';
-  const evs = bkEvents(cur);
+  const hbIn = BK.find(b => live(b) && b.kind === "hotel" && b.start_date === dayISO(cur));
+  const ciStop = hbIn ? d.stops.findIndex(s => s.k === "stay" && /^入住/.test(s.n.z)) : -1;
+  const evs = bkEvents(cur).filter(e => !(ciStop >= 0 && e.b === hbIn && e.ic === "🏨"));
   d.stops.forEach((s,i) => {
     const sm = /(\d{1,2}):(\d{2})/.exec(t(s.t)||""); if (sm) { const m = (+sm[1])*60 + (+sm[2]); while (evs.length && evs[0].m < m) h += bkEvHTML(evs.shift()); }
     if (s.k === "drive"){ h += '<li class="leg"><span>'+(isTrain?"🚃 ":"🚗 ")+esc(t(s.n))+'</span></li>'; return; }
     const isDone = !!done[i], ph = PHOTO[cur+"-"+i];
-    h += '<li class="st '+s.k+(isDone?" done":"")+'"><span class="tm">'+esc(t(s.t))+'</span><span class="nd"></span><div class="card"><details'+(i===firstOpen(d)?" open":"")+'><summary>'+(ph?'<img class="thb" src="'+ph[0]+'" alt="" loading="lazy" onerror="this.remove()">':'')+'<div class="ttl"><h4>'+esc(t(s.n))+'</h4>'+(s.jp?'<div class="jp">'+esc(s.jp)+'</div>':'')+'</div>'+(s.book?'<span class="badge" title="booking"></span>':'')+'<span class="chev">▼</span></summary><div class="more">';
+    h += '<li class="st '+s.k+(isDone?" done":"")+'"><span class="tm">'+esc(t(s.t))+'</span><span class="nd"></span><div class="card"><details'+(i===firstOpen(d)?" open":"")+'><summary>'+(ph?'<img class="thb" src="'+ph[0]+'" alt="" loading="lazy" onerror="this.remove()">':'')+'<div class="ttl"><h4>'+(i===ciStop ? '✅ '+esc(t(_("入住：","Check in: "))+hbIn.title) : esc(t(s.n)))+'</h4>'+(i===ciStop ? (hbIn.title_ja?'<div class="jp">'+esc(hbIn.title_ja)+(hbIn.start_time?' · '+t(_("入住 ","from "))+esc(hbIn.start_time):'')+'</div>':'') : s.jp?'<div class="jp">'+esc(s.jp)+'</div>':'')+'</div>'+(s.book?'<span class="badge" title="booking"></span>':'')+'<span class="chev">▼</span></summary><div class="more">';
     if (ph) h += '<figure class="ph"><img src="'+ph[0]+'" alt="'+esc(t(s.n))+'" loading="lazy" onerror="this.parentNode.remove()"><figcaption><a href="'+ph[1]+'" target="_blank" rel="noopener">'+t(_("图片","Photo"))+' · Wikimedia Commons</a></figcaption></figure>';
-    if (s.p) h += '<p>'+esc(t(s.p))+'</p>';
+    if (i === ciStop) h += bkCard(hbIn, {compact:true});
+    if (s.p && i !== ciStop) h += '<p>'+esc(t(s.p))+'</p>';
     if (s.tips) h += '<ul>'+s.tips.map(z=>'<li>'+esc(t(z))+'</li>').join("")+'</ul>';
     if (s.book) h += '<span class="tag warn">⏰ '+esc(t(s.book))+'</span>';
     if (s.tel) h += '<span class="tag nav">'+t(UI.navTel)+s.tel+'</span>';
@@ -1628,7 +1633,9 @@ const bkEvHTML = e => '<li class="st bkev"><span class="tm">'+esc(e.tm || "✓")
 function bkCard(b, opt){
   opt = opt || {};
   const FL = Object.fromEntries(BKWATCH.map(([f,l]) => [f, l]));
-  let h = '<div class="bk'+(live(b)?"":" cancelled")+'">'+(!live(b) ? '<div class="bkst x">❌ '+t(_("已取消 · 不再出现在行程里","Cancelled · removed from the plan"))+'</div>' : b.changes && b.changes.length && !opt.preview ? '<div class="bkst">🔄 '+t(_("已更新","Updated"))+(b.updated?" "+fmtD(b.updated):"")+'：'+b.changes.filter(c => c.f !== "status").map(c => esc(t(FL[c.f]))+" "+esc(c.f.endsWith("date")?fmtD(c.from):c.from||"—")+" → <b>"+esc(c.f.endsWith("date")?fmtD(c.to):c.to||"—")+"</b>").join("；")+'</div>' : '')+'<div class="bkh"><i>'+(BKICON[b.kind]||"📌")+'</i><div><b>'+esc(b.title||"")+'</b>'+(b.title_ja?'<small lang="ja">'+esc(b.title_ja)+'</small>':'')+'</div>'+(b.provider?'<em>'+esc(b.provider)+'</em>':'')+'</div>';
+  const T0 = dayISO(0), T1 = dayISO(DAYS.length - 1), outTrip = live(b) && b.start_date && (b.start_date > T1 || (b.end_date || b.start_date) < T0);
+  const noDate = live(b) && !b.start_date && !opt.preview;
+  let h = '<div class="bk'+(live(b)?"":" cancelled")+'">'+(!live(b) ? '<div class="bkst x">❌ '+t(_("已取消 · 不再出现在行程里","Cancelled · removed from the plan"))+'</div>' : b.changes && b.changes.length && !opt.preview ? '<div class="bkst">🔄 '+t(_("已更新","Updated"))+(b.updated?" "+fmtD(b.updated):"")+'：'+b.changes.filter(c => c.f !== "status").map(c => esc(t(FL[c.f]))+" "+esc(c.f.endsWith("date")?fmtD(c.from):c.from||"—")+" → <b>"+esc(c.f.endsWith("date")?fmtD(c.to):c.to||"—")+"</b>").join("；")+'</div>' : '')+(outTrip ? '<div class="bkst x">⚠ '+t(_("日期 ","Dates "))+esc(fmtD(b.start_date)+(b.end_date?"–"+fmtD(b.end_date):""))+" ("+esc(b.start_date.slice(0,4))+") "+t(_("不在行程内（2027年1月23–30日），所以不会出现在每天的行程里。点 ✏️ 改日期。","are outside the trip (23–30 Jan 2027), so it won't show on any day. Tap ✏️ to fix the dates."))+'</div>' : noDate ? '<div class="bkst">⚠ '+t(_("没有日期，点 ✏️ 补上才会显示在行程里。","No date yet; tap ✏️ to add it so it shows in the plan."))+'</div>' : '')+'<div class="bkh"><i>'+(BKICON[b.kind]||"📌")+'</i><div><b>'+esc(b.title||"")+'</b>'+(b.title_ja?'<small lang="ja">'+esc(b.title_ja)+'</small>':'')+'</div>'+(b.provider?'<em>'+esc(b.provider)+'</em>':'')+'</div>';
   const w = bkWhen(b); if (w.trim()) h += '<div class="bkw">'+esc(w)+'</div>';
   const c = [b.confirmation && t(_("确认号","Conf."))+' <b>'+esc(b.confirmation)+'</b>', b.pin && 'PIN <b>'+esc(b.pin)+'</b>', b.flight_no && b.kind!=="flight" && esc(b.flight_no), b.seat && t(_("座位","Seat"))+' <b>'+esc(b.seat)+'</b>', b.guests && esc(b.guests), b.price && esc(b.price)].filter(Boolean);
   if (c.length) h += '<div class="bkc">'+c.map(x => '<span>'+x+'</span>').join("")+'</div>';
